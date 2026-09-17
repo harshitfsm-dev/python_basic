@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python OOP Part 2 — Interactive Learning Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224);
+  --primary-glow: rgba(58, 114, 224, 0.25);
+  --primary-light: #e8f0fe;
+  --primary-dark: #2a5db8;
+  --bg: #f5f7fb;
+  --bg-secondary: #eef2f7;
+  --card-bg: #ffffff;
+  --card-border: #dbe4ff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --code-bg: #1e293b;
+  --font: 'Inter','Segoe UI',Roboto,sans-serif;
+  --mono: 'Fira Code','JetBrains Mono','Cascadia Code',monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --glow: 0 4px 20px rgba(58,114,224,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border);
+  transition: all 0.3s;
+}
+
+.nav-logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--primary), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links { display: flex; gap: 28px; list-style: none; }
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 0; right: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+section {
+  padding: 60px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-section {
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 140px 40px 80px;
+  overflow: hidden;
+  background: #ffffff;
+  max-width: 100%;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(58,114,224,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 750px; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+
+.hero-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--card-border);
+  background: #ffffff;
+  color: var(--text-muted);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.hero-badge.primary { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+.hero-title {
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+.hero-title span {
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 36px;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.btn {
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 20px var(--primary-glow); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+.btn-ghost { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); }
+.btn-ghost:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover { border-color: var(--primary); box-shadow: var(--glow); transform: translateY(-4px); }
+
+.section-header { text-align: center; margin-bottom: 60px; }
+
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; color: var(--text); }
+.section-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+.code-editor { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #161b22;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.code-dots { display: flex; gap: 8px; }
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.code-dot.red { background: #ff5f57; }
+.code-dot.yellow { background: #febc2e; }
+.code-dot.green { background: #28c840; }
+.code-filename { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); }
+
+.code-copy {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+
+.code-copy:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.code-body { padding: 24px; background: var(--code-bg); overflow-x: auto; }
+.code-body pre { font-family: var(--mono); font-size: 0.88rem; line-height: 1.7; color: #e6edf3; margin: 0; }
+
+.kw { color: #ff7b72; }
+.fn { color: #d2a8ff; }
+.st { color: #a5d6ff; }
+.cm { color: #8b949e; }
+.op { color: #79c0ff; }
+.num { color: #79c0ff; }
+.dec { color: #ffa657; }
+.bi { color: #79c0ff; }
+.param { color: #ffa657; }
+.cls { color: #f0883e; }
+
+.output-block {
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: #065f46;
+}
+
+.output-block::before {
+  content: '▶ Output';
+  display: block;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--success);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.diagram-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 40px;
+  margin: 32px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.diagram-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark); }
+.diagram-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+
+.flow-container { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+.flow-node {
+  padding: 16px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 2px solid var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.flow-node.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(58,114,224,0.3); }
+.flow-node.success { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065f46; }
+.flow-node.warning { border-color: var(--warning); background: rgba(245,158,11,0.1); color: #92400e; }
+.flow-arrow { color: var(--primary); font-size: 1.4rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); display: table; }
+th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--card-border); font-size: 0.85rem; color: var(--text); vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: var(--primary-light); }
+
+.qa-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.qa-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
+
+.qa-question {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  background: #f8fafc;
+}
+
+.qa-question:hover { background: var(--primary-light); }
+
+.qa-num {
+  width: 32px; height: 32px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.qa-text { font-weight: 600; font-size: 0.95rem; flex: 1; }
+.qa-toggle { color: var(--text-muted); font-size: 1.2rem; transition: transform 0.3s; }
+.qa-card.open .qa-toggle { transform: rotate(180deg); }
+.qa-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.qa-card.open .qa-answer { padding: 0 24px 24px; max-height: 800px; }
+.qa-answer-content { padding-top: 16px; border-top: 1px solid var(--card-border); color: var(--text); line-height: 1.8; }
+
+.qa-tip {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--primary-light);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  border-left: 3px solid var(--primary);
+}
+
+.usecase-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.usecase-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), #a78bfa);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.usecase-card:hover::before { opacity: 1; }
+.usecase-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--glow); }
+
+.usecase-icon {
+  width: 48px; height: 48px;
+  background: var(--primary-light);
+  border: 1px solid rgba(58,114,224,0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+}
+
+.usecase-card h4 { font-size: 1.05rem; margin-bottom: 8px; color: var(--text); }
+.usecase-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  section { padding: 40px 20px; }
+  .nav { padding: 12px 20px; }
+  .nav-links { display: none; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .hero-title { font-size: 2.5rem; }
+  .hero-section { padding: 100px 20px 50px; }
+  .glass-card { padding: 20px; overflow-x: auto; }
+  table { min-width: 600px; }
+  .code-body { padding: 16px; }
+  .code-body pre { font-size: 0.8rem; }
+  .diagram-wrapper { padding: 20px 12px; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🐍 PyOOP Part 2</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#abstract">Abstract Classes</a></li>
+    <li><a href="#mixins">Mixins</a></li>
+    <li><a href="#metaclasses">Metaclasses</a></li>
+    <li><a href="#internals">Internals</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badges">
+      <span class="hero-badge primary">🐍 Python</span>
+      <span class="hero-badge">🧠 Advanced</span>
+      <span class="hero-badge">⏱ 30 min read</span>
+      <span class="hero-badge">🔬 Deep Dive</span>
+    </div>
+    <h1 class="hero-title">OOP <span>Part 2</span></h1>
+    <p class="hero-subtitle">Go deeper — abstract classes, mixins, metaclasses, and how Python actually manages memory and executes your code under the hood.</p>
+    <div class="hero-cta">
+      <a href="#abstract" class="btn btn-primary">Start Learning →</a>
+      <a href="#examples" class="btn btn-ghost">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview">
+  <div class="section-header reveal">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-title">What's in Part 2?</h2>
+    <p class="section-desc">Advanced OOP patterns and a peek behind the curtain at how Python actually works.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="glass-card reveal" style="border-left:4px solid rgb(58,114,224);">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">📐</div>
+        <h4 style="margin:0; font-size:1.05rem;">Abstract Classes</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Define contracts that child classes MUST follow. If they don't implement required methods, Python won't let them be instantiated.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #7c3aed;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#f3f0ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🧩</div>
+        <h4 style="margin:0; font-size:1.05rem;">Mixins</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Small, reusable classes that add specific behavior. Mix them into any class via multiple inheritance — like plugins for your objects.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #059669;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🏭</div>
+        <h4 style="margin:0; font-size:1.05rem;">Metaclasses</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Classes that create classes. The deepest level of Python's object model — used by frameworks like Django and SQLAlchemy.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #d97706;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#fffbeb; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">⚙️</div>
+        <h4 style="margin:0; font-size:1.05rem;">Python Internals</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">How Python manages memory, counts references, collects garbage, and executes your code from source to bytecode.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract Classes Section -->
+<section id="abstract">
+  <div class="section-header reveal">
+    <div class="section-label">Contracts</div>
+    <h2 class="section-title">Abstract Classes</h2>
+    <p class="section-desc">Force child classes to implement specific methods — or they can't be created at all.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">What's an Abstract Class?</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">An abstract class is a class you <strong>can't instantiate directly</strong>. It exists only to be inherited from. It defines a contract — "any class that inherits from me MUST implement these methods." If a child class forgets to implement one, Python raises <code>TypeError</code> at instantiation time, not at runtime.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">from abc import ABC, abstractmethod → define the contract</code>
+    </div>
+  </div>
+
+  <!-- ABC Code Example -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">The ABC Module — Defining Contracts</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Use <code>ABC</code> as a base class and <code>@abstractmethod</code> to mark methods that MUST be implemented.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">abstract_classes.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">PaymentProcessor</span>(ABC):
+    <span class="st">"""Abstract base class — defines the payment interface."""</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">process_payment</span>(<span class="param">self</span>, <span class="param">amount</span>):
+        <span class="st">"""Must be implemented by all payment processors."""</span>
+        <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">refund</span>(<span class="param">self</span>, <span class="param">transaction_id</span>):
+        <span class="st">"""Must be implemented — handle refunds."""</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">validate_amount</span>(<span class="param">self</span>, <span class="param">amount</span>):
+        <span class="st">"""Concrete method — shared by all subclasses."""</span>
+        <span class="kw">if</span> amount <= <span class="num">0</span>:
+            <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">"Amount must be positive"</span>)
+        <span class="kw">return</span> <span class="op">True</span>
+
+<span class="cm"># ✅ This works — implements all abstract methods</span>
+<span class="kw">class</span> <span class="cls">StripePayment</span>(PaymentProcessor):
+    <span class="kw">def</span> <span class="fn">process_payment</span>(<span class="param">self</span>, <span class="param">amount</span>):
+        self.validate_amount(amount)
+        <span class="kw">return</span> <span class="st">f"Stripe: charged ${amount}"</span>
+
+    <span class="kw">def</span> <span class="fn">refund</span>(<span class="param">self</span>, <span class="param">transaction_id</span>):
+        <span class="kw">return</span> <span class="st">f"Stripe: refunded {transaction_id}"</span>
+
+<span class="cm"># ❌ This crashes — missing refund()</span>
+<span class="kw">class</span> <span class="cls">BrokenPayment</span>(PaymentProcessor):
+    <span class="kw">def</span> <span class="fn">process_payment</span>(<span class="param">self</span>, <span class="param">amount</span>):
+        <span class="kw">return</span> <span class="st">"paid"</span>
+    <span class="cm"># forgot refund() — TypeError on instantiation!</span>
+
+stripe = StripePayment()
+<span class="bi">print</span>(stripe.process_payment(<span class="num">99.99</span>))
+<span class="bi">print</span>(stripe.refund(<span class="st">"txn_123"</span>))
+
+<span class="cm"># broken = BrokenPayment()  # TypeError: Can't instantiate!</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+Stripe: charged $99.99
+Stripe: refunded txn_123
+    </div>
+  </div>
+
+  <!-- Interface-like Behavior -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Interface-Like Behavior</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Python doesn't have a formal <code>interface</code> keyword like Java. But an abstract class with ONLY abstract methods (no concrete implementations) acts exactly like one.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">interface_pattern.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="cm"># This acts like an interface — pure contract, no implementation</span>
+<span class="kw">class</span> <span class="cls">Serializable</span>(ABC):
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">to_json</span>(<span class="param">self</span>) -> <span class="bi">str</span>:
+        <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">from_json</span>(<span class="param">cls</span>, <span class="param">data</span>: <span class="bi">str</span>):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Cacheable</span>(ABC):
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">cache_key</span>(<span class="param">self</span>) -> <span class="bi">str</span>:
+        <span class="kw">pass</span>
+
+<span class="cm"># A class can "implement" multiple interfaces</span>
+<span class="kw">class</span> <span class="cls">User</span>(Serializable, Cacheable):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">name</span>, <span class="param">email</span>):
+        self.name = name
+        self.email = email
+
+    <span class="kw">def</span> <span class="fn">to_json</span>(<span class="param">self</span>):
+        <span class="kw">import</span> json
+        <span class="kw">return</span> json.dumps({<span class="st">"name"</span>: self.name, <span class="st">"email"</span>: self.email})
+
+    <span class="kw">def</span> <span class="fn">from_json</span>(<span class="param">cls</span>, <span class="param">data</span>):
+        <span class="kw">import</span> json
+        d = json.loads(data)
+        <span class="kw">return</span> cls(d[<span class="st">"name"</span>], d[<span class="st">"email"</span>])
+
+    <span class="kw">def</span> <span class="fn">cache_key</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">f"user:{self.email}"</span>
+
+user = User(<span class="st">"Alice"</span>, <span class="st">"alice@dev.io"</span>)
+<span class="bi">print</span>(user.to_json())
+<span class="bi">print</span>(user.cache_key())</pre>
+      </div>
+    </div>
+    <div class="output-block">
+{"name": "Alice", "email": "alice@dev.io"}
+user:alice@dev.io
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.7; margin:0;">
+        <strong>Key difference:</strong> An abstract class CAN have concrete methods (shared logic). An interface-like class has ONLY abstract methods (pure contract). Use abstract classes when you want to share code. Use interface-like patterns when you just want to enforce a contract.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Mixins Section -->
+<section id="mixins">
+  <div class="section-header reveal">
+    <div class="section-label">Composition</div>
+    <h2 class="section-title">Mixins</h2>
+    <p class="section-desc">Small, focused classes that add reusable behavior — like plugins you snap onto any class.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">What's a Mixin?</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">A mixin is a small class that provides a specific piece of functionality — like logging, serialization, or timestamp tracking. You don't use it alone. You "mix it in" to other classes via multiple inheritance. Think of it like adding a USB adapter to a laptop — it adds capability without changing the core design.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">class MyClass(MixinA, MixinB, BaseClass): ... → adds behavior from mixins</code>
+    </div>
+  </div>
+
+  <!-- Mixin Code Example -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Reusable Behavior with Mixins</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Each mixin adds one specific capability. Mix and match as needed.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">mixins.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Mixin 1: Adds JSON serialization</span>
+<span class="kw">class</span> <span class="cls">JsonMixin</span>:
+    <span class="kw">def</span> <span class="fn">to_json</span>(<span class="param">self</span>):
+        <span class="kw">return</span> json.dumps(self.__dict__, default=<span class="bi">str</span>)
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="param">self</span>):
+        <span class="kw">return</span> self.to_json()
+
+<span class="cm"># Mixin 2: Adds timestamp tracking</span>
+<span class="kw">class</span> <span class="cls">TimestampMixin</span>:
+    <span class="kw">def</span> <span class="fn">__init_subclass__</span>(<span class="param">cls</span>, **kwargs):
+        <span class="bi">super</span>().__init_subclass__(**kwargs)
+        original_init = cls.__init__
+
+        <span class="kw">def</span> <span class="fn">new_init</span>(self, *args, **kw):
+            original_init(self, *args, **kw)
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+
+        cls.__init__ = new_init
+
+    <span class="kw">def</span> <span class="fn">touch</span>(<span class="param">self</span>):
+        self.updated_at = datetime.now()
+
+<span class="cm"># Mixin 3: Adds validation</span>
+<span class="kw">class</span> <span class="cls">ValidatorMixin</span>:
+    <span class="kw">def</span> <span class="fn">validate</span>(<span class="param">self</span>):
+        <span class="kw">for</span> field, value <span class="kw">in</span> self.__dict__.items():
+            <span class="kw">if</span> value <span class="kw">is</span> <span class="op">None</span>:
+                <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">f"{field} cannot be None"</span>)
+        <span class="kw">return</span> <span class="op">True</span>
+
+<span class="cm"># Combine mixins with a base class</span>
+<span class="kw">class</span> <span class="cls">User</span>(JsonMixin, ValidatorMixin):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">name</span>, <span class="param">email</span>):
+        self.name = name
+        self.email = email
+
+user = User(<span class="st">"Alice"</span>, <span class="st">"alice@dev.io"</span>)
+<span class="bi">print</span>(user.to_json())       <span class="cm"># from JsonMixin</span>
+<span class="bi">print</span>(user.validate())      <span class="cm"># from ValidatorMixin</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+{"name": "Alice", "email": "alice@dev.io"}
+True
+    </div>
+  </div>
+
+  <!-- Composition vs Inheritance -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Composition vs Inheritance — When to Use What</div>
+    <div class="diagram-desc">Two ways to reuse code. Pick the right one based on the relationship.</div>
+    <div style="display:flex; gap:32px; justify-content:center; flex-wrap:wrap; text-align:left;">
+      <div style="flex:1; min-width:280px; max-width:400px; padding:24px; background:#ecfdf5; border:2px solid #059669; border-radius:12px;">
+        <h4 style="color:#047857; margin-bottom:12px;">🧬 Inheritance — "IS A"</h4>
+        <p style="font-size:0.88rem; color:var(--text); line-height:1.7; margin-bottom:12px;">Use when the child truly IS a type of the parent.</p>
+        <ul style="font-size:0.85rem; color:var(--text-muted); line-height:2; padding-left:18px;">
+          <li>Dog IS an Animal ✅</li>
+          <li>Square IS a Rectangle ✅</li>
+          <li>Admin IS a User ✅</li>
+        </ul>
+        <div style="margin-top:12px; padding:10px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3;">
+          class Dog(Animal): ...
+        </div>
+      </div>
+      <div style="flex:1; min-width:280px; max-width:400px; padding:24px; background:#eff6ff; border:2px solid #3a72e0; border-radius:12px;">
+        <h4 style="color:#1d4ed8; margin-bottom:12px;">🧩 Composition — "HAS A"</h4>
+        <p style="font-size:0.88rem; color:var(--text); line-height:1.7; margin-bottom:12px;">Use when the class USES another class as a component.</p>
+        <ul style="font-size:0.85rem; color:var(--text-muted); line-height:2; padding-left:18px;">
+          <li>Car HAS an Engine ✅</li>
+          <li>User HAS an Address ✅</li>
+          <li>Game HAS a Player ✅</li>
+        </ul>
+        <div style="margin-top:12px; padding:10px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3;">
+          class Car:<br>&nbsp;&nbsp;self.engine = Engine()
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:24px; padding:14px; background:#fef3c7; border-radius:var(--radius-sm); border-left:3px solid #d97706; text-align:left;">
+      <p style="font-size:0.88rem; color:#92400e; line-height:1.7; margin:0;">
+        <strong>Rule of thumb:</strong> Prefer composition over inheritance. Inheritance creates tight coupling — if the parent changes, all children break. Composition is more flexible — you can swap components at runtime.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Metaclasses Section -->
+<section id="metaclasses">
+  <div class="section-header reveal">
+    <div class="section-label">Deep Magic</div>
+    <h2 class="section-title">Metaclasses</h2>
+    <p class="section-desc">Classes that create classes. The deepest level of Python's object system.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">What's a Metaclass?</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">In Python, everything is an object — including classes themselves. A metaclass is the "class of a class." Just like a class defines how objects behave, a metaclass defines how classes behave. The default metaclass is <code>type</code>. When you write <code>class Foo:</code>, Python actually calls <code>type('Foo', bases, attrs)</code> behind the scenes.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">object → instance of a class &nbsp;|&nbsp; class → instance of a metaclass &nbsp;|&nbsp; type → the default metaclass</code>
+    </div>
+  </div>
+
+  <!-- type() explanation -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">type() — The Class Factory</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;"><code>type()</code> does two things: check an object's type, or dynamically create a new class.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">type_function.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Usage 1: Check type of an object</span>
+<span class="bi">print</span>(<span class="bi">type</span>(<span class="num">42</span>))          <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="bi">print</span>(<span class="bi">type</span>(<span class="st">"hello"</span>))     <span class="cm"># &lt;class 'str'&gt;</span>
+
+<span class="cm"># Usage 2: Create a class dynamically!</span>
+<span class="cm"># type(name, bases, attrs) → creates a new class</span>
+
+<span class="cm"># This:</span>
+Dog = <span class="bi">type</span>(<span class="st">"Dog"</span>, (), {
+    <span class="st">"species"</span>: <span class="st">"Canis familiaris"</span>,
+    <span class="st">"bark"</span>: <span class="kw">lambda</span> self: <span class="st">"Woof!"</span>
+})
+
+<span class="cm"># Is EXACTLY the same as writing:</span>
+<span class="cm"># class Dog:</span>
+<span class="cm">#     species = "Canis familiaris"</span>
+<span class="cm">#     def bark(self): return "Woof!"</span>
+
+rex = Dog()
+<span class="bi">print</span>(rex.species)     <span class="cm"># Canis familiaris</span>
+<span class="bi">print</span>(rex.bark())      <span class="cm"># Woof!</span>
+<span class="bi">print</span>(<span class="bi">type</span>(rex))        <span class="cm"># &lt;class '__main__.Dog'&gt;</span>
+<span class="bi">print</span>(<span class="bi">type</span>(Dog))        <span class="cm"># &lt;class 'type'&gt; ← Dog's class is type!</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;
+Canis familiaris
+Woof!
+&lt;class '__main__.Dog'&gt;
+&lt;class 'type'&gt;
+    </div>
+  </div>
+
+  <!-- Class Creation Flow Diagram -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Class Creation Flow — What Python Does Behind the Scenes</div>
+    <div class="diagram-desc">When you write <code>class Foo:</code>, Python executes these steps internally</div>
+    <svg width="100%" height="300" viewBox="0 0 850 300" style="max-width:850px; margin:0 auto; display:block;">
+      <!-- Step 1 -->
+      <rect x="20" y="40" width="160" height="70" rx="10" fill="#eff6ff" stroke="#3a72e0" stroke-width="2"/>
+      <text x="45" y="68" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#1d4ed8">Step 1</text>
+      <text x="40" y="88" font-family="monospace" font-size="9" fill="#475569">Python reads the</text>
+      <text x="40" y="102" font-family="monospace" font-size="9" fill="#475569">class body as a dict</text>
+
+      <!-- Arrow -->
+      <line x1="180" y1="75" x2="220" y2="75" stroke="#3a72e0" stroke-width="2" marker-end="url(#arrMeta)"/>
+
+      <!-- Step 2 -->
+      <rect x="225" y="40" width="160" height="70" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="250" y="68" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#6d28d9">Step 2</text>
+      <text x="245" y="88" font-family="monospace" font-size="9" fill="#475569">Determines the</text>
+      <text x="245" y="102" font-family="monospace" font-size="9" fill="#475569">metaclass (default: type)</text>
+
+      <!-- Arrow -->
+      <line x1="385" y1="75" x2="425" y2="75" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrMeta)"/>
+
+      <!-- Step 3 -->
+      <rect x="430" y="40" width="180" height="70" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <text x="455" y="68" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#047857">Step 3</text>
+      <text x="450" y="88" font-family="monospace" font-size="9" fill="#475569">Calls metaclass.__new__()</text>
+      <text x="450" y="102" font-family="monospace" font-size="9" fill="#475569">to create the class object</text>
+
+      <!-- Arrow -->
+      <line x1="610" y1="75" x2="650" y2="75" stroke="#059669" stroke-width="2" marker-end="url(#arrMeta)"/>
+
+      <!-- Step 4 -->
+      <rect x="655" y="40" width="170" height="70" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="680" y="68" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#92400e">Step 4</text>
+      <text x="675" y="88" font-family="monospace" font-size="9" fill="#475569">Calls metaclass.__init__()</text>
+      <text x="675" y="102" font-family="monospace" font-size="9" fill="#475569">to initialize the class</text>
+
+      <!-- Equivalent code -->
+      <rect x="150" y="150" width="550" height="120" rx="12" fill="#1e293b" stroke="#374151" stroke-width="2"/>
+      <text x="180" y="178" font-family="monospace" font-size="11" fill="#8b949e"># What Python actually does when you write:</text>
+      <text x="180" y="198" font-family="monospace" font-size="11" fill="#ff7b72">class</text>
+      <text x="215" y="198" font-family="monospace" font-size="11" fill="#f0883e">Foo</text>
+      <text x="240" y="198" font-family="monospace" font-size="11" fill="#e6edf3">(Bar):</text>
+      <text x="180" y="218" font-family="monospace" font-size="11" fill="#e6edf3">    x = 10</text>
+      <text x="180" y="248" font-family="monospace" font-size="11" fill="#8b949e"># Becomes: Foo = type('Foo', (Bar,), {'x': 10})</text>
+
+      <defs>
+        <marker id="arrMeta" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#475569"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Custom Metaclass -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Custom Metaclass — Practical Example</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A metaclass that automatically registers all subclasses — useful for plugin systems, ORMs, and serialization frameworks.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">metaclass_example.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">RegistryMeta</span>(<span class="bi">type</span>):
+    <span class="st">"""Metaclass that auto-registers all classes created with it."""</span>
+    registry = {}
+
+    <span class="kw">def</span> <span class="fn">__new__</span>(<span class="param">mcs</span>, <span class="param">name</span>, <span class="param">bases</span>, <span class="param">namespace</span>):
+        cls = <span class="bi">super</span>().__new__(mcs, name, bases, namespace)
+        <span class="kw">if</span> bases:  <span class="cm"># don't register the base class itself</span>
+            RegistryMeta.registry[name] = cls
+        <span class="kw">return</span> cls
+
+<span class="cm"># Base class uses our metaclass</span>
+<span class="kw">class</span> <span class="cls">Plugin</span>(metaclass=RegistryMeta):
+    <span class="kw">pass</span>
+
+<span class="cm"># Every subclass is auto-registered — no manual step needed!</span>
+<span class="kw">class</span> <span class="cls">AuthPlugin</span>(Plugin):
+    <span class="kw">def</span> <span class="fn">run</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"Checking auth..."</span>
+
+<span class="kw">class</span> <span class="cls">CachePlugin</span>(Plugin):
+    <span class="kw">def</span> <span class="fn">run</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"Checking cache..."</span>
+
+<span class="kw">class</span> <span class="cls">LogPlugin</span>(Plugin):
+    <span class="kw">def</span> <span class="fn">run</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"Logging request..."</span>
+
+<span class="cm"># See all registered plugins — no manual list needed!</span>
+<span class="bi">print</span>(<span class="st">"Registered plugins:"</span>, <span class="bi">list</span>(RegistryMeta.registry.keys()))
+
+<span class="cm"># Instantiate and run all plugins dynamically</span>
+<span class="kw">for</span> name, plugin_cls <span class="kw">in</span> RegistryMeta.registry.items():
+    plugin = plugin_cls()
+    <span class="bi">print</span>(<span class="st">f"  {name}: {plugin.run()}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Registered plugins: ['AuthPlugin', 'CachePlugin', 'LogPlugin']
+  AuthPlugin: Checking auth...
+  CachePlugin: Checking cache...
+  LogPlugin: Logging request...
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(245,158,11,0.08); border-radius:var(--radius-sm); border-left:3px solid var(--warning);">
+      <p style="font-size:0.9rem; color:#92400e; line-height:1.7; margin:0;">
+        <strong>⚠️ When to use metaclasses:</strong> Almost never in application code. They're for framework authors — Django uses them for models, SQLAlchemy for table mapping, pytest for test discovery. If you're not building a framework, <code>__init_subclass__</code> or class decorators are simpler alternatives.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Python Internals Section -->
+<section id="internals">
+  <div class="section-header reveal">
+    <div class="section-label">Under the Hood</div>
+    <h2 class="section-title">Python Internals</h2>
+    <p class="section-desc">How Python manages memory, cleans up objects, and executes your code.</p>
+  </div>
+
+  <!-- Memory Management -->
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">🧠 Memory Management Overview</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">Python handles memory automatically — you don't malloc/free like in C. But understanding HOW it works helps you write efficient code and avoid memory leaks.</p>
+    <p style="color:var(--text); font-size:0.95rem; line-height:1.8; margin-top:12px;">Python uses a <strong>private heap</strong> managed by its memory manager. It has three layers of defense against memory waste:</p>
+    <ol style="margin-top:12px; padding-left:24px; line-height:2.2; color:var(--text);">
+      <li><strong>Reference Counting</strong> — tracks how many variables point to each object</li>
+      <li><strong>Garbage Collector</strong> — catches circular references that ref counting misses</li>
+      <li><strong>Memory Pools</strong> — pre-allocates small blocks to avoid OS overhead</li>
+    </ol>
+  </div>
+
+  <!-- Reference Counting -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Reference Counting — The Primary Mechanism</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Every object has a counter tracking how many references point to it. When it hits zero, the memory is freed immediately.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">reference_counting.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> sys
+
+<span class="cm"># Create an object — ref count starts at 1</span>
+a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="bi">print</span>(sys.getrefcount(a))  <span class="cm"># 2 (a + getrefcount's temp ref)</span>
+
+<span class="cm"># Add another reference — count goes up</span>
+b = a
+<span class="bi">print</span>(sys.getrefcount(a))  <span class="cm"># 3 (a + b + temp)</span>
+
+<span class="cm"># Put it in a list — count goes up again</span>
+c = [a]
+<span class="bi">print</span>(sys.getrefcount(a))  <span class="cm"># 4 (a + b + c[0] + temp)</span>
+
+<span class="cm"># Delete a reference — count goes down</span>
+<span class="kw">del</span> b
+<span class="bi">print</span>(sys.getrefcount(a))  <span class="cm"># 3</span>
+
+<span class="cm"># When ref count hits 0 → memory freed immediately</span>
+<span class="cm"># No waiting for garbage collector!</span>
+
+<span class="cm"># The problem: circular references</span>
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>):
+        self.ref = <span class="op">None</span>
+
+node_a = Node()
+node_b = Node()
+node_a.ref = node_b  <span class="cm"># a → b</span>
+node_b.ref = node_a  <span class="cm"># b → a (circular!)</span>
+
+<span class="cm"># Even after del, ref count never hits 0</span>
+<span class="cm"># That's where the garbage collector steps in</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+2
+3
+4
+3
+    </div>
+  </div>
+
+  <!-- Garbage Collection -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Garbage Collection — Catching Circular References</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The GC runs periodically to find and clean up objects that reference each other but are no longer reachable from your code.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">garbage_collection.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> gc
+
+<span class="cm"># Check GC status</span>
+<span class="bi">print</span>(<span class="st">f"GC enabled: {gc.isenabled()}"</span>)
+<span class="bi">print</span>(<span class="st">f"Thresholds: {gc.get_threshold()}"</span>)
+<span class="cm"># (700, 10, 10) → gen0 after 700 allocs, gen1 after 10 gen0 runs, etc.</span>
+
+<span class="cm"># Generational collection: 3 generations</span>
+<span class="cm"># Gen 0: new objects (collected most often)</span>
+<span class="cm"># Gen 1: survived one collection</span>
+<span class="cm"># Gen 2: long-lived objects (collected rarely)</span>
+
+<span class="cm"># Force a collection</span>
+collected = gc.collect()
+<span class="bi">print</span>(<span class="st">f"Objects collected: {collected}"</span>)
+
+<span class="cm"># Create a circular reference</span>
+<span class="kw">class</span> <span class="cls">Circular</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">name</span>):
+        self.name = name
+        self.ref = <span class="op">None</span>
+    <span class="kw">def</span> <span class="fn">__del__</span>(<span class="param">self</span>):
+        <span class="bi">print</span>(<span class="st">f"  Destroying {self.name}"</span>)
+
+a = Circular(<span class="st">"A"</span>)
+b = Circular(<span class="st">"B"</span>)
+a.ref = b
+b.ref = a
+
+<span class="cm"># Remove our references</span>
+<span class="kw">del</span> a, b
+
+<span class="cm"># Objects still exist (circular ref keeps count > 0)</span>
+<span class="cm"># Force GC to find and clean them</span>
+<span class="bi">print</span>(<span class="st">"Running GC..."</span>)
+gc.collect()</pre>
+      </div>
+    </div>
+    <div class="output-block">
+GC enabled: True
+Thresholds: (700, 10, 10)
+Objects collected: 0
+Running GC...
+  Destroying A
+  Destroying B
+    </div>
+  </div>
+
+  <!-- Stack vs Heap Diagram -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Stack vs Heap — Where Things Live in Memory</div>
+    <div class="diagram-desc">Variables (references) live on the stack. Objects (actual data) live on the heap.</div>
+    <svg width="100%" height="340" viewBox="0 0 800 340" style="max-width:800px; margin:0 auto; display:block;">
+      <!-- Stack -->
+      <rect x="40" y="20" width="280" height="300" rx="14" fill="#eff6ff" stroke="#3a72e0" stroke-width="2.5"/>
+      <text x="130" y="50" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#1d4ed8">STACK</text>
+      <text x="80" y="70" font-family="Inter,sans-serif" font-size="10" fill="#6b7280">(function calls, local variables)</text>
+
+      <!-- Stack frames -->
+      <rect x="60" y="90" width="240" height="45" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="80" y="112" font-family="monospace" font-size="10" fill="#1e3a5f">main()</text>
+      <text x="150" y="112" font-family="monospace" font-size="10" fill="#475569">x = →</text>
+      <text x="200" y="126" font-family="monospace" font-size="9" fill="#6b7280">name = →</text>
+
+      <rect x="60" y="145" width="240" height="45" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="80" y="167" font-family="monospace" font-size="10" fill="#1e3a5f">greet(user)</text>
+      <text x="170" y="167" font-family="monospace" font-size="10" fill="#475569">user = →</text>
+      <text x="200" y="181" font-family="monospace" font-size="9" fill="#6b7280">msg = →</text>
+
+      <rect x="60" y="200" width="240" height="45" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="80" y="222" font-family="monospace" font-size="10" fill="#1e3a5f">format_name()</text>
+      <text x="180" y="222" font-family="monospace" font-size="10" fill="#475569">result = →</text>
+
+      <text x="80" y="275" font-family="Inter,sans-serif" font-size="10" fill="#3a72e0" font-weight="600">↑ Grows upward</text>
+      <text x="80" y="295" font-family="Inter,sans-serif" font-size="9" fill="#6b7280">Auto-managed (LIFO)</text>
+      <text x="80" y="308" font-family="Inter,sans-serif" font-size="9" fill="#6b7280">Fast allocation/deallocation</text>
+
+      <!-- Arrows from stack to heap -->
+      <line x1="300" y1="110" x2="420" y2="80" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrSH)"/>
+      <line x1="300" y1="165" x2="420" y2="160" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrSH)"/>
+      <line x1="300" y1="220" x2="420" y2="250" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrSH)"/>
+
+      <!-- Heap -->
+      <rect x="400" y="20" width="370" height="300" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2.5"/>
+      <text x="540" y="50" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#047857">HEAP</text>
+      <text x="480" y="70" font-family="Inter,sans-serif" font-size="10" fill="#6b7280">(all Python objects live here)</text>
+
+      <!-- Heap objects -->
+      <rect x="430" y="85" width="130" height="40" rx="6" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="450" y="108" font-family="monospace" font-size="10" fill="#064e3b">int: 42</text>
+
+      <rect x="580" y="85" width="170" height="40" rx="6" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="600" y="108" font-family="monospace" font-size="10" fill="#064e3b">str: "Alice"</text>
+
+      <rect x="430" y="145" width="200" height="50" rx="6" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="450" y="168" font-family="monospace" font-size="10" fill="#064e3b">User object</text>
+      <text x="450" y="184" font-family="monospace" font-size="9" fill="#6b7280">{name, email, age}</text>
+
+      <rect x="430" y="215" width="170" height="40" rx="6" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="450" y="238" font-family="monospace" font-size="10" fill="#064e3b">list: [1, 2, 3]</text>
+
+      <rect x="620" y="215" width="130" height="40" rx="6" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="640" y="238" font-family="monospace" font-size="10" fill="#064e3b">str: "Hello"</text>
+
+      <text x="450" y="285" font-family="Inter,sans-serif" font-size="10" fill="#059669" font-weight="600">Managed by Python's memory manager</text>
+      <text x="450" y="300" font-family="Inter,sans-serif" font-size="9" fill="#6b7280">Reference counted + garbage collected</text>
+
+      <defs>
+        <marker id="arrSH" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+          <polygon points="0 0, 6 2.5, 0 5" fill="#64748b"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Python Execution Model -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Python Execution Model — From Source to Running Code</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Python isn't purely interpreted — it compiles to bytecode first, then the Python Virtual Machine (PVM) executes that bytecode.</p>
+
+    <div class="diagram-wrapper" style="margin-top:20px;">
+      <div class="diagram-title">Execution Pipeline</div>
+      <div class="diagram-desc">Your .py file goes through these stages before anything actually runs</div>
+      <div class="flow-container">
+        <div class="flow-node active">source.py</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Lexer/Parser</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node warning">AST</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Compiler</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node success">Bytecode (.pyc)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node active">PVM executes</div>
+      </div>
+    </div>
+
+    <div class="code-editor" style="margin-top:24px;">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">execution_model.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> dis
+
+<span class="cm"># See the bytecode Python generates for a function</span>
+<span class="kw">def</span> <span class="fn">add</span>(<span class="param">a</span>, <span class="param">b</span>):
+    <span class="kw">return</span> a + b
+
+<span class="bi">print</span>(<span class="st">"Bytecode for add():"</span>)
+dis.dis(add)
+
+<span class="bi">print</span>(<span class="st">"\n--- Execution Model Summary ---"</span>)
+<span class="bi">print</span>(<span class="st">"1. Source code (.py) → parsed into AST"</span>)
+<span class="bi">print</span>(<span class="st">"2. AST → compiled to bytecode (.pyc in __pycache__)"</span>)
+<span class="bi">print</span>(<span class="st">"3. Bytecode → executed by Python Virtual Machine (PVM)"</span>)
+<span class="bi">print</span>(<span class="st">"4. PVM is a stack-based interpreter"</span>)
+<span class="bi">print</span>(<span class="st">f"\nPython implementation: {__import__('platform').python_implementation()}"</span>)
+<span class="bi">print</span>(<span class="st">f"Bytecode cache: __pycache__/*.pyc files"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Bytecode for add():
+  2           0 LOAD_FAST                0 (a)
+              2 LOAD_FAST                1 (b)
+              4 BINARY_ADD
+              6 RETURN_VALUE
+
+--- Execution Model Summary ---
+1. Source code (.py) → parsed into AST
+2. AST → compiled to bytecode (.pyc in __pycache__)
+3. Bytecode → executed by Python Virtual Machine (PVM)
+4. PVM is a stack-based interpreter
+
+Python implementation: CPython
+Bytecode cache: __pycache__/*.pyc files
+    </div>
+  </div>
+
+  <!-- Internals Summary Table -->
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Python Internals — Quick Reference</h3>
+    <table>
+      <thead>
+        <tr><th>Concept</th><th>What It Does</th><th>Key Detail</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Reference Counting</strong></td><td>Tracks how many variables point to an object</td><td>Object freed immediately when count hits 0</td></tr>
+        <tr><td><strong>Garbage Collector</strong></td><td>Finds circular references that ref counting misses</td><td>Uses generational collection (3 generations)</td></tr>
+        <tr><td><strong>Stack</strong></td><td>Stores function calls and local variable references</td><td>LIFO order, auto-managed, very fast</td></tr>
+        <tr><td><strong>Heap</strong></td><td>Stores all actual Python objects</td><td>Managed by Python's memory allocator (pymalloc)</td></tr>
+        <tr><td><strong>Bytecode</strong></td><td>Intermediate representation of your code</td><td>Cached in <code>__pycache__/*.pyc</code> files</td></tr>
+        <tr><td><strong>PVM</strong></td><td>Python Virtual Machine — executes bytecode</td><td>Stack-based interpreter, one instruction at a time</td></tr>
+        <tr><td><strong>GIL</strong></td><td>Global Interpreter Lock — one thread at a time</td><td>Limits true parallelism in CPython (use multiprocessing)</td></tr>
+        <tr><td><strong>Memory Pools</strong></td><td>Pre-allocated blocks for small objects (&lt;512 bytes)</td><td>Avoids expensive OS-level malloc calls</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Code Examples Section -->
+<section id="examples">
+  <div class="section-header reveal">
+    <div class="section-label">Hands-On</div>
+    <h2 class="section-title">Real-World Examples</h2>
+    <p class="section-desc">Complete examples that tie all the advanced concepts together.</p>
+  </div>
+
+  <!-- Example 1: Plugin System with ABC -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 1: Plugin System with Abstract Base Class</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A notification system where each channel (email, SMS, push) must implement the same interface.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">notification_system.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Notifier</span>(ABC):
+    <span class="st">"""All notification channels must implement these methods."""</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="param">self</span>, <span class="param">recipient</span>, <span class="param">message</span>):
+        <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">validate_recipient</span>(<span class="param">self</span>, <span class="param">recipient</span>) -> <span class="bi">bool</span>:
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">notify</span>(<span class="param">self</span>, <span class="param">recipient</span>, <span class="param">message</span>):
+        <span class="st">"""Template method — shared logic."""</span>
+        <span class="kw">if</span> <span class="kw">not</span> self.validate_recipient(recipient):
+            <span class="kw">return</span> <span class="st">f"❌ Invalid recipient: {recipient}"</span>
+        <span class="kw">return</span> self.send(recipient, message)
+
+<span class="kw">class</span> <span class="cls">EmailNotifier</span>(Notifier):
+    <span class="kw">def</span> <span class="fn">validate_recipient</span>(<span class="param">self</span>, <span class="param">recipient</span>):
+        <span class="kw">return</span> <span class="st">"@"</span> <span class="kw">in</span> recipient
+
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="param">self</span>, <span class="param">recipient</span>, <span class="param">message</span>):
+        <span class="kw">return</span> <span class="st">f"📧 Email to {recipient}: {message}"</span>
+
+<span class="kw">class</span> <span class="cls">SMSNotifier</span>(Notifier):
+    <span class="kw">def</span> <span class="fn">validate_recipient</span>(<span class="param">self</span>, <span class="param">recipient</span>):
+        <span class="kw">return</span> recipient.startswith(<span class="st">"+"</span>) <span class="kw">and</span> <span class="bi">len</span>(recipient) >= <span class="num">10</span>
+
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="param">self</span>, <span class="param">recipient</span>, <span class="param">message</span>):
+        <span class="kw">return</span> <span class="st">f"📱 SMS to {recipient}: {message}"</span>
+
+<span class="cm"># Polymorphism — same interface, different channels</span>
+notifiers = [EmailNotifier(), SMSNotifier()]
+<span class="kw">for</span> n <span class="kw">in</span> notifiers:
+    <span class="bi">print</span>(n.notify(<span class="st">"alice@dev.io"</span>, <span class="st">"Hello!"</span>))
+    <span class="bi">print</span>(n.notify(<span class="st">"+1234567890"</span>, <span class="st">"Hello!"</span>))</pre>
+      </div>
+    </div>
+    <div class="output-block">
+📧 Email to alice@dev.io: Hello!
+❌ Invalid recipient: +1234567890
+❌ Invalid recipient: alice@dev.io
+📱 SMS to +1234567890: Hello!
+    </div>
+  </div>
+
+  <!-- Example 2: Mixins in Practice -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 2: Mixins — Building a Feature-Rich Model</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Compose behavior from multiple mixins — each adds one capability without inheritance headaches.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">mixin_composition.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">class</span> <span class="cls">SerializeMixin</span>:
+    <span class="st">"""Adds to_dict() and to_json() to any class."""</span>
+    <span class="kw">def</span> <span class="fn">to_dict</span>(<span class="param">self</span>):
+        <span class="kw">return</span> {k: v <span class="kw">for</span> k, v <span class="kw">in</span> self.__dict__.items()
+                <span class="kw">if</span> <span class="kw">not</span> k.startswith(<span class="st">"_"</span>)}
+
+    <span class="kw">def</span> <span class="fn">to_json</span>(<span class="param">self</span>):
+        <span class="kw">return</span> json.dumps(self.to_dict(), default=<span class="bi">str</span>)
+
+<span class="kw">class</span> <span class="cls">AuditMixin</span>:
+    <span class="st">"""Tracks creation and modification times."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, *args, **kwargs):
+        <span class="bi">super</span>().__init__(*args, **kwargs)
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+    <span class="kw">def</span> <span class="fn">mark_updated</span>(<span class="param">self</span>):
+        self.updated_at = datetime.now()
+
+<span class="kw">class</span> <span class="cls">CompareMixin</span>:
+    <span class="st">"""Adds equality comparison based on all attributes."""</span>
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="param">self</span>, <span class="param">other</span>):
+        <span class="kw">if</span> <span class="bi">type</span>(self) != <span class="bi">type</span>(other):
+            <span class="kw">return</span> <span class="op">False</span>
+        <span class="kw">return</span> self.__dict__ == other.__dict__
+
+<span class="cm"># Compose all mixins into one class</span>
+<span class="kw">class</span> <span class="cls">Product</span>(SerializeMixin, AuditMixin, CompareMixin):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">name</span>, <span class="param">price</span>):
+        self.name = name
+        self.price = price
+        <span class="bi">super</span>().__init__()  <span class="cm"># triggers AuditMixin</span>
+
+p = Product(<span class="st">"Widget"</span>, <span class="num">29.99</span>)
+<span class="bi">print</span>(p.to_dict())
+<span class="bi">print</span>(<span class="st">f"Created: {p.created_at}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+{'name': 'Widget', 'price': 29.99, 'created_at': datetime(2026, 5, 31, ...), 'updated_at': datetime(2026, 5, 31, ...)}
+Created: 2026-05-31 10:30:00.123456
+    </div>
+  </div>
+
+  <!-- Example 3: Memory Profiling -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 3: Memory Profiling — Slots vs Regular Classes</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Use <code>__slots__</code> to reduce memory usage when you have many instances of the same class.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">memory_slots.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> sys
+
+<span class="cm"># Regular class — uses __dict__ for attributes (flexible but heavy)</span>
+<span class="kw">class</span> <span class="cls">PointRegular</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">x</span>, <span class="param">y</span>):
+        self.x = x
+        self.y = y
+
+<span class="cm"># Slotted class — fixed attributes (less flexible but lighter)</span>
+<span class="kw">class</span> <span class="cls">PointSlotted</span>:
+    __slots__ = [<span class="st">'x'</span>, <span class="st">'y'</span>]
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">x</span>, <span class="param">y</span>):
+        self.x = x
+        self.y = y
+
+<span class="cm"># Compare memory usage</span>
+regular = PointRegular(<span class="num">1</span>, <span class="num">2</span>)
+slotted = PointSlotted(<span class="num">1</span>, <span class="num">2</span>)
+
+<span class="bi">print</span>(<span class="st">f"Regular: {sys.getsizeof(regular)} + {sys.getsizeof(regular.__dict__)} (dict) bytes"</span>)
+<span class="bi">print</span>(<span class="st">f"Slotted: {sys.getsizeof(slotted)} bytes (no __dict__)"</span>)
+
+<span class="cm"># With 1 million points, slots saves ~40% memory</span>
+<span class="bi">print</span>(<span class="st">f"\nRegular has __dict__: {hasattr(regular, '__dict__')}"</span>)
+<span class="bi">print</span>(<span class="st">f"Slotted has __dict__: {hasattr(slotted, '__dict__')}"</span>)
+
+<span class="cm"># Slotted can't add new attributes dynamically:</span>
+<span class="cm"># slotted.z = 3  → AttributeError!</span>
+regular.z = <span class="num">3</span>  <span class="cm"># This works fine on regular class</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+Regular: 48 + 104 (dict) bytes
+Slotted: 48 bytes (no __dict__)
+
+Regular has __dict__: True
+Slotted has __dict__: False
+    </div>
+  </div>
+
+  <!-- Example 4: Composition Pattern -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 4: Composition Over Inheritance</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Instead of inheriting behavior, inject it as components — more flexible and easier to test.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">composition.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="cm"># Define interfaces for components</span>
+<span class="kw">class</span> <span class="cls">Engine</span>(ABC):
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="param">self</span>): <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">ElectricEngine</span>(Engine):
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"⚡ Electric motor humming"</span>
+
+<span class="kw">class</span> <span class="cls">GasEngine</span>(Engine):
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"🔥 Gas engine roaring"</span>
+
+<span class="kw">class</span> <span class="cls">GPS</span>:
+    <span class="kw">def</span> <span class="fn">navigate</span>(<span class="param">self</span>, <span class="param">destination</span>):
+        <span class="kw">return</span> <span class="st">f"📍 Navigating to {destination}"</span>
+
+<span class="cm"># Car USES components (composition) instead of BEING them (inheritance)</span>
+<span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">model</span>, <span class="param">engine</span>: Engine, <span class="param">gps</span>: GPS = <span class="op">None</span>):
+        self.model = model
+        self.engine = engine      <span class="cm"># HAS an engine</span>
+        self.gps = gps            <span class="cm"># HAS a GPS (optional)</span>
+
+    <span class="kw">def</span> <span class="fn">drive</span>(<span class="param">self</span>, <span class="param">destination</span>=<span class="op">None</span>):
+        result = [<span class="st">f"🚗 {self.model}: {self.engine.start()}"</span>]
+        <span class="kw">if</span> self.gps <span class="kw">and</span> destination:
+            result.append(self.gps.navigate(destination))
+        <span class="kw">return</span> <span class="st">"\n"</span>.join(result)
+
+<span class="cm"># Swap components easily — no inheritance changes needed</span>
+tesla = Car(<span class="st">"Tesla"</span>, ElectricEngine(), GPS())
+mustang = Car(<span class="st">"Mustang"</span>, GasEngine())
+
+<span class="bi">print</span>(tesla.drive(<span class="st">"San Francisco"</span>))
+<span class="bi">print</span>()
+<span class="bi">print</span>(mustang.drive())</pre>
+      </div>
+    </div>
+    <div class="output-block">
+🚗 Tesla: ⚡ Electric motor humming
+📍 Navigating to San Francisco
+
+🚗 Mustang: 🔥 Gas engine roaring
+    </div>
+  </div>
+</section>
+
+<!-- Real-World Use Cases -->
+<section id="usecases">
+  <div class="section-header reveal">
+    <div class="section-label">In Production</div>
+    <h2 class="section-title">Where You'll See These Patterns</h2>
+    <p class="section-desc">These advanced OOP concepts power the frameworks and libraries you use daily.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🌐</div>
+      <h4>Django Models (Metaclass)</h4>
+      <p>Django uses a metaclass to auto-discover fields, create database tables, and register models — all from a simple class definition.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🔌</div>
+      <h4>Plugin Systems (ABC)</h4>
+      <p>Define an abstract interface, let third-party developers implement plugins. Your code calls the interface — doesn't care about the implementation.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🧩</div>
+      <h4>Django REST Mixins</h4>
+      <p>DRF uses mixins like <code>ListModelMixin</code>, <code>CreateModelMixin</code> — mix and match to build exactly the API view you need.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">📊</div>
+      <h4>SQLAlchemy (Metaclass)</h4>
+      <p>Table columns defined as class attributes get intercepted by a metaclass that builds SQL schemas and query interfaces automatically.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🧪</div>
+      <h4>pytest Discovery (Metaclass)</h4>
+      <p>pytest uses metaclass-like patterns to auto-discover test classes and methods — no registration needed, just name them <code>test_*</code>.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">⚡</div>
+      <h4>Memory Optimization (__slots__)</h4>
+      <p>Data-heavy applications with millions of objects use <code>__slots__</code> to cut memory usage by 30-50% per instance.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🔄</div>
+      <h4>Celery Tasks (ABC)</h4>
+      <p>Celery's <code>Task</code> base class defines the interface for async tasks. Your task classes inherit and implement <code>run()</code>.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🏗️</div>
+      <h4>FastAPI Dependencies (Composition)</h4>
+      <p>FastAPI injects dependencies via composition — database sessions, auth handlers, and validators are composed, not inherited.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🐍</div>
+      <h4>CPython Internals (GC)</h4>
+      <p>Understanding reference counting and GC helps you avoid memory leaks in long-running services — especially with circular references in caches.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Interview Questions Section -->
+<section id="interview">
+  <div class="section-header reveal">
+    <div class="section-label">Career Prep</div>
+    <h2 class="section-title">Interview Questions</h2>
+    <p class="section-desc">Advanced questions you'll get in senior-level interviews. Click to reveal answers.</p>
+  </div>
+
+  <div class="reveal">
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">1</span>
+        <span class="qa-text">What's the difference between an abstract class and an interface in Python?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Python doesn't have a formal <code>interface</code> keyword. An abstract class (using <code>ABC</code>) can have both abstract methods (contract) AND concrete methods (shared implementation). An "interface" in Python is just an abstract class with ONLY abstract methods — pure contract, no implementation.</p>
+          <p style="margin-top:8px;">Use abstract classes when you want to share code between subclasses. Use interface-like patterns when you just want to enforce a contract without dictating implementation.</p>
+          <div class="qa-tip">💡 Also mention Python's Protocol (typing module) for structural subtyping — "if it has these methods, it satisfies the protocol" without inheritance.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">2</span>
+        <span class="qa-text">What's a mixin and how is it different from regular inheritance?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A mixin is a small class that provides a specific piece of functionality — it's not meant to stand alone. The difference from regular inheritance: a mixin doesn't represent an "is-a" relationship. A <code>User</code> isn't a <code>JsonMixin</code> — it just HAS JSON serialization capability.</p>
+          <p style="margin-top:8px;">Conventions: name them with "Mixin" suffix, keep them focused on one thing, don't store state, and list them before the base class in the inheritance order.</p>
+          <div class="qa-tip">💡 Give Django REST Framework as a real example — <code>class UserView(ListModelMixin, CreateModelMixin, GenericAPIView)</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">3</span>
+        <span class="qa-text">When would you choose composition over inheritance?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Use <strong>inheritance</strong> when there's a genuine "is-a" relationship (Dog IS an Animal). Use <strong>composition</strong> when there's a "has-a" relationship (Car HAS an Engine) or when you want to swap behavior at runtime.</p>
+          <p style="margin-top:8px;">Prefer composition when: you need flexibility, the relationship might change, you want to avoid deep inheritance hierarchies, or you need to combine behaviors from multiple sources without multiple inheritance complexity.</p>
+          <div class="qa-tip">💡 The "favor composition over inheritance" principle exists because inheritance creates tight coupling — changing the parent breaks all children.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">4</span>
+        <span class="qa-text">What is a metaclass and when would you use one?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A metaclass is a "class of a class" — it controls how classes are created. The default metaclass is <code>type</code>. You'd use a custom metaclass to: auto-register classes, validate class definitions at creation time, inject methods/attributes, or implement ORMs.</p>
+          <p style="margin-top:8px;">In practice, you almost never need them in application code. They're for framework authors. Simpler alternatives: <code>__init_subclass__</code>, class decorators, or descriptors.</p>
+          <div class="qa-tip">💡 Famous quote: "If you're wondering whether you need a metaclass, you don't." — Tim Peters</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">5</span>
+        <span class="qa-text">How does Python's garbage collector work?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Python uses two mechanisms: <strong>reference counting</strong> (primary) and <strong>generational garbage collection</strong> (secondary). Reference counting frees objects immediately when no references remain. The GC handles circular references that ref counting can't detect.</p>
+          <p style="margin-top:8px;">The GC uses three generations — new objects start in gen 0 (collected frequently). If they survive a collection, they move to gen 1, then gen 2 (collected rarely). This is based on the observation that most objects die young.</p>
+          <div class="qa-tip">💡 Mention that you can control the GC with <code>gc.disable()</code>, <code>gc.collect()</code>, and <code>gc.get_threshold()</code> — useful for performance-critical sections.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">6</span>
+        <span class="qa-text">What's the difference between stack and heap memory in Python?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The <strong>stack</strong> stores function call frames and local variable references (pointers). It's fast, auto-managed (LIFO), and each thread gets its own. The <strong>heap</strong> stores all actual Python objects — strings, lists, class instances, everything.</p>
+          <p style="margin-top:8px;">When you write <code>x = [1, 2, 3]</code>, the variable <code>x</code> (a reference/pointer) lives on the stack, but the actual list object lives on the heap. Python's memory manager handles heap allocation.</p>
+          <div class="qa-tip">💡 Key insight: Python variables are always references (pointers on the stack) to objects (on the heap). Assignment copies the reference, not the object.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">7</span>
+        <span class="qa-text">Explain Python's execution model — what happens when you run a .py file?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Four stages: (1) <strong>Lexing/Parsing</strong> — source code is tokenized and parsed into an Abstract Syntax Tree (AST). (2) <strong>Compilation</strong> — AST is compiled to bytecode (stored in <code>__pycache__/*.pyc</code>). (3) <strong>Execution</strong> — the Python Virtual Machine (PVM) interprets bytecode instructions one by one. (4) The PVM is a stack-based interpreter.</p>
+          <p style="margin-top:8px;">Python is NOT purely interpreted — it compiles to bytecode first. The .pyc cache means subsequent runs skip compilation if the source hasn't changed.</p>
+          <div class="qa-tip">💡 Use <code>dis.dis(func)</code> to see the bytecode for any function. Use <code>compile()</code> and <code>ast.parse()</code> to inspect intermediate stages.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">8</span>
+        <span class="qa-text">What is <code>__slots__</code> and when should you use it?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>__slots__</code> tells Python to use a fixed-size array instead of a <code>__dict__</code> for instance attributes. This saves ~30-50% memory per instance and slightly speeds up attribute access. The trade-off: you can't add new attributes dynamically.</p>
+          <p style="margin-top:8px;">Use it when: you have millions of instances of the same class (like data points, pixels, or database rows) and memory is a concern. Don't use it for regular classes where flexibility matters more than memory.</p>
+          <div class="qa-tip">💡 Gotcha: <code>__slots__</code> doesn't inherit — each class in the hierarchy needs its own <code>__slots__</code> declaration.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">9</span>
+        <span class="qa-text">What is the GIL and how does it affect Python programs?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The <strong>Global Interpreter Lock (GIL)</strong> is a mutex in CPython that allows only one thread to execute Python bytecode at a time. This means multi-threaded Python code can't achieve true parallelism for CPU-bound tasks — even on multi-core machines.</p>
+          <p style="margin-top:8px;"><strong>Workarounds:</strong> Use <code>multiprocessing</code> for CPU-bound work (separate processes, each with its own GIL). Use <code>threading</code> for I/O-bound work (the GIL is released during I/O operations like network calls). Use <code>asyncio</code> for concurrent I/O.</p>
+          <div class="qa-tip">💡 The GIL exists because CPython's memory management (reference counting) isn't thread-safe. It simplifies the interpreter but limits parallelism.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">10</span>
+        <span class="qa-text">How does <code>type()</code> relate to metaclasses?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>type</code> IS the default metaclass. When you write <code>class Foo:</code>, Python internally calls <code>type('Foo', (object,), {...})</code> to create the class object. A custom metaclass is just a subclass of <code>type</code> that overrides <code>__new__</code> or <code>__init__</code> to customize class creation.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># The hierarchy:</span><br>
+            type(42)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8b949e;"># → int (42 is an instance of int)</span><br>
+            type(int)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8b949e;"># → type (int is an instance of type)</span><br>
+            type(type)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8b949e;"># → type (type is an instance of itself!)</span>
+          </div>
+          <div class="qa-tip">💡 The fact that <code>type(type) is type</code> is the bootstrap — it's turtles all the way down, but it stops at <code>type</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">11</span>
+        <span class="qa-text">What's <code>__init_subclass__</code> and how is it a simpler alternative to metaclasses?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>__init_subclass__</code> (Python 3.6+) is a hook that runs whenever a class is subclassed. It gives you most of the power of metaclasses — auto-registration, validation, attribute injection — without the complexity.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#ff7b72;">class</span> <span style="color:#f0883e;">Plugin</span>:<br>
+            &nbsp;&nbsp;registry = []<br><br>
+            &nbsp;&nbsp;<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">__init_subclass__</span>(cls, **kwargs):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;super().__init_subclass__(**kwargs)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Plugin.registry.append(cls)<br><br>
+            <span style="color:#ff7b72;">class</span> <span style="color:#f0883e;">MyPlugin</span>(Plugin): ...  <span style="color:#8b949e;"># auto-registered!</span>
+          </div>
+          <div class="qa-tip">💡 Rule: if <code>__init_subclass__</code> can do what you need, use it instead of a metaclass. It's simpler, more readable, and easier to debug.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">12</span>
+        <span class="qa-text">How can you detect and prevent memory leaks in Python?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Common causes: circular references (especially with <code>__del__</code>), global caches that grow forever, unclosed file handles, and event listeners that hold references.</p>
+          <p style="margin-top:8px;"><strong>Detection tools:</strong></p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><code>tracemalloc</code> — built-in memory tracing</li>
+            <li><code>objgraph</code> — visualize object reference graphs</li>
+            <li><code>gc.get_objects()</code> — list all tracked objects</li>
+            <li><code>weakref</code> — create references that don't prevent GC</li>
+          </ul>
+          <p style="margin-top:8px;"><strong>Prevention:</strong> Use <code>weakref</code> for caches, context managers for resources, avoid circular references, and set cache size limits.</p>
+          <div class="qa-tip">💡 In long-running services, periodically log <code>len(gc.get_objects())</code> — if it grows without bound, you have a leak.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="text-align:center; padding:80px 40px; border-top:1px solid var(--card-border);">
+  <div style="width:60px; height:3px; background:linear-gradient(90deg, var(--primary), #a78bfa); margin:0 auto 20px; border-radius:2px;"></div>
+  <p style="color:var(--text-muted); font-size:0.95rem;">Python OOP Part 2 — Interactive Learning Guide</p>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">Built with HTML, CSS & vanilla JS</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+// Scroll Reveal
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// Active Nav Link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Accordion Toggle
+function toggleQA(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// Copy Code
+function copyCode(btn) {
+  const codeBody = btn.closest('.code-editor').querySelector('.code-body pre');
+  const text = codeBody.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

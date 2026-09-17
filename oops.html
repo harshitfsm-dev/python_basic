@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python OOP — Interactive Learning Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224);
+  --primary-glow: rgba(58, 114, 224, 0.25);
+  --primary-light: #e8f0fe;
+  --primary-dark: #2a5db8;
+  --bg: #f5f7fb;
+  --bg-secondary: #eef2f7;
+  --card-bg: #ffffff;
+  --card-border: #dbe4ff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --code-bg: #1e293b;
+  --font: 'Inter','Segoe UI',Roboto,sans-serif;
+  --mono: 'Fira Code','JetBrains Mono','Cascadia Code',monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --glow: 0 4px 20px rgba(58,114,224,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border);
+  transition: all 0.3s;
+}
+
+.nav-logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--primary), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links { display: flex; gap: 28px; list-style: none; }
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 0; right: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+section {
+  padding: 60px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-section {
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 140px 40px 80px;
+  overflow: hidden;
+  background: #ffffff;
+  max-width: 100%;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(58,114,224,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 750px; }
+
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+
+.hero-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--card-border);
+  background: #ffffff;
+  color: var(--text-muted);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.hero-badge.primary { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+.hero-title {
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+.hero-title span {
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 36px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.btn {
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 20px var(--primary-glow); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+.btn-ghost { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); }
+.btn-ghost:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover { border-color: var(--primary); box-shadow: var(--glow); transform: translateY(-4px); }
+
+.section-header { text-align: center; margin-bottom: 60px; }
+
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; color: var(--text); }
+.section-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+.code-editor { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #161b22;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.code-dots { display: flex; gap: 8px; }
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.code-dot.red { background: #ff5f57; }
+.code-dot.yellow { background: #febc2e; }
+.code-dot.green { background: #28c840; }
+
+.code-filename { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); }
+
+.code-copy {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+
+.code-copy:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+.code-body { padding: 24px; background: var(--code-bg); overflow-x: auto; }
+
+.code-body pre { font-family: var(--mono); font-size: 0.88rem; line-height: 1.7; color: #e6edf3; margin: 0; }
+
+.kw { color: #ff7b72; }
+.fn { color: #d2a8ff; }
+.st { color: #a5d6ff; }
+.cm { color: #8b949e; }
+.op { color: #79c0ff; }
+.num { color: #79c0ff; }
+.dec { color: #ffa657; }
+.bi { color: #79c0ff; }
+.param { color: #ffa657; }
+.cls { color: #f0883e; }
+
+.output-block {
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: #065f46;
+}
+
+.output-block::before {
+  content: '▶ Output';
+  display: block;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--success);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.diagram-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 40px;
+  margin: 32px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.diagram-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark); }
+.diagram-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+
+.flow-container { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+.flow-node {
+  padding: 16px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 2px solid var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.flow-node.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(58,114,224,0.3); }
+.flow-node.success { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065f46; }
+.flow-node.warning { border-color: var(--warning); background: rgba(245,158,11,0.1); color: #92400e; }
+.flow-arrow { color: var(--primary); font-size: 1.4rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); display: table; }
+th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--card-border); font-size: 0.85rem; color: var(--text); vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: var(--primary-light); }
+
+.qa-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.qa-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
+
+.qa-question {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  background: #f8fafc;
+}
+
+.qa-question:hover { background: var(--primary-light); }
+
+.qa-num {
+  width: 32px; height: 32px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.qa-text { font-weight: 600; font-size: 0.95rem; flex: 1; }
+.qa-toggle { color: var(--text-muted); font-size: 1.2rem; transition: transform 0.3s; }
+.qa-card.open .qa-toggle { transform: rotate(180deg); }
+
+.qa-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.qa-card.open .qa-answer { padding: 0 24px 24px; max-height: 800px; }
+
+.qa-answer-content { padding-top: 16px; border-top: 1px solid var(--card-border); color: var(--text); line-height: 1.8; }
+
+.qa-tip {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--primary-light);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  border-left: 3px solid var(--primary);
+}
+
+.usecase-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.usecase-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), #a78bfa);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.usecase-card:hover::before { opacity: 1; }
+.usecase-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--glow); }
+
+.usecase-icon {
+  width: 48px; height: 48px;
+  background: var(--primary-light);
+  border: 1px solid rgba(58,114,224,0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+}
+
+.usecase-card h4 { font-size: 1.05rem; margin-bottom: 8px; color: var(--text); }
+.usecase-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  section { padding: 40px 20px; }
+  .nav { padding: 12px 20px; }
+  .nav-links { display: none; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .hero-title { font-size: 2.5rem; }
+  .hero-section { padding: 100px 20px 50px; }
+  .glass-card { padding: 20px; overflow-x: auto; }
+  table { min-width: 600px; }
+  .code-body { padding: 16px; }
+  .code-body pre { font-size: 0.8rem; }
+  .diagram-wrapper { padding: 20px 12px; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🐍 PyOOP</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#foundations">Foundations</a></li>
+    <li><a href="#visuals">Visuals</a></li>
+    <li><a href="#dunder">Dunder Methods</a></li>
+    <li><a href="#dataclasses">Dataclasses</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badges">
+      <span class="hero-badge primary">🐍 Python</span>
+      <span class="hero-badge">🏗️ Intermediate</span>
+      <span class="hero-badge">⏱ 30 min read</span>
+      <span class="hero-badge">🎯 Essential</span>
+    </div>
+    <h1 class="hero-title">Python <span>OOP</span></h1>
+    <p class="hero-subtitle">Learn how to model real-world things as objects — with classes, inheritance, dunder methods, and dataclasses — so your code stays organized as it grows.</p>
+    <div class="hero-cta">
+      <a href="#overview" class="btn btn-primary">Start Learning →</a>
+      <a href="#examples" class="btn btn-ghost">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview">
+  <div class="section-header reveal">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-title">What Is OOP?</h2>
+    <p class="section-desc">A way to organize code around "things" (objects) instead of just functions and variables.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">Object-Oriented Programming in Plain English</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">OOP is a way of writing code where you bundle data and the functions that work on that data into a single unit called a <strong>class</strong>. When you create a specific instance of that class, it's called an <strong>object</strong>. Think of a class as a blueprint (like "Car") and an object as an actual car you can drive.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">class = blueprint &nbsp;|&nbsp; object = actual thing built from that blueprint</code>
+    </div>
+  </div>
+
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">🌍 Why OOP Matters in Production</h3>
+    <table>
+      <thead>
+        <tr><th>Use Case</th><th>Framework</th><th>Example</th><th>What It Does</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Web Models</td><td>Django</td><td><code>class User(Model)</code></td><td>Maps a database table to a Python class — each row becomes an object.</td></tr>
+        <tr><td>API Schemas</td><td>Pydantic</td><td><code>class UserSchema(BaseModel)</code></td><td>Validates incoming JSON data against a class definition automatically.</td></tr>
+        <tr><td>Game Entities</td><td>Pygame</td><td><code>class Player(Sprite)</code></td><td>Bundles position, health, and movement logic into one reusable unit.</td></tr>
+        <tr><td>ML Pipelines</td><td>scikit-learn</td><td><code>class MyModel(BaseEstimator)</code></td><td>Wraps your model with fit/predict interface so it plugs into any pipeline.</td></tr>
+        <tr><td>CLI Tools</td><td>Click</td><td><code>class Config</code></td><td>Stores app settings as attributes — pass one object instead of 20 variables.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Foundations Section -->
+<section id="foundations">
+  <div class="section-header reveal">
+    <div class="section-label">Core Pillars</div>
+    <h2 class="section-title">OOP Foundations</h2>
+    <p class="section-desc">The four building blocks you need to understand before anything else clicks.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="glass-card reveal" style="border-left:4px solid rgb(58,114,224);">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🏗️</div>
+        <h4 style="margin:0; font-size:1.05rem;">Classes & Objects</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">A class defines what something <em>is</em> (attributes) and what it can <em>do</em> (methods). An object is a specific instance of that class with actual data filled in.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="kw">class</span> <span class="cls">Dog</span>:<br>
+        &nbsp;&nbsp;<span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, name):<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;self.name = name<br><br>
+        rex = Dog(<span class="st">"Rex"</span>)  <span class="cm"># object</span>
+      </div>
+      <p style="font-size:0.8rem; color:var(--primary); margin-top:12px; font-weight:500;">💡 <code>self</code> refers to the specific object being created or used.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #7c3aed;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#f3f0ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🔐</div>
+        <h4 style="margin:0; font-size:1.05rem;">Encapsulation</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">Hide internal details and expose only what's needed. Use <code>_single</code> underscore for "private by convention" and <code>__double</code> for name mangling (harder to access from outside).</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        self._internal = <span class="st">"hint: private"</span><br>
+        self.__secret = <span class="st">"name-mangled"</span>
+      </div>
+      <p style="font-size:0.8rem; color:#7c3aed; margin-top:12px; font-weight:500;">💡 Python trusts developers — it's "we're all adults here" philosophy.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #059669;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🧬</div>
+        <h4 style="margin:0; font-size:1.05rem;">Inheritance</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">A child class gets all the attributes and methods of a parent class — then adds or overrides what's different. Avoids repeating code.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="kw">class</span> <span class="cls">Animal</span>: ...<br>
+        <span class="kw">class</span> <span class="cls">Dog</span>(Animal): ...  <span class="cm"># inherits</span>
+      </div>
+      <p style="font-size:0.8rem; color:#059669; margin-top:12px; font-weight:500;">💡 Use <code>super()</code> to call the parent's methods from the child.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #d97706;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#fffbeb; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🎭</div>
+        <h4 style="margin:0; font-size:1.05rem;">Polymorphism</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">Different classes can have the same method name but behave differently. You call <code>.speak()</code> on any animal — a Dog barks, a Cat meows. Same interface, different behavior.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="kw">for</span> animal <span class="kw">in</span> [dog, cat]:<br>
+        &nbsp;&nbsp;animal.speak()  <span class="cm"># different output</span>
+      </div>
+      <p style="font-size:0.8rem; color:#d97706; margin-top:12px; font-weight:500;">💡 Python uses "duck typing" — if it quacks like a duck, it IS a duck.</p>
+    </div>
+  </div>
+
+  <!-- Instance vs Class Variables -->
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Instance Variables vs Class Variables</h3>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Instance Variable</th><th>Class Variable</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Defined in</strong></td><td><code>__init__</code> with <code>self.x</code></td><td>Directly in the class body</td></tr>
+        <tr><td><strong>Belongs to</strong></td><td>Each individual object</td><td>The class itself (shared by all)</td></tr>
+        <tr><td><strong>Unique per object?</strong></td><td>✅ Yes — each object has its own copy</td><td>❌ No — all objects share one copy</td></tr>
+        <tr><td><strong>Use case</strong></td><td>Name, age, balance — unique data</td><td>Species, count, constants — shared data</td></tr>
+        <tr><td><strong>Access</strong></td><td><code>self.name</code></td><td><code>ClassName.var</code> or <code>self.var</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="code-editor" style="margin-top:16px;">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">variables.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">Dog</span>:
+    species = <span class="st">"Canis familiaris"</span>  <span class="cm"># class variable — shared</span>
+    count = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">name</span>, <span class="param">age</span>):
+        self.name = name   <span class="cm"># instance variable — unique</span>
+        self.age = age     <span class="cm"># instance variable — unique</span>
+        Dog.count += <span class="num">1</span>    <span class="cm"># modify class variable</span>
+
+rex = Dog(<span class="st">"Rex"</span>, <span class="num">5</span>)
+buddy = Dog(<span class="st">"Buddy"</span>, <span class="num">3</span>)
+
+<span class="bi">print</span>(rex.name)       <span class="cm"># Rex (instance)</span>
+<span class="bi">print</span>(buddy.name)     <span class="cm"># Buddy (instance)</span>
+<span class="bi">print</span>(rex.species)    <span class="cm"># Canis familiaris (shared)</span>
+<span class="bi">print</span>(Dog.count)      <span class="cm"># 2 (shared counter)</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+Rex
+Buddy
+Canis familiaris
+2
+    </div>
+  </div>
+</section>
+
+<!-- Visual Understanding Section -->
+<section id="visuals">
+  <div class="section-header reveal">
+    <div class="section-label">Visualized</div>
+    <h2 class="section-title">How OOP Works</h2>
+    <p class="section-desc">Diagrams that show what's actually happening under the hood.</p>
+  </div>
+
+  <!-- Diagram 1: Class to Object -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">From Class (Blueprint) to Object (Instance)</div>
+    <div class="diagram-desc">A class defines the structure — objects are actual things created from it</div>
+    <svg width="100%" height="280" viewBox="0 0 800 280" style="max-width:800px; margin:0 auto; display:block;">
+      <!-- Class Blueprint -->
+      <rect x="40" y="30" width="280" height="220" rx="14" fill="#eff6ff" stroke="#3a72e0" stroke-width="2.5"/>
+      <text x="100" y="60" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1d4ed8">class Dog:</text>
+      <line x1="60" y1="72" x2="300" y2="72" stroke="#3a72e0" stroke-width="1" opacity="0.3"/>
+      <text x="70" y="100" font-family="monospace" font-size="11" fill="#475569">name: str</text>
+      <text x="70" y="122" font-family="monospace" font-size="11" fill="#475569">age: int</text>
+      <text x="70" y="144" font-family="monospace" font-size="11" fill="#475569">breed: str</text>
+      <line x1="60" y1="158" x2="300" y2="158" stroke="#3a72e0" stroke-width="1" opacity="0.3"/>
+      <text x="70" y="182" font-family="monospace" font-size="11" fill="#475569">bark()</text>
+      <text x="70" y="204" font-family="monospace" font-size="11" fill="#475569">fetch()</text>
+      <text x="70" y="226" font-family="monospace" font-size="11" fill="#475569">sit()</text>
+      <text x="130" y="262" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#6b7280">BLUEPRINT</text>
+
+      <!-- Arrow -->
+      <line x1="340" y1="140" x2="420" y2="90" stroke="#3a72e0" stroke-width="2" marker-end="url(#arrB)"/>
+      <line x1="340" y1="140" x2="420" y2="190" stroke="#3a72e0" stroke-width="2" marker-end="url(#arrB)"/>
+      <text x="355" y="135" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#3a72e0">creates</text>
+
+      <!-- Object 1 -->
+      <rect x="440" y="30" width="160" height="110" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <text x="460" y="55" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#047857">rex (object)</text>
+      <text x="460" y="78" font-family="monospace" font-size="10" fill="#475569">name = "Rex"</text>
+      <text x="460" y="96" font-family="monospace" font-size="10" fill="#475569">age = 5</text>
+      <text x="460" y="114" font-family="monospace" font-size="10" fill="#475569">breed = "Husky"</text>
+
+      <!-- Object 2 -->
+      <rect x="440" y="160" width="160" height="110" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="460" y="185" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#92400e">buddy (object)</text>
+      <text x="460" y="208" font-family="monospace" font-size="10" fill="#475569">name = "Buddy"</text>
+      <text x="460" y="226" font-family="monospace" font-size="10" fill="#475569">age = 3</text>
+      <text x="460" y="244" font-family="monospace" font-size="10" fill="#475569">breed = "Lab"</text>
+
+      <text x="490" y="278" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#6b7280">INSTANCES</text>
+
+      <defs>
+        <marker id="arrB" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3a72e0"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Diagram 2: Inheritance Chain -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Inheritance — The Family Tree</div>
+    <div class="diagram-desc">Child classes inherit everything from parents, then add or override what's different</div>
+    <svg width="100%" height="320" viewBox="0 0 700 320" style="max-width:700px; margin:0 auto; display:block;">
+      <!-- Parent -->
+      <rect x="240" y="20" width="220" height="80" rx="12" fill="#eff6ff" stroke="#3a72e0" stroke-width="2.5"/>
+      <text x="290" y="52" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1d4ed8">Animal (Parent)</text>
+      <text x="270" y="76" font-family="monospace" font-size="10" fill="#475569">name, age, eat(), sleep()</text>
+
+      <!-- Arrows down -->
+      <line x1="310" y1="100" x2="170" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#arrG)"/>
+      <line x1="390" y1="100" x2="390" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#arrG)"/>
+      <line x1="430" y1="100" x2="570" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#arrG)"/>
+
+      <!-- Child 1 -->
+      <rect x="60" y="155" width="200" height="70" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <text x="110" y="182" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#047857">Dog(Animal)</text>
+      <text x="85" y="204" font-family="monospace" font-size="10" fill="#475569">breed, bark(), fetch()</text>
+
+      <!-- Child 2 -->
+      <rect x="290" y="155" width="200" height="70" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="345" y="182" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#6d28d9">Cat(Animal)</text>
+      <text x="315" y="204" font-family="monospace" font-size="10" fill="#475569">indoor, meow(), purr()</text>
+
+      <!-- Child 3 -->
+      <rect x="520" y="155" width="160" height="70" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="550" y="182" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#92400e">Bird(Animal)</text>
+      <text x="545" y="204" font-family="monospace" font-size="10" fill="#475569">wingspan, fly()</text>
+
+      <!-- Grandchild -->
+      <line x1="160" y1="225" x2="160" y2="260" stroke="#64748b" stroke-width="2" marker-end="url(#arrG)"/>
+      <rect x="60" y="265" width="200" height="45" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5"/>
+      <text x="85" y="293" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#9f1239">GoldenRetriever(Dog)</text>
+
+      <!-- Legend -->
+      <text x="350" y="300" font-family="Inter,sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Each child inherits ALL parent methods + adds its own</text>
+
+      <defs>
+        <marker id="arrG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Diagram 3: Encapsulation -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Encapsulation — Access Levels</div>
+    <div class="diagram-desc">Python uses naming conventions to signal what's public, protected, and private</div>
+    <div style="display:flex; gap:24px; justify-content:center; flex-wrap:wrap; text-align:left;">
+      <div style="padding:20px; background:#ecfdf5; border:2px solid #059669; border-radius:12px; min-width:200px; flex:1; max-width:220px;">
+        <p style="font-weight:700; color:#047857; margin-bottom:8px;">🟢 Public</p>
+        <code style="font-family:var(--mono); font-size:0.82rem; color:#064e3b;">self.name</code>
+        <p style="font-size:0.8rem; color:#475569; margin-top:8px;">Anyone can access. No underscore. This is the default.</p>
+      </div>
+      <div style="padding:20px; background:#fef3c7; border:2px solid #d97706; border-radius:12px; min-width:200px; flex:1; max-width:220px;">
+        <p style="font-weight:700; color:#92400e; margin-bottom:8px;">🟡 Protected</p>
+        <code style="font-family:var(--mono); font-size:0.82rem; color:#78350f;">self._internal</code>
+        <p style="font-size:0.8rem; color:#475569; margin-top:8px;">Convention: "don't touch from outside." Still accessible, but you shouldn't.</p>
+      </div>
+      <div style="padding:20px; background:#fef2f2; border:2px solid #ef4444; border-radius:12px; min-width:200px; flex:1; max-width:220px;">
+        <p style="font-weight:700; color:#dc2626; margin-bottom:8px;">🔴 Private</p>
+        <code style="font-family:var(--mono); font-size:0.82rem; color:#991b1b;">self.__secret</code>
+        <p style="font-size:0.8rem; color:#475569; margin-top:8px;">Name-mangled to <code>_Class__secret</code>. Hard to access from outside — but not impossible.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Polymorphism Code Example -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Polymorphism in Action</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Same method name, different behavior — the caller doesn't need to know which class it's dealing with.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">polymorphism.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="param">self</span>):
+        <span class="kw">raise</span> <span class="bi">NotImplementedError</span>
+
+<span class="kw">class</span> <span class="cls">Dog</span>(Animal):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"Woof!"</span>
+
+<span class="kw">class</span> <span class="cls">Cat</span>(Animal):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"Meow!"</span>
+
+<span class="kw">class</span> <span class="cls">Duck</span>(Animal):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">"Quack!"</span>
+
+<span class="cm"># Polymorphism — same interface, different behavior</span>
+animals = [Dog(), Cat(), Duck()]
+<span class="kw">for</span> animal <span class="kw">in</span> animals:
+    <span class="bi">print</span>(animal.speak())</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Woof!
+Meow!
+Quack!
+    </div>
+  </div>
+</section>
+
+<!-- Dunder Methods Section -->
+<section id="dunder">
+  <div class="section-header reveal">
+    <div class="section-label">Magic Methods</div>
+    <h2 class="section-title">Dunder Methods</h2>
+    <p class="section-desc">Special methods with double underscores that let your objects work with Python's built-in operations.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">What Are Dunder Methods?</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">"Dunder" means <strong>d</strong>ouble <strong>under</strong>score — like <code>__init__</code>, <code>__str__</code>, <code>__len__</code>. These are hooks that Python calls automatically when you use operators or built-in functions on your objects. Want <code>len(my_obj)</code> to work? Define <code>__len__</code>. Want <code>print(my_obj)</code> to show something useful? Define <code>__str__</code>.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">len(obj) → obj.__len__() &nbsp;|&nbsp; str(obj) → obj.__str__() &nbsp;|&nbsp; obj[i] → obj.__getitem__(i)</code>
+    </div>
+  </div>
+
+  <!-- Dunder Reference Table -->
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Dunder Methods Quick Reference</h3>
+    <table>
+      <thead>
+        <tr><th>Method</th><th>Triggered By</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>__init__(self, ...)</code></td><td><code>MyClass()</code></td><td>Constructor — runs when you create an object. Set up initial state here.</td></tr>
+        <tr><td><code>__str__(self)</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td><td>Human-readable string. What users see.</td></tr>
+        <tr><td><code>__repr__(self)</code></td><td><code>repr(obj)</code>, REPL</td><td>Developer-readable string. Should ideally recreate the object.</td></tr>
+        <tr><td><code>__len__(self)</code></td><td><code>len(obj)</code></td><td>Return the "length" of your object.</td></tr>
+        <tr><td><code>__call__(self, ...)</code></td><td><code>obj()</code></td><td>Makes your object callable like a function.</td></tr>
+        <tr><td><code>__iter__(self)</code></td><td><code>for x in obj</code></td><td>Makes your object iterable in a for loop.</td></tr>
+        <tr><td><code>__getitem__(self, key)</code></td><td><code>obj[key]</code></td><td>Enables bracket access like lists/dicts.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Dunder Code Example -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">All Dunder Methods in One Class</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A playlist class that implements every dunder method we covered — so you can see them all working together.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">dunder_methods.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">Playlist</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">name</span>, <span class="param">songs</span>=<span class="op">None</span>):
+        <span class="st">"""Constructor — called when you create a Playlist."""</span>
+        self.name = name
+        self.songs = songs <span class="kw">or</span> []
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="param">self</span>):
+        <span class="st">"""Human-readable — for print() and str()."""</span>
+        <span class="kw">return</span> <span class="st">f"🎵 {self.name} ({len(self.songs)} songs)"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="param">self</span>):
+        <span class="st">"""Developer-readable — for debugging."""</span>
+        <span class="kw">return</span> <span class="st">f"Playlist('{self.name}', {self.songs})"</span>
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="param">self</span>):
+        <span class="st">"""Called by len() — returns song count."""</span>
+        <span class="kw">return</span> <span class="bi">len</span>(self.songs)
+
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(<span class="param">self</span>, <span class="param">index</span>):
+        <span class="st">"""Called by playlist[0] — bracket access."""</span>
+        <span class="kw">return</span> self.songs[index]
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(<span class="param">self</span>):
+        <span class="st">"""Called by for loop — makes it iterable."""</span>
+        <span class="kw">return</span> <span class="bi">iter</span>(self.songs)
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(<span class="param">self</span>):
+        <span class="st">"""Called when you do playlist() — like a function."""</span>
+        <span class="bi">print</span>(<span class="st">f"▶ Now playing: {self.songs[0]}"</span>)
+
+<span class="cm"># Using all the dunder methods</span>
+p = Playlist(<span class="st">"Road Trip"</span>, [<span class="st">"Bohemian Rhapsody"</span>, <span class="st">"Hotel California"</span>, <span class="st">"Stairway to Heaven"</span>])
+
+<span class="bi">print</span>(p)           <span class="cm"># __str__</span>
+<span class="bi">print</span>(<span class="bi">repr</span>(p))     <span class="cm"># __repr__</span>
+<span class="bi">print</span>(<span class="bi">len</span>(p))      <span class="cm"># __len__</span>
+<span class="bi">print</span>(p[<span class="num">1</span>])        <span class="cm"># __getitem__</span>
+p()                 <span class="cm"># __call__</span>
+
+<span class="kw">for</span> song <span class="kw">in</span> p:     <span class="cm"># __iter__</span>
+    <span class="bi">print</span>(<span class="st">f"  - {song}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+🎵 Road Trip (3 songs)
+Playlist('Road Trip', ['Bohemian Rhapsody', 'Hotel California', 'Stairway to Heaven'])
+3
+Hotel California
+▶ Now playing: Bohemian Rhapsody
+  - Bohemian Rhapsody
+  - Hotel California
+  - Stairway to Heaven
+    </div>
+  </div>
+</section>
+
+<!-- Dataclasses Section -->
+<section id="dataclasses">
+  <div class="section-header reveal">
+    <div class="section-label">Modern Python</div>
+    <h2 class="section-title">Dataclasses</h2>
+    <p class="section-desc">Write classes with less boilerplate — Python auto-generates __init__, __repr__, and more for you.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">Why Dataclasses?</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">Writing <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code> for every class gets tedious. The <code>@dataclass</code> decorator (Python 3.7+) generates all that boilerplate for you. You just declare your fields and Python handles the rest.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">@dataclass → auto-generates __init__, __repr__, __eq__ from your field declarations</code>
+    </div>
+  </div>
+
+  <!-- Dataclass Basics -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Dataclass Basics</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Before and after — see how much code you save.</p>
+
+    <div class="grid-2">
+      <div>
+        <p style="font-weight:600; margin-bottom:8px; color:var(--danger);">❌ Without dataclass (verbose)</p>
+        <div class="code-editor">
+          <div class="code-toolbar">
+            <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+            <span class="code-filename">without_dataclass.py</span>
+            <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">User</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, name, email, age):
+        self.name = name
+        self.email = email
+        self.age = age
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="param">self</span>):
+        <span class="kw">return</span> (<span class="st">f"User(name='{self.name}', "</span>
+                <span class="st">f"email='{self.email}', "</span>
+                <span class="st">f"age={self.age})"</span>)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="param">self</span>, other):
+        <span class="kw">return</span> (self.name == other.name
+                <span class="kw">and</span> self.email == other.email
+                <span class="kw">and</span> self.age == other.age)</pre>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="font-weight:600; margin-bottom:8px; color:var(--success);">✅ With dataclass (clean)</p>
+        <div class="code-editor">
+          <div class="code-toolbar">
+            <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+            <span class="code-filename">with_dataclass.py</span>
+            <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <div class="code-body">
+<pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">User</span>:
+    name: <span class="bi">str</span>
+    email: <span class="bi">str</span>
+    age: <span class="bi">int</span>
+
+<span class="cm"># That's it! __init__, __repr__,</span>
+<span class="cm"># and __eq__ are auto-generated.</span>
+
+user = User(<span class="st">"Alice"</span>, <span class="st">"alice@dev.io"</span>, <span class="num">28</span>)
+<span class="bi">print</span>(user)
+<span class="cm"># User(name='Alice', email='alice@dev.io', age=28)</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frozen Dataclass -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Frozen Dataclass — Immutable Objects</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Add <code>frozen=True</code> to make your dataclass immutable — like a tuple, but with named fields.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">frozen_dataclass.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass(frozen=True)</span>
+<span class="kw">class</span> <span class="cls">Point</span>:
+    x: <span class="bi">float</span>
+    y: <span class="bi">float</span>
+
+p = Point(<span class="num">3.0</span>, <span class="num">4.0</span>)
+<span class="bi">print</span>(p)          <span class="cm"># Point(x=3.0, y=4.0)</span>
+<span class="bi">print</span>(p.x)        <span class="cm"># 3.0</span>
+
+<span class="cm"># Can't modify — it's frozen!</span>
+<span class="cm"># p.x = 10  → FrozenInstanceError!</span>
+
+<span class="cm"># Frozen dataclasses are hashable — can be dict keys or set members</span>
+points = {p: <span class="st">"origin"</span>}
+<span class="bi">print</span>(points[Point(<span class="num">3.0</span>, <span class="num">4.0</span>)])  <span class="cm"># "origin"</span>
+
+<span class="cm"># Use cases: coordinates, config values, cache keys</span>
+<span class="dec">@dataclass(frozen=True)</span>
+<span class="kw">class</span> <span class="cls">Color</span>:
+    r: <span class="bi">int</span>
+    g: <span class="bi">int</span>
+    b: <span class="bi">int</span>
+
+RED = Color(<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>)
+BLUE = Color(<span class="num">0</span>, <span class="num">0</span>, <span class="num">255</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Point(x=3.0, y=4.0)
+3.0
+origin
+    </div>
+  </div>
+
+  <!-- field() and default_factory -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">field() and default_factory</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Need a mutable default (like a list or dict)? You can't just write <code>tags: list = []</code> — that's a shared mutable default bug. Use <code>field(default_factory=list)</code> instead.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">field_example.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">BlogPost</span>:
+    title: <span class="bi">str</span>
+    author: <span class="bi">str</span>
+    views: <span class="bi">int</span> = <span class="num">0</span>                          <span class="cm"># simple default</span>
+    tags: <span class="bi">list</span> = field(default_factory=<span class="bi">list</span>)  <span class="cm"># mutable default</span>
+    metadata: <span class="bi">dict</span> = field(default_factory=<span class="bi">dict</span>)
+
+    <span class="cm"># field() options:</span>
+    <span class="cm"># - default_factory: callable that creates the default value</span>
+    <span class="cm"># - repr=False: hide from __repr__ output</span>
+    <span class="cm"># - compare=False: exclude from __eq__ comparison</span>
+    <span class="cm"># - init=False: don't include in __init__ params</span>
+
+    _internal: <span class="bi">str</span> = field(default=<span class="st">""</span>, repr=<span class="op">False</span>)  <span class="cm"># hidden from repr</span>
+
+<span class="cm"># Each instance gets its OWN list — no shared state bug</span>
+post1 = BlogPost(<span class="st">"Python OOP"</span>, <span class="st">"Alice"</span>)
+post2 = BlogPost(<span class="st">"Decorators"</span>, <span class="st">"Bob"</span>)
+
+post1.tags.append(<span class="st">"python"</span>)
+post1.tags.append(<span class="st">"oop"</span>)
+
+<span class="bi">print</span>(post1)
+<span class="bi">print</span>(post2)
+<span class="bi">print</span>(<span class="st">f"Post1 tags: {post1.tags}"</span>)
+<span class="bi">print</span>(<span class="st">f"Post2 tags: {post2.tags}"</span>)  <span class="cm"># empty — not shared!</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+BlogPost(title='Python OOP', author='Alice', views=0, tags=['python', 'oop'], metadata={})
+BlogPost(title='Decorators', author='Bob', views=0, tags=[], metadata={})
+Post1 tags: ['python', 'oop']
+Post2 tags: []
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(239,68,68,0.06); border-radius:var(--radius-sm); border-left:3px solid var(--danger);">
+      <p style="font-size:0.9rem; color:#991b1b; line-height:1.7; margin:0;">
+        <strong>⚠️ Common Bug:</strong> Never write <code>tags: list = []</code> in a dataclass. All instances would share the SAME list. Always use <code>field(default_factory=list)</code> for mutable defaults.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Code Examples Section -->
+<section id="examples">
+  <div class="section-header reveal">
+    <div class="section-label">Hands-On</div>
+    <h2 class="section-title">Real-World Examples</h2>
+    <p class="section-desc">Complete examples that show OOP patterns you'll actually use in projects.</p>
+  </div>
+
+  <!-- Example 1: Basic Class -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 1: Bank Account — Encapsulation</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A class that protects its balance from direct manipulation — you can only change it through methods.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">bank_account.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">owner</span>, <span class="param">balance</span>=<span class="num">0</span>):
+        self.owner = owner
+        self.__balance = balance  <span class="cm"># private — can't access directly</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(<span class="param">self</span>, <span class="param">amount</span>):
+        <span class="kw">if</span> amount <= <span class="num">0</span>:
+            <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">"Deposit must be positive"</span>)
+        self.__balance += amount
+        <span class="kw">return</span> <span class="st">f"Deposited ${amount}. New balance: ${self.__balance}"</span>
+
+    <span class="kw">def</span> <span class="fn">withdraw</span>(<span class="param">self</span>, <span class="param">amount</span>):
+        <span class="kw">if</span> amount > self.__balance:
+            <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">"Insufficient funds"</span>)
+        self.__balance -= amount
+        <span class="kw">return</span> <span class="st">f"Withdrew ${amount}. New balance: ${self.__balance}"</span>
+
+    @<span class="bi">property</span>
+    <span class="kw">def</span> <span class="fn">balance</span>(<span class="param">self</span>):
+        <span class="kw">return</span> self.__balance  <span class="cm"># read-only access</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">f"Account({self.owner}: ${self.__balance})"</span>
+
+acc = BankAccount(<span class="st">"Alice"</span>, <span class="num">1000</span>)
+<span class="bi">print</span>(acc.deposit(<span class="num">500</span>))
+<span class="bi">print</span>(acc.withdraw(<span class="num">200</span>))
+<span class="bi">print</span>(<span class="st">f"Balance: ${acc.balance}"</span>)
+<span class="bi">print</span>(acc)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Deposited $500. New balance: $1500
+Withdrew $200. New balance: $1300
+Balance: $1300
+Account(Alice: $1300)
+    </div>
+  </div>
+
+  <!-- Example 2: Inheritance -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 2: Shape Hierarchy — Inheritance & Polymorphism</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A base class defines the interface, child classes implement the specifics.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">shapes.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> math
+
+<span class="kw">class</span> <span class="cls">Shape</span>:
+    <span class="st">"""Base class — defines what every shape must do."""</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="param">self</span>):
+        <span class="kw">raise</span> <span class="bi">NotImplementedError</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">f"{self.__class__.__name__}: area = {self.area():.2f}"</span>
+
+<span class="kw">class</span> <span class="cls">Circle</span>(Shape):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">radius</span>):
+        self.radius = radius
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="param">self</span>):
+        <span class="kw">return</span> math.pi * self.radius ** <span class="num">2</span>
+
+<span class="kw">class</span> <span class="cls">Rectangle</span>(Shape):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">width</span>, <span class="param">height</span>):
+        self.width = width
+        self.height = height
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="param">self</span>):
+        <span class="kw">return</span> self.width * self.height
+
+<span class="kw">class</span> <span class="cls">Square</span>(Rectangle):
+    <span class="st">"""Square IS a Rectangle with equal sides."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">side</span>):
+        <span class="bi">super</span>().__init__(side, side)  <span class="cm"># call parent's __init__</span>
+
+<span class="cm"># Polymorphism — same interface, different shapes</span>
+shapes = [Circle(<span class="num">5</span>), Rectangle(<span class="num">4</span>, <span class="num">6</span>), Square(<span class="num">3</span>)]
+<span class="kw">for</span> shape <span class="kw">in</span> shapes:
+    <span class="bi">print</span>(shape)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Circle: area = 78.54
+Rectangle: area = 24.00
+Square: area = 9.00
+    </div>
+  </div>
+
+  <!-- Example 3: Callable Class -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 3: Callable Class — __call__ for Stateful Functions</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A class that acts like a function but remembers state between calls — perfect for counters, validators, or rate limiters.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">callable_class.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">class</span> <span class="cls">Counter</span>:
+    <span class="st">"""A callable that counts how many times it's been called."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>):
+        self.count = <span class="num">0</span>
+        self.history = []
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(<span class="param">self</span>, <span class="param">label</span>=<span class="st">"default"</span>):
+        self.count += <span class="num">1</span>
+        self.history.append(label)
+        <span class="kw">return</span> <span class="st">f"Call #{self.count} ({label})"</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="st">f"Counter: {self.count} calls"</span>
+
+<span class="cm"># Use it like a function — but it remembers state</span>
+counter = Counter()
+<span class="bi">print</span>(counter(<span class="st">"login"</span>))
+<span class="bi">print</span>(counter(<span class="st">"api_call"</span>))
+<span class="bi">print</span>(counter(<span class="st">"api_call"</span>))
+<span class="bi">print</span>(counter)
+<span class="bi">print</span>(<span class="st">f"History: {counter.history}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Call #1 (login)
+Call #2 (api_call)
+Call #3 (api_call)
+Counter: 3 calls
+History: ['login', 'api_call', 'api_call']
+    </div>
+  </div>
+
+  <!-- Example 4: Advanced Dataclass -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 4: Advanced Dataclass — API Response Model</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A production-style dataclass with validation, computed fields, and serialization.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">api_model.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field, asdict
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">APIResponse</span>:
+    status: <span class="bi">int</span>
+    data: <span class="bi">dict</span>
+    message: <span class="bi">str</span> = <span class="st">"OK"</span>
+    timestamp: <span class="bi">str</span> = field(default_factory=<span class="kw">lambda</span>: datetime.now().isoformat())
+    errors: <span class="bi">list</span> = field(default_factory=<span class="bi">list</span>)
+    meta: Optional[<span class="bi">dict</span>] = <span class="op">None</span>
+
+    @<span class="bi">property</span>
+    <span class="kw">def</span> <span class="fn">is_success</span>(<span class="param">self</span>):
+        <span class="kw">return</span> <span class="num">200</span> <= self.status < <span class="num">300</span>
+
+    <span class="kw">def</span> <span class="fn">to_json</span>(<span class="param">self</span>):
+        <span class="st">"""Convert to dict for JSON serialization."""</span>
+        <span class="kw">return</span> asdict(self)
+
+<span class="cm"># Success response</span>
+response = APIResponse(
+    status=<span class="num">200</span>,
+    data={<span class="st">"user"</span>: <span class="st">"Alice"</span>, <span class="st">"role"</span>: <span class="st">"admin"</span>},
+)
+<span class="bi">print</span>(response)
+<span class="bi">print</span>(<span class="st">f"Success: {response.is_success}"</span>)
+
+<span class="cm"># Error response</span>
+error = APIResponse(
+    status=<span class="num">422</span>,
+    data={},
+    message=<span class="st">"Validation failed"</span>,
+    errors=[<span class="st">"email is required"</span>, <span class="st">"age must be positive"</span>]
+)
+<span class="bi">print</span>(<span class="st">f"Errors: {error.errors}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+APIResponse(status=200, data={'user': 'Alice', 'role': 'admin'}, message='OK', timestamp='2026-05-31T10:30:00', errors=[], meta=None)
+Success: True
+Errors: ['email is required', 'age must be positive']
+    </div>
+  </div>
+</section>
+
+<!-- Real-World Use Cases -->
+<section id="usecases">
+  <div class="section-header reveal">
+    <div class="section-label">In Production</div>
+    <h2 class="section-title">Real-World Use Cases</h2>
+    <p class="section-desc">OOP is everywhere in Python. Here's where you'll actually use it.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🌐</div>
+      <h4>Web Framework Models</h4>
+      <p>Django/SQLAlchemy models map database tables to classes. Each row is an object you can query, update, and save.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🎮</div>
+      <h4>Game Entities</h4>
+      <p>Players, enemies, items — each is a class with position, health, and behavior methods. Inheritance creates enemy types.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🔌</div>
+      <h4>API Clients</h4>
+      <p>Wrap an external API in a class — store auth tokens, handle retries, and expose clean methods like <code>client.get_users()</code>.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">📊</div>
+      <h4>Data Pipelines</h4>
+      <p>Each pipeline step is a class with a <code>transform()</code> method. Chain them together — polymorphism makes them interchangeable.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🧪</div>
+      <h4>Test Fixtures</h4>
+      <p>Test classes group related tests. <code>setUp()</code> and <code>tearDown()</code> methods handle setup/cleanup for each test.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">⚙️</div>
+      <h4>Configuration Objects</h4>
+      <p>Instead of passing 15 parameters, bundle them into a config dataclass. One object, all settings, type-checked.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🤖</div>
+      <h4>ML Models</h4>
+      <p>scikit-learn's <code>fit()</code>/<code>predict()</code> pattern is pure OOP. Your custom model inherits from BaseEstimator and plugs into any pipeline.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">📦</div>
+      <h4>Custom Collections</h4>
+      <p>Build your own list-like or dict-like objects with <code>__getitem__</code>, <code>__iter__</code>, <code>__len__</code>. They work with for loops and indexing.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🔒</div>
+      <h4>Context Managers</h4>
+      <p>Classes with <code>__enter__</code> and <code>__exit__</code> work with <code>with</code> statements — auto-cleanup for files, connections, locks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Interview Questions Section -->
+<section id="interview">
+  <div class="section-header reveal">
+    <div class="section-label">Career Prep</div>
+    <h2 class="section-title">Interview Questions</h2>
+    <p class="section-desc">Questions you'll likely get asked. Click to reveal the answers.</p>
+  </div>
+
+  <div class="reveal">
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">1</span>
+        <span class="qa-text">What's the difference between a class and an object?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A <strong>class</strong> is a blueprint — it defines what attributes and methods something will have. An <strong>object</strong> is a specific instance created from that blueprint with actual data. You can create many objects from one class, each with different values.</p>
+          <p style="margin-top:8px;">Think: <code>class Car</code> is the design spec. <code>my_car = Car("Tesla", "red")</code> is an actual car you can drive.</p>
+          <div class="qa-tip">💡 Say "class defines structure, object holds state" — short and clear.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">2</span>
+        <span class="qa-text">What's the difference between <code>__str__</code> and <code>__repr__</code>?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>__str__</code> is for <strong>humans</strong> — what you want users to see when they print the object. <code>__repr__</code> is for <strong>developers</strong> — it should ideally be a string that could recreate the object (like <code>User('Alice', 28)</code>).</p>
+          <p style="margin-top:8px;">If only one is defined, Python falls back to <code>__repr__</code> for both. Always define <code>__repr__</code> at minimum.</p>
+          <div class="qa-tip">💡 Rule of thumb: <code>__repr__</code> for debugging, <code>__str__</code> for display. If in doubt, implement <code>__repr__</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">3</span>
+        <span class="qa-text">How does Python handle private variables? Is anything truly private?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Nothing is truly private in Python. Single underscore (<code>_var</code>) is a convention meaning "don't touch from outside." Double underscore (<code>__var</code>) triggers name mangling — Python renames it to <code>_ClassName__var</code>, making it harder (but not impossible) to access.</p>
+          <p style="margin-top:8px;">Python's philosophy is "we're all consenting adults" — it trusts you to respect conventions rather than enforcing strict access control.</p>
+          <div class="qa-tip">💡 Mention that name mangling exists to prevent accidental name collisions in inheritance, not for security.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">4</span>
+        <span class="qa-text">What is <code>super()</code> and when do you use it?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>super()</code> gives you access to the parent class's methods. You use it most often in <code>__init__</code> to call the parent's constructor before adding your own stuff. Without it, the parent's initialization code wouldn't run.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#ff7b72;">class</span> <span style="color:#f0883e;">Dog</span>(Animal):<br>
+            &nbsp;&nbsp;<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">__init__</span>(self, name, breed):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;super().__init__(name)  <span style="color:#8b949e;"># call Animal.__init__</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;self.breed = breed
+          </div>
+          <div class="qa-tip">💡 Also mention MRO (Method Resolution Order) — <code>super()</code> follows it in multiple inheritance.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">5</span>
+        <span class="qa-text">What's the difference between instance variables and class variables?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Instance variables</strong> belong to each object — defined in <code>__init__</code> with <code>self.x</code>. Each object has its own copy. <strong>Class variables</strong> are defined in the class body and shared by ALL instances.</p>
+          <p style="margin-top:8px;">Use class variables for constants or counters. Use instance variables for data that's unique to each object.</p>
+          <div class="qa-tip">💡 Gotcha: if you assign to <code>self.class_var</code>, it creates an instance variable that shadows the class variable — it doesn't modify the shared one.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">6</span>
+        <span class="qa-text">What makes <code>__call__</code> useful? Give a real example.</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>__call__</code> lets you use an object like a function — <code>obj()</code> instead of <code>obj.do_something()</code>. It's useful when you need a function that remembers state between calls, like a counter, a rate limiter, or a memoization cache.</p>
+          <p style="margin-top:8px;">Real example: decorators implemented as classes use <code>__call__</code> — the decorator instance wraps the function, and <code>__call__</code> runs the wrapper logic each time the function is called.</p>
+          <div class="qa-tip">💡 If you can check <code>callable(obj)</code> and it returns True, the object has <code>__call__</code> defined.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">7</span>
+        <span class="qa-text">When would you use a dataclass vs a regular class?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Use a <strong>dataclass</strong> when your class is primarily about storing data — like a config object, API response, or database record. It auto-generates <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code> so you don't write boilerplate.</p>
+          <p style="margin-top:8px;">Use a <strong>regular class</strong> when behavior is more important than data — like a service class with complex methods, or when you need full control over initialization logic.</p>
+          <div class="qa-tip">💡 Rule: if you're writing a class and most of <code>__init__</code> is just <code>self.x = x</code>, use a dataclass.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">8</span>
+        <span class="qa-text">What is <code>field(default_factory=list)</code> and why is it needed?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>In dataclasses, you can't use mutable defaults like <code>tags: list = []</code> because all instances would share the same list object. <code>field(default_factory=list)</code> creates a <strong>new empty list for each instance</strong> — solving the shared mutable default bug.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># BAD — shared list bug</span><br>
+            tags: list = []<br><br>
+            <span style="color:#8b949e;"># GOOD — each instance gets its own list</span><br>
+            tags: list = field(default_factory=list)
+          </div>
+          <div class="qa-tip">💡 <code>default_factory</code> accepts any callable — <code>list</code>, <code>dict</code>, <code>set</code>, or even a custom function like <code>lambda: [1, 2, 3]</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">9</span>
+        <span class="qa-text">Explain polymorphism with a practical example.</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Polymorphism means "many forms" — different classes respond to the same method call in their own way. The caller doesn't need to know which specific class it's dealing with.</p>
+          <p style="margin-top:8px;">Practical example: a payment system with <code>CreditCard</code>, <code>PayPal</code>, and <code>Crypto</code> classes. Each has a <code>process_payment(amount)</code> method. Your checkout code just calls <code>payment_method.process_payment(total)</code> — it works regardless of which payment type the user chose.</p>
+          <div class="qa-tip">💡 Python uses "duck typing" — it doesn't check the class, just whether the method exists. If it has <code>.process_payment()</code>, it works.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">10</span>
+        <span class="qa-text">What's the difference between <code>@dataclass(frozen=True)</code> and a regular dataclass?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A frozen dataclass is <strong>immutable</strong> — you can't change any field after creation. Trying to set an attribute raises <code>FrozenInstanceError</code>. This makes it hashable, so you can use it as a dictionary key or put it in a set.</p>
+          <p style="margin-top:8px;">Use frozen dataclasses for value objects that shouldn't change — coordinates, colors, configuration constants, cache keys.</p>
+          <div class="qa-tip">💡 Frozen dataclasses are Python's answer to "I want a named tuple but with type hints and methods."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">11</span>
+        <span class="qa-text">How do you make a custom object work with <code>for</code> loops?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Implement <code>__iter__</code> (which returns an iterator) and optionally <code>__next__</code>. The simplest approach is to have <code>__iter__</code> return <code>iter(self.some_list)</code> — delegating to a built-in iterable.</p>
+          <p style="margin-top:8px;">For custom iteration logic, make your class its own iterator by implementing both <code>__iter__</code> (returns <code>self</code>) and <code>__next__</code> (returns next value or raises <code>StopIteration</code>).</p>
+          <div class="qa-tip">💡 Also mention <code>__getitem__</code> — if you define it, Python can iterate over your object even without <code>__iter__</code> (it tries index 0, 1, 2... until IndexError).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">12</span>
+        <span class="qa-text">What is MRO (Method Resolution Order) in Python?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>MRO is the order Python searches through classes when you call a method. With single inheritance it's simple (child → parent → grandparent). With multiple inheritance, Python uses the <strong>C3 linearization algorithm</strong> to determine a consistent order.</p>
+          <p style="margin-top:8px;">You can check it with <code>MyClass.__mro__</code> or <code>MyClass.mro()</code>. This is what <code>super()</code> follows — it doesn't always go to the direct parent, it goes to the next class in the MRO.</p>
+          <div class="qa-tip">💡 The "diamond problem" (two parents share a grandparent) is solved by MRO — each class appears only once in the resolution order.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="text-align:center; padding:80px 40px; border-top:1px solid var(--card-border);">
+  <div style="width:60px; height:3px; background:linear-gradient(90deg, var(--primary), #a78bfa); margin:0 auto 20px; border-radius:2px;"></div>
+  <p style="color:var(--text-muted); font-size:0.95rem;">Python OOP — Interactive Learning Guide</p>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">Built with HTML, CSS & vanilla JS</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+// Scroll Reveal
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// Active Nav Link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Accordion Toggle
+function toggleQA(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// Copy Code
+function copyCode(btn) {
+  const codeBody = btn.closest('.code-editor').querySelector('.code-body pre');
+  const text = codeBody.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

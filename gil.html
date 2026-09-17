@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python GIL — Interactive Learning Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224);
+  --primary-glow: rgba(58, 114, 224, 0.25);
+  --primary-light: #e8f0fe;
+  --primary-dark: #2a5db8;
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --card-border: #dbe4ff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --code-bg: #1e293b;
+  --font: 'Inter','Segoe UI',Roboto,sans-serif;
+  --mono: 'Fira Code','JetBrains Mono','Cascadia Code',monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --glow: 0 4px 20px rgba(58,114,224,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.nav-logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--primary), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links { display: flex; gap: 28px; list-style: none; }
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 0; right: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+section { padding: 60px 40px; max-width: 1200px; margin: 0 auto; }
+
+.hero-section {
+  min-height: auto;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 140px 40px 80px;
+  overflow: hidden;
+  background: #ffffff;
+  max-width: 100%;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(58,114,224,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 750px; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+
+.hero-badge {
+  padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+  border: 1px solid var(--card-border); background: #ffffff; color: var(--text-muted);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.hero-badge.primary { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+.hero-title { font-size: clamp(2.8rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 18px; }
+.hero-title span {
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 36px; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.btn { padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; border: none; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 20px var(--primary-glow); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+.btn-ghost { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); }
+.btn-ghost:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+.glass-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius);
+  padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card:hover { border-color: var(--primary); box-shadow: var(--glow); transform: translateY(-4px); }
+
+.section-header { text-align: center; margin-bottom: 60px; }
+.section-label { font-size: 0.85rem; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+.section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; }
+.section-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+.code-editor { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.code-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: #161b22; border-bottom: 1px solid var(--card-border); }
+.code-dots { display: flex; gap: 8px; }
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.code-dot.red { background: #ff5f57; }
+.code-dot.yellow { background: #febc2e; }
+.code-dot.green { background: #28c840; }
+.code-filename { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); }
+.code-copy { background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); color: var(--text-muted); padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
+.code-copy:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.code-body { padding: 24px; background: var(--code-bg); overflow-x: auto; }
+.code-body pre { font-family: var(--mono); font-size: 0.88rem; line-height: 1.7; color: #e6edf3; margin: 0; }
+
+.kw { color: #ff7b72; } .fn { color: #d2a8ff; } .st { color: #a5d6ff; } .cm { color: #8b949e; }
+.op { color: #79c0ff; } .num { color: #79c0ff; } .dec { color: #ffa657; } .bi { color: #79c0ff; }
+.param { color: #ffa657; } .cls { color: #f0883e; }
+
+.output-block {
+  background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-sm); padding: 16px 20px; margin: 16px 0;
+  font-family: var(--mono); font-size: 0.85rem; color: #065f46;
+}
+.output-block::before { content: '▶ Output'; display: block; font-weight: 600; font-size: 0.7rem; color: var(--success); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+.diagram-wrapper {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius);
+  padding: 40px; margin: 32px 0; text-align: center; overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+.diagram-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark); }
+.diagram-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+
+.flow-container { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.flow-node { padding: 16px 24px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.85rem; border: 2px solid var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.flow-node.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(58,114,224,0.3); }
+.flow-node.success { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065f46; }
+.flow-node.warning { border-color: var(--warning); background: rgba(245,158,11,0.1); color: #92400e; }
+.flow-node.danger { border-color: var(--danger); background: rgba(239,68,68,0.1); color: #991b1b; }
+.flow-arrow { color: var(--primary); font-size: 1.4rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); display: table; }
+th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.85rem; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--card-border); font-size: 0.85rem; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: var(--primary-light); }
+
+.qa-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+.qa-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
+.qa-question { padding: 20px 24px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: background 0.3s; background: #f8fafc; }
+.qa-question:hover { background: var(--primary-light); }
+.qa-num { width: 32px; height: 32px; background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+.qa-text { font-weight: 600; font-size: 0.95rem; flex: 1; }
+.qa-toggle { color: var(--text-muted); font-size: 1.2rem; transition: transform 0.3s; }
+.qa-card.open .qa-toggle { transform: rotate(180deg); }
+.qa-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.qa-card.open .qa-answer { padding: 0 24px 24px; max-height: 800px; }
+.qa-answer-content { padding-top: 16px; border-top: 1px solid var(--card-border); color: var(--text); line-height: 1.8; }
+.qa-tip { margin-top: 12px; padding: 12px 16px; background: var(--primary-light); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--primary-dark); border-left: 3px solid var(--primary); }
+
+.usecase-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius);
+  padding: 28px; transition: all 0.4s; position: relative; overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+.usecase-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), #a78bfa); opacity: 0; transition: opacity 0.3s; }
+.usecase-card:hover::before { opacity: 1; }
+.usecase-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--glow); }
+.usecase-icon { width: 48px; height: 48px; background: var(--primary-light); border: 1px solid rgba(58,114,224,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.3rem; }
+.usecase-card h4 { font-size: 1.05rem; margin-bottom: 8px; }
+.usecase-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  section { padding: 40px 20px; }
+  .nav { padding: 12px 20px; }
+  .nav-links { display: none; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .hero-title { font-size: 2.5rem; }
+  .hero-section { padding: 100px 20px 50px; }
+  .glass-card { padding: 20px; overflow-x: auto; }
+  table { min-width: 600px; }
+  .code-body { padding: 16px; }
+  .code-body pre { font-size: 0.8rem; }
+  .diagram-wrapper { padding: 20px 12px; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🐍 PyGIL</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#basics">GIL Basics</a></li>
+    <li><a href="#impact">GIL Impact</a></li>
+    <li><a href="#visuals">Visuals</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badges">
+      <span class="hero-badge primary">🐍 Python</span>
+      <span class="hero-badge">🔒 CPython Internals</span>
+      <span class="hero-badge">⏱ 25 min read</span>
+      <span class="hero-badge">🧠 Advanced</span>
+    </div>
+    <h1 class="hero-title">The <span>GIL</span></h1>
+    <p class="hero-subtitle">Understand Python's Global Interpreter Lock — why it exists, how it limits concurrency, and what you can do about it for CPU-bound and I/O-bound workloads.</p>
+    <div class="hero-cta">
+      <a href="#basics" class="btn btn-primary">Start Learning →</a>
+      <a href="#examples" class="btn btn-ghost">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview">
+  <div class="section-header reveal">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-title">What You'll Learn</h2>
+    <p class="section-desc">The GIL is the most misunderstood part of Python. Let's clear it up.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">The GIL in One Sentence</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">The <strong>Global Interpreter Lock (GIL)</strong> is a mutex (lock) in CPython that allows only <strong>one thread to execute Python bytecode at a time</strong> — even on a machine with 8 CPU cores. It's not a Python language feature — it's a CPython implementation detail that exists to keep memory management simple and safe.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">8 cores + 8 threads + GIL = still only 1 thread running Python at any moment</code>
+    </div>
+  </div>
+
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">🌍 Why Should You Care?</h3>
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th>GIL Impact</th><th>Solution</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Number crunching</td><td>🔴 Severe — threads can't parallelize</td><td><code>multiprocessing</code></td><td>Each process has its own GIL</td></tr>
+        <tr><td>Web scraping</td><td>🟢 Minimal — GIL released during I/O</td><td><code>threading</code> / <code>asyncio</code></td><td>Threads wait on network, not CPU</td></tr>
+        <tr><td>File processing</td><td>🟡 Depends on ratio of I/O to CPU</td><td>Profile first, then decide</td><td>Mix of I/O waits and computation</td></tr>
+        <tr><td>ML training</td><td>🟢 Minimal — NumPy releases GIL</td><td>NumPy/C extensions</td><td>Heavy work happens in C, not Python</td></tr>
+        <tr><td>Web server</td><td>🟢 Minimal — mostly I/O</td><td><code>asyncio</code> / multi-worker</td><td>Waiting on DB/network most of the time</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- GIL Basics Section -->
+<section id="basics">
+  <div class="section-header reveal">
+    <div class="section-label">Foundations</div>
+    <h2 class="section-title">GIL Basics</h2>
+    <p class="section-desc">What it is, why it exists, and how CPython's threading model actually works.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="glass-card reveal" style="border-left:4px solid rgb(58,114,224);">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🔒</div>
+        <h4 style="margin:0; font-size:1.05rem;">What Is the GIL?</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">A mutex (mutual exclusion lock) that protects access to Python objects. Only the thread holding the GIL can execute Python bytecode. Other threads must wait their turn — even if your CPU has idle cores.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="cm"># Only ONE thread runs at a time</span><br>
+        Thread-1: [===RUN===]..wait...[===RUN===]<br>
+        Thread-2: ..wait...[===RUN===]..wait....
+      </div>
+      <p style="font-size:0.8rem; color:var(--primary); margin-top:12px; font-weight:500;">💡 The GIL is a CPython thing — Jython, IronPython, and PyPy (STM) don't have it.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #7c3aed;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#f3f0ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">❓</div>
+        <h4 style="margin:0; font-size:1.05rem;">Why Does the GIL Exist?</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">CPython uses <strong>reference counting</strong> for memory management. Every object has a counter. Without the GIL, two threads could modify the same counter simultaneously — causing crashes, memory leaks, or double-frees. The GIL makes ref counting thread-safe without per-object locks.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="cm"># Without GIL, this would be unsafe:</span><br>
+        refcount(obj) += 1 <span class="cm"># Thread A</span><br>
+        refcount(obj) -= 1 <span class="cm"># Thread B (race!)</span>
+      </div>
+      <p style="font-size:0.8rem; color:#7c3aed; margin-top:12px; font-weight:500;">💡 The GIL is a trade-off: simpler internals, but limited parallelism.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #059669;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🧵</div>
+        <h4 style="margin:0; font-size:1.05rem;">CPython Threading Model</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">CPython uses <strong>real OS threads</strong> (pthreads on Linux/macOS, Win32 threads on Windows). They're real threads — the OS schedules them across cores. But the GIL forces them to take turns executing Python code. It's like having 8 lanes on a highway but only one car allowed to move at a time.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="cm"># Threads are real, but serialized</span><br>
+        OS sees: 4 threads on 4 cores<br>
+        GIL says: only 1 runs Python code
+      </div>
+      <p style="font-size:0.8rem; color:#059669; margin-top:12px; font-weight:500;">💡 The GIL is released every 5ms (Python 3.2+) to give other threads a chance.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #d97706;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#fffbeb; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🔓</div>
+        <h4 style="margin:0; font-size:1.05rem;">When Is the GIL Released?</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">The GIL is released during <strong>I/O operations</strong> (network, disk, sleep) and when calling <strong>C extensions</strong> that explicitly release it (NumPy, PIL, etc.). This is why threading still works great for I/O-bound tasks — threads can overlap their waiting time.</p>
+      <div style="padding:14px 16px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="cm"># GIL released during:</span><br>
+        socket.recv()&nbsp;&nbsp;<span class="cm"># network I/O</span><br>
+        file.read()&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># disk I/O</span><br>
+        time.sleep()&nbsp;&nbsp;&nbsp;<span class="cm"># waiting</span><br>
+        numpy.dot()&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># C extension</span>
+      </div>
+      <p style="font-size:0.8rem; color:#d97706; margin-top:12px; font-weight:500;">💡 This is why web servers and scrapers work fine with threads despite the GIL.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GIL Impact Section -->
+<section id="impact">
+  <div class="section-header reveal">
+    <div class="section-label">Real Effects</div>
+    <h2 class="section-title">GIL Impact</h2>
+    <p class="section-desc">How the GIL affects CPU-bound vs I/O-bound tasks — and what actually happens when threads run.</p>
+  </div>
+
+  <!-- CPU-bound vs IO-bound -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">CPU-Bound vs I/O-Bound — The GIL Affects Them Differently</div>
+    <div class="diagram-desc">The GIL is a bottleneck for computation, but barely matters for waiting</div>
+    <div style="display:flex; gap:32px; justify-content:center; flex-wrap:wrap; text-align:left;">
+      <div style="flex:1; min-width:300px; max-width:420px; padding:24px; background:#fef2f2; border:2px solid #ef4444; border-radius:12px;">
+        <h4 style="color:#dc2626; margin-bottom:12px;">🔴 CPU-Bound (GIL hurts)</h4>
+        <p style="font-size:0.88rem; color:var(--text); line-height:1.7; margin-bottom:12px;">Tasks that spend most time <strong>computing</strong> — math, image processing, data crunching. Threads can't run in parallel because they all need the GIL to execute Python bytecode.</p>
+        <div style="padding:12px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3; line-height:1.6; margin-bottom:12px;">
+          <span class="cm"># 2 threads, CPU-bound</span><br>
+          T1: [██████]......[██████]......<br>
+          T2: ......[██████]......[██████]<br>
+          <span class="cm"># Total time ≈ same as single thread!</span>
+        </div>
+        <p style="font-size:0.82rem; color:#991b1b;"><strong>Result:</strong> Threading makes it SLOWER (context switch overhead) not faster.</p>
+      </div>
+      <div style="flex:1; min-width:300px; max-width:420px; padding:24px; background:#ecfdf5; border:2px solid #10b981; border-radius:12px;">
+        <h4 style="color:#059669; margin-bottom:12px;">🟢 I/O-Bound (GIL doesn't matter)</h4>
+        <p style="font-size:0.88rem; color:var(--text); line-height:1.7; margin-bottom:12px;">Tasks that spend most time <strong>waiting</strong> — network requests, file reads, database queries. The GIL is released during I/O, so threads can overlap their wait times.</p>
+        <div style="padding:12px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3; line-height:1.6; margin-bottom:12px;">
+          <span class="cm"># 2 threads, I/O-bound</span><br>
+          T1: [req]...waiting...[done]<br>
+          T2: ..[req]...waiting...[done]<br>
+          <span class="cm"># Overlap! Total time ≈ 1x not 2x</span>
+        </div>
+        <p style="font-size:0.82rem; color:#065f46;"><strong>Result:</strong> Threading works great — threads wait concurrently.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thread Execution Behavior -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Thread Execution Behavior — What Actually Happens</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Let's prove the GIL's effect with actual code. Watch how CPU-bound threads don't speed things up.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">gil_demo.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">cpu_bound_task</span>(<span class="param">n</span>):
+    <span class="st">"""Pure computation — GIL prevents parallelism."""</span>
+    count = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n):
+        count += i * i
+    <span class="kw">return</span> count
+
+N = <span class="num">10_000_000</span>
+
+<span class="cm"># Single-threaded</span>
+start = time.perf_counter()
+cpu_bound_task(N)
+cpu_bound_task(N)
+single_time = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"Single-threaded: {single_time:.3f}s"</span>)
+
+<span class="cm"># Multi-threaded (2 threads)</span>
+start = time.perf_counter()
+t1 = threading.Thread(target=cpu_bound_task, args=(N,))
+t2 = threading.Thread(target=cpu_bound_task, args=(N,))
+t1.start(); t2.start()
+t1.join(); t2.join()
+multi_time = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"Multi-threaded:  {multi_time:.3f}s"</span>)
+
+<span class="bi">print</span>(<span class="st">f"\nSpeedup: {single_time/multi_time:.2f}x"</span>)
+<span class="bi">print</span>(<span class="st">"(Should be ~2x but GIL prevents it)"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Single-threaded: 1.842s
+Multi-threaded:  1.956s
+
+Speedup: 0.94x
+(Should be ~2x but GIL prevents it)
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(239,68,68,0.06); border-radius:var(--radius-sm); border-left:3px solid var(--danger);">
+      <p style="font-size:0.9rem; color:#991b1b; line-height:1.7; margin:0;">
+        <strong>⚠️ Key insight:</strong> Multi-threading for CPU-bound work is actually <em>slower</em> than single-threaded — you get the overhead of context switching and GIL contention with zero parallelism benefit. The threads take turns, they don't run simultaneously.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Visual Understanding Section -->
+<section id="visuals">
+  <div class="section-header reveal">
+    <div class="section-label">Visualized</div>
+    <h2 class="section-title">How the GIL Works</h2>
+    <p class="section-desc">Diagrams showing what happens inside CPython when threads compete for the GIL.</p>
+  </div>
+
+  <!-- Diagram 1: GIL Acquisition Flow -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">GIL Acquisition — The Thread Dance</div>
+    <div class="diagram-desc">Every 5ms, the running thread is asked to release the GIL so others get a turn</div>
+    <svg width="100%" height="280" viewBox="0 0 850 280" style="max-width:850px; margin:0 auto; display:block;">
+      <!-- Timeline -->
+      <line x1="50" y1="140" x2="800" y2="140" stroke="#cbd5e1" stroke-width="2"/>
+      <text x="400" y="270" font-family="Inter,sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Time →</text>
+
+      <!-- Thread 1 blocks -->
+      <text x="20" y="80" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#1d4ed8">T1</text>
+      <rect x="60" y="60" width="180" height="35" rx="6" fill="#3a72e0" stroke="#1d4ed8" stroke-width="1.5"/>
+      <text x="110" y="82" font-family="monospace" font-size="9" fill="#ffffff">RUNNING (has GIL)</text>
+      <rect x="280" y="60" width="60" height="35" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="290" y="82" font-family="monospace" font-size="8" fill="#1d4ed8">wait</text>
+      <rect x="380" y="60" width="180" height="35" rx="6" fill="#3a72e0" stroke="#1d4ed8" stroke-width="1.5"/>
+      <text x="430" y="82" font-family="monospace" font-size="9" fill="#ffffff">RUNNING (has GIL)</text>
+      <rect x="600" y="60" width="60" height="35" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="610" y="82" font-family="monospace" font-size="8" fill="#1d4ed8">wait</text>
+      <rect x="700" y="60" width="90" height="35" rx="6" fill="#3a72e0" stroke="#1d4ed8" stroke-width="1.5"/>
+      <text x="715" y="82" font-family="monospace" font-size="9" fill="#ffffff">RUNNING</text>
+
+      <!-- Thread 2 blocks -->
+      <text x="20" y="200" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#059669">T2</text>
+      <rect x="60" y="180" width="180" height="35" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="115" y="202" font-family="monospace" font-size="8" fill="#047857">waiting for GIL</text>
+      <rect x="280" y="180" width="60" height="35" rx="6" fill="#059669" stroke="#047857" stroke-width="1.5"/>
+      <text x="285" y="202" font-family="monospace" font-size="8" fill="#ffffff">RUN</text>
+      <rect x="380" y="180" width="180" height="35" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="435" y="202" font-family="monospace" font-size="8" fill="#047857">waiting for GIL</text>
+      <rect x="600" y="180" width="60" height="35" rx="6" fill="#059669" stroke="#047857" stroke-width="1.5"/>
+      <text x="605" y="202" font-family="monospace" font-size="8" fill="#ffffff">RUN</text>
+      <rect x="700" y="180" width="90" height="35" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="720" y="202" font-family="monospace" font-size="8" fill="#047857">wait</text>
+
+      <!-- Switch markers -->
+      <line x1="240" y1="50" x2="240" y2="225" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="235" y="245" font-family="Inter,sans-serif" font-size="9" fill="#d97706">5ms</text>
+      <line x1="560" y1="50" x2="560" y2="225" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="555" y="245" font-family="Inter,sans-serif" font-size="9" fill="#d97706">5ms</text>
+
+      <!-- GIL label -->
+      <rect x="340" y="125" width="120" height="30" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+      <text x="360" y="145" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#92400e">🔒 GIL switch</text>
+    </svg>
+  </div>
+
+  <!-- Diagram 2: I/O-bound threading -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">I/O-Bound Threading — Why It Works Despite the GIL</div>
+    <div class="diagram-desc">The GIL is released during I/O, so threads can overlap their waiting time</div>
+    <svg width="100%" height="260" viewBox="0 0 850 260" style="max-width:850px; margin:0 auto; display:block;">
+      <!-- Timeline -->
+      <line x1="50" y1="130" x2="800" y2="130" stroke="#cbd5e1" stroke-width="1"/>
+
+      <!-- Thread 1 -->
+      <text x="20" y="65" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#1d4ed8">T1</text>
+      <rect x="60" y="45" width="80" height="35" rx="6" fill="#3a72e0"/>
+      <text x="70" y="67" font-family="monospace" font-size="8" fill="#fff">send req</text>
+      <rect x="140" y="45" width="200" height="35" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="190" y="67" font-family="monospace" font-size="8" fill="#3a72e0">⏳ waiting (GIL released)</text>
+      <rect x="340" y="45" width="80" height="35" rx="6" fill="#3a72e0"/>
+      <text x="348" y="67" font-family="monospace" font-size="8" fill="#fff">process</text>
+
+      <!-- Thread 2 -->
+      <text x="20" y="165" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#059669">T2</text>
+      <rect x="100" y="145" width="80" height="35" rx="6" fill="#059669"/>
+      <text x="108" y="167" font-family="monospace" font-size="8" fill="#fff">send req</text>
+      <rect x="180" y="145" width="200" height="35" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="225" y="167" font-family="monospace" font-size="8" fill="#047857">⏳ waiting (GIL released)</text>
+      <rect x="380" y="145" width="80" height="35" rx="6" fill="#059669"/>
+      <text x="388" y="167" font-family="monospace" font-size="8" fill="#fff">process</text>
+
+      <!-- Thread 3 -->
+      <text x="20" y="215" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#7c3aed">T3</text>
+      <rect x="140" y="195" width="80" height="35" rx="6" fill="#7c3aed"/>
+      <text x="148" y="217" font-family="monospace" font-size="8" fill="#fff">send req</text>
+      <rect x="220" y="195" width="200" height="35" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="265" y="217" font-family="monospace" font-size="8" fill="#6d28d9">⏳ waiting (GIL released)</text>
+      <rect x="420" y="195" width="80" height="35" rx="6" fill="#7c3aed"/>
+      <text x="428" y="217" font-family="monospace" font-size="8" fill="#fff">process</text>
+
+      <!-- Annotation -->
+      <rect x="530" y="80" width="260" height="80" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+      <text x="550" y="105" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#047857">✅ Threads overlap I/O waits</text>
+      <text x="550" y="125" font-family="Inter,sans-serif" font-size="9" fill="#475569">3 requests complete in ~1x time</text>
+      <text x="550" y="145" font-family="Inter,sans-serif" font-size="9" fill="#475569">not 3x (sequential would be 3x)</text>
+    </svg>
+  </div>
+
+  <!-- Diagram 3: Multiprocessing vs Threading -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Multiprocessing — Each Process Gets Its Own GIL</div>
+    <div class="diagram-desc">The solution for CPU-bound work: separate processes with separate GILs = true parallelism</div>
+    <svg width="100%" height="240" viewBox="0 0 800 240" style="max-width:800px; margin:0 auto; display:block;">
+      <!-- Process 1 -->
+      <rect x="30" y="30" width="350" height="85" rx="12" fill="#eff6ff" stroke="#3a72e0" stroke-width="2"/>
+      <text x="50" y="55" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#1d4ed8">Process 1 (own GIL, own memory)</text>
+      <rect x="50" y="70" width="310" height="30" rx="6" fill="#3a72e0"/>
+      <text x="120" y="90" font-family="monospace" font-size="10" fill="#ffffff">████████████ RUNNING on Core 1</text>
+
+      <!-- Process 2 -->
+      <rect x="420" y="30" width="350" height="85" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <text x="440" y="55" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#047857">Process 2 (own GIL, own memory)</text>
+      <rect x="440" y="70" width="310" height="30" rx="6" fill="#059669"/>
+      <text x="510" y="90" font-family="monospace" font-size="10" fill="#ffffff">████████████ RUNNING on Core 2</text>
+
+      <!-- Result -->
+      <rect x="200" y="145" width="400" height="70" rx="10" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+      <text x="260" y="172" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#92400e">✅ True Parallelism Achieved</text>
+      <text x="240" y="195" font-family="Inter,sans-serif" font-size="10" fill="#475569">Both processes run simultaneously on different CPU cores</text>
+      <text x="270" y="210" font-family="Inter,sans-serif" font-size="10" fill="#475569">2 cores = ~2x speedup for CPU-bound work</text>
+    </svg>
+  </div>
+</section>
+
+<!-- Performance Concepts Section -->
+<section id="performance">
+  <div class="section-header reveal">
+    <div class="section-label">Deep Dive</div>
+    <h2 class="section-title">Performance Concepts</h2>
+    <p class="section-desc">Context switching, concurrency limitations, and choosing the right tool.</p>
+  </div>
+
+  <!-- Context Switching -->
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">⚡ Context Switching — The Hidden Cost</h3>
+    <p style="color:var(--text); font-size:0.95rem; line-height:1.8;">Every time the GIL switches from one thread to another, there's overhead: saving the current thread's state, loading the next thread's state, and the OS scheduler doing its thing. For CPU-bound tasks, this switching happens every ~5ms and adds up — making threaded code <em>slower</em> than single-threaded.</p>
+    <div style="margin-top:16px; padding:16px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border);">
+      <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+        <strong>What happens during a context switch:</strong><br>
+        1. Running thread gets a "drop GIL" signal (every 5ms in Python 3.2+)<br>
+        2. Thread saves its execution state (stack frame, registers)<br>
+        3. GIL is released<br>
+        4. OS scheduler picks the next thread<br>
+        5. New thread acquires the GIL<br>
+        6. New thread restores its state and continues
+      </p>
+    </div>
+    <div style="margin-top:12px; padding:12px 16px; background:rgba(239,68,68,0.06); border-radius:var(--radius-sm); border-left:3px solid var(--danger);">
+      <p style="font-size:0.85rem; color:#991b1b; margin:0;"><strong>Cost:</strong> Each switch takes ~1-10 microseconds. With 200 switches/second × multiple threads, it adds up to measurable overhead for CPU-bound work.</p>
+    </div>
+  </div>
+
+  <!-- Concurrency Limitations -->
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">🚧 Concurrency Limitations in CPython</h3>
+    <table>
+      <thead>
+        <tr><th>Limitation</th><th>What It Means</th><th>Workaround</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>No true thread parallelism</strong></td><td>Only one thread executes Python bytecode at a time</td><td>Use <code>multiprocessing</code> for CPU work</td></tr>
+        <tr><td><strong>GIL contention</strong></td><td>Threads fight over the GIL, causing overhead</td><td>Reduce thread count or use async</td></tr>
+        <tr><td><strong>Context switch overhead</strong></td><td>Switching threads costs time even without useful work</td><td>Use fewer threads, or processes</td></tr>
+        <tr><td><strong>Memory not shared (multiprocessing)</strong></td><td>Each process has its own memory space</td><td>Use <code>shared_memory</code>, queues, or pipes</td></tr>
+        <tr><td><strong>Thread safety still needed</strong></td><td>GIL doesn't protect YOUR data structures</td><td>Use locks for shared mutable state</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px; padding:14px; background:rgba(245,158,11,0.08); border-radius:var(--radius-sm); border-left:3px solid var(--warning);">
+      <p style="font-size:0.88rem; color:#92400e; line-height:1.7; margin:0;">
+        <strong>Common misconception:</strong> "The GIL makes my code thread-safe." <strong>Wrong.</strong> The GIL prevents crashes in CPython's internals, but your own data structures (lists, dicts, counters) still need explicit locks if shared between threads.
+      </p>
+    </div>
+  </div>
+
+  <!-- Multiprocessing vs Threading Comparison -->
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Threading vs Multiprocessing vs Asyncio — Decision Guide</h3>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>threading</th><th>multiprocessing</th><th>asyncio</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Best for</strong></td><td>I/O-bound tasks</td><td>CPU-bound tasks</td><td>High-concurrency I/O</td></tr>
+        <tr><td><strong>GIL affected?</strong></td><td>Yes — threads share one GIL</td><td>No — each process has own GIL</td><td>N/A — single thread, event loop</td></tr>
+        <tr><td><strong>True parallelism?</strong></td><td>❌ No (for Python code)</td><td>✅ Yes</td><td>❌ No (concurrency, not parallelism)</td></tr>
+        <tr><td><strong>Memory</strong></td><td>Shared (lightweight)</td><td>Separate (heavy — copies per process)</td><td>Shared (very lightweight)</td></tr>
+        <tr><td><strong>Overhead</strong></td><td>Low (thread creation ~1ms)</td><td>High (process creation ~50ms)</td><td>Very low (coroutine ~μs)</td></tr>
+        <tr><td><strong>Communication</strong></td><td>Shared variables + locks</td><td>Queues, pipes, shared memory</td><td>Awaitable objects</td></tr>
+        <tr><td><strong>Use case example</strong></td><td>Web scraping 100 URLs</td><td>Processing 100 images</td><td>Handling 10K WebSocket connections</td></tr>
+        <tr><td><strong>Max concurrency</strong></td><td>~100s of threads</td><td>~CPU core count</td><td>~10,000s of coroutines</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Decision Flowchart -->
+  <div class="diagram-wrapper reveal" style="margin-top:32px;">
+    <div class="diagram-title">Which Concurrency Tool Should I Use?</div>
+    <div class="diagram-desc">Follow the questions to pick the right approach</div>
+    <div style="text-align:left; max-width:700px; margin:0 auto;">
+      <div style="padding:16px 20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border); margin-bottom:12px;">
+        <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+          <strong>❓ Is your task CPU-bound or I/O-bound?</strong><br>
+          &nbsp;&nbsp;├─ <strong style="color:var(--danger);">CPU-bound</strong> (math, image processing, data crunching)<br>
+          &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;→ Use <strong style="color:var(--primary);">multiprocessing</strong> (bypasses GIL entirely)<br>
+          &nbsp;&nbsp;└─ <strong style="color:var(--success);">I/O-bound</strong> (network, files, databases) → Keep going ↓
+        </p>
+      </div>
+      <div style="padding:16px 20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border); margin-bottom:12px;">
+        <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+          <strong>❓ How many concurrent operations?</strong><br>
+          &nbsp;&nbsp;├─ <strong>< 100</strong> → Use <strong style="color:var(--primary);">threading</strong> (simple, good enough)<br>
+          &nbsp;&nbsp;└─ <strong>1000+</strong> → Use <strong style="color:#7c3aed;">asyncio</strong> (lightweight, scales better)
+        </p>
+      </div>
+      <div style="padding:16px 20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border);">
+        <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+          <strong>❓ Need both CPU and I/O concurrency?</strong><br>
+          &nbsp;&nbsp;→ Use <strong style="color:var(--primary);">ProcessPoolExecutor</strong> + <strong style="color:#7c3aed;">asyncio</strong> together
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Code Examples Section -->
+<section id="examples">
+  <div class="section-header reveal">
+    <div class="section-label">Hands-On</div>
+    <h2 class="section-title">Code Examples</h2>
+    <p class="section-desc">Prove the GIL's effects with real benchmarks, then see the solutions.</p>
+  </div>
+
+  <!-- Example 1: I/O-bound threading works -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 1: I/O-Bound — Threading Works Great</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">For network/file operations, threads overlap their wait times — real speedup despite the GIL.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">io_bound_threading.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">io_bound_task</span>(<span class="param">task_id</span>):
+    <span class="st">"""Simulates a network request (I/O wait)."""</span>
+    <span class="bi">print</span>(<span class="st">f"  Task {task_id}: starting request..."</span>)
+    time.sleep(<span class="num">2</span>)  <span class="cm"># GIL is released during sleep!</span>
+    <span class="bi">print</span>(<span class="st">f"  Task {task_id}: done!"</span>)
+
+<span class="cm"># Sequential — takes 10 seconds</span>
+start = time.perf_counter()
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>):
+    io_bound_task(i)
+seq_time = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"\nSequential: {seq_time:.1f}s"</span>)
+
+<span class="cm"># Threaded — takes ~2 seconds (all wait concurrently)</span>
+start = time.perf_counter()
+threads = []
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>):
+    t = threading.Thread(target=io_bound_task, args=(i,))
+    threads.append(t)
+    t.start()
+
+<span class="kw">for</span> t <span class="kw">in</span> threads:
+    t.join()
+thread_time = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"Threaded:   {thread_time:.1f}s"</span>)
+<span class="bi">print</span>(<span class="st">f"Speedup:    {seq_time/thread_time:.1f}x"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+  Task 0-4: starting request...
+  Task 0-4: done!
+
+Sequential: 10.0s
+Threaded:   2.0s
+Speedup:    5.0x
+    </div>
+  </div>
+
+  <!-- Example 2: Multiprocessing for CPU-bound -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 2: CPU-Bound — Multiprocessing Bypasses the GIL</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Each process has its own Python interpreter and GIL — true parallelism on multiple cores.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">cpu_bound_multiprocessing.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> multiprocessing
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">cpu_heavy</span>(<span class="param">n</span>):
+    <span class="st">"""CPU-intensive computation."""</span>
+    <span class="kw">return</span> <span class="bi">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n))
+
+N = <span class="num">10_000_000</span>
+
+<span class="cm"># Single process — baseline</span>
+start = time.perf_counter()
+cpu_heavy(N)
+cpu_heavy(N)
+cpu_heavy(N)
+cpu_heavy(N)
+single_time = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"Single process:  {single_time:.3f}s"</span>)
+
+<span class="cm"># Multiprocessing — true parallelism!</span>
+start = time.perf_counter()
+<span class="kw">with</span> multiprocessing.Pool(processes=<span class="num">4</span>) <span class="kw">as</span> pool:
+    results = pool.map(cpu_heavy, [N, N, N, N])
+multi_time = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"4 processes:     {multi_time:.3f}s"</span>)
+<span class="bi">print</span>(<span class="st">f"Speedup:         {single_time/multi_time:.2f}x"</span>)
+<span class="bi">print</span>(<span class="st">f"CPU cores:       {multiprocessing.cpu_count()}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Single process:  3.241s
+4 processes:     0.892s
+Speedup:         3.63x
+CPU cores:       8
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.7; margin:0;">
+        <strong>Why not exactly 4x?</strong> Process creation overhead, inter-process communication, and OS scheduling eat into the speedup. But ~3.6x from 4 cores is excellent for real-world code.
+      </p>
+    </div>
+  </div>
+
+  <!-- Example 3: concurrent.futures -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 3: concurrent.futures — The Modern API</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The cleanest way to do concurrency in Python — same API for threads and processes, just swap the executor.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">concurrent_futures.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, ProcessPoolExecutor
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">download_page</span>(<span class="param">url</span>):
+    <span class="st">"""I/O-bound — use threads."""</span>
+    time.sleep(<span class="num">1</span>)  <span class="cm"># simulate network delay</span>
+    <span class="kw">return</span> <span class="st">f"Downloaded {url}"</span>
+
+<span class="kw">def</span> <span class="fn">process_image</span>(<span class="param">image_id</span>):
+    <span class="st">"""CPU-bound — use processes."""</span>
+    <span class="kw">return</span> <span class="bi">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5_000_000</span>))
+
+urls = [<span class="st">f"https://example.com/page/{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">10</span>)]
+
+<span class="cm"># ThreadPoolExecutor — for I/O-bound work</span>
+start = time.perf_counter()
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">10</span>) <span class="kw">as</span> executor:
+    results = <span class="bi">list</span>(executor.map(download_page, urls))
+<span class="bi">print</span>(<span class="st">f"10 downloads (threads): {time.perf_counter()-start:.1f}s"</span>)
+
+<span class="cm"># ProcessPoolExecutor — for CPU-bound work</span>
+start = time.perf_counter()
+<span class="kw">with</span> ProcessPoolExecutor(max_workers=<span class="num">4</span>) <span class="kw">as</span> executor:
+    results = <span class="bi">list</span>(executor.map(process_image, <span class="bi">range</span>(<span class="num">8</span>)))
+<span class="bi">print</span>(<span class="st">f"8 images (processes):   {time.perf_counter()-start:.1f}s"</span>)
+
+<span class="cm"># Same API! Just swap ThreadPool ↔ ProcessPool</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+10 downloads (threads): 1.0s
+8 images (processes):   1.2s
+    </div>
+  </div>
+
+  <!-- Example 4: GIL release in C extensions -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 4: C Extensions Release the GIL — NumPy Proof</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">NumPy releases the GIL during heavy computation — so threaded NumPy code CAN run in parallel.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">numpy_gil_release.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> threading
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">numpy_heavy</span>():
+    <span class="st">"""NumPy releases the GIL during computation."""</span>
+    a = np.random.rand(<span class="num">2000</span>, <span class="num">2000</span>)
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>):
+        np.dot(a, a)  <span class="cm"># GIL released during this!</span>
+
+<span class="kw">def</span> <span class="fn">python_heavy</span>():
+    <span class="st">"""Pure Python — GIL NOT released."""</span>
+    total = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">10_000_000</span>):
+        total += i * i
+
+<span class="cm"># NumPy with threads — gets real speedup!</span>
+start = time.perf_counter()
+threads = [threading.Thread(target=numpy_heavy) <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">4</span>)]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+<span class="bi">print</span>(<span class="st">f"NumPy (4 threads):  {time.perf_counter()-start:.2f}s"</span>)
+
+<span class="cm"># NumPy sequential — for comparison</span>
+start = time.perf_counter()
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">4</span>):
+    numpy_heavy()
+<span class="bi">print</span>(<span class="st">f"NumPy (sequential): {time.perf_counter()-start:.2f}s"</span>)
+
+<span class="bi">print</span>(<span class="st">"\n💡 NumPy releases GIL → threads get true parallelism!"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+NumPy (4 threads):  0.85s
+NumPy (sequential): 2.91s
+
+💡 NumPy releases GIL → threads get true parallelism!
+    </div>
+  </div>
+</section>
+
+<!-- Real-World Use Cases -->
+<section id="usecases">
+  <div class="section-header reveal">
+    <div class="section-label">In Production</div>
+    <h2 class="section-title">Real-World Patterns</h2>
+    <p class="section-desc">How production Python applications work around the GIL.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🌐</div>
+      <h4>Gunicorn Workers</h4>
+      <p>Web servers like Gunicorn spawn multiple worker processes — each handles requests independently with its own GIL. That's why you set <code>workers = 2*cores + 1</code>.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🕷️</div>
+      <h4>Web Scraping</h4>
+      <p>Scrapers use ThreadPoolExecutor to fetch 100+ URLs concurrently. The GIL is released during network I/O, so threads overlap their wait times perfectly.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">📊</div>
+      <h4>Data Processing</h4>
+      <p>Pandas/NumPy release the GIL during C-level operations. For pure Python transforms, use <code>multiprocessing</code> or libraries like Dask that handle parallelism for you.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🤖</div>
+      <h4>ML Training</h4>
+      <p>PyTorch and TensorFlow release the GIL during GPU operations and matrix math. Training is parallel despite Python orchestrating it — the heavy lifting happens in C/CUDA.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">⚡</div>
+      <h4>Celery Task Queues</h4>
+      <p>Celery distributes CPU-heavy tasks across multiple worker processes on multiple machines. Each worker is a separate process — GIL is irrelevant at this scale.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🔌</div>
+      <h4>AsyncIO Servers</h4>
+      <p>FastAPI/Starlette use asyncio for thousands of concurrent connections in a single thread. No GIL contention because there's only one thread — concurrency via cooperative scheduling.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🖼️</div>
+      <h4>Image Processing</h4>
+      <p>Pillow and OpenCV release the GIL during image operations. For batch processing, <code>ProcessPoolExecutor</code> gives near-linear speedup across cores.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">📦</div>
+      <h4>Cython / C Extensions</h4>
+      <p>Write performance-critical code in Cython with <code>nogil</code> blocks — your code runs without the GIL, achieving true thread parallelism for compute-heavy sections.</p>
+    </div>
+
+    <div class="usecase-card reveal">
+      <div class="usecase-icon">🐍</div>
+      <h4>Python 3.13+ (Free-threaded)</h4>
+      <p>CPython 3.13 introduces an experimental no-GIL build (<code>--disable-gil</code>). True multi-threaded parallelism is coming — but it's opt-in and still maturing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Interview Questions Section -->
+<section id="interview">
+  <div class="section-header reveal">
+    <div class="section-label">Career Prep</div>
+    <h2 class="section-title">Interview Questions</h2>
+    <p class="section-desc">GIL questions come up in every senior Python interview. Click to reveal answers.</p>
+  </div>
+
+  <div class="reveal">
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">1</span>
+        <span class="qa-text">What is the GIL and why does CPython have it?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The GIL is a mutex that allows only one thread to execute Python bytecode at a time. CPython has it because its memory management uses reference counting — without the GIL, two threads could modify an object's reference count simultaneously, causing memory corruption. The GIL makes reference counting thread-safe without needing per-object locks (which would be much slower).</p>
+          <div class="qa-tip">💡 Emphasize it's a CPython implementation detail, not a Python language feature. Jython and IronPython don't have it.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">2</span>
+        <span class="qa-text">Does the GIL make Python thread-safe?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>No.</strong> The GIL protects CPython's internal data structures (reference counts, memory allocator), but it does NOT protect your code. Operations like <code>counter += 1</code> are NOT atomic — the GIL can switch threads between the read and write. You still need <code>threading.Lock()</code> for shared mutable state.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># NOT thread-safe despite GIL:</span><br>
+            counter += 1&nbsp;&nbsp;<span style="color:#8b949e;"># LOAD → ADD → STORE (3 bytecodes)</span><br>
+            <span style="color:#8b949e;"># GIL can switch between any of these!</span>
+          </div>
+          <div class="qa-tip">💡 This is the #1 misconception. The GIL prevents interpreter crashes, not data races in your code.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">3</span>
+        <span class="qa-text">When is threading still useful in Python despite the GIL?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Threading is great for <strong>I/O-bound tasks</strong> — network requests, file operations, database queries. The GIL is released during I/O operations, so threads can overlap their waiting time. A web scraper fetching 100 URLs with 10 threads will be ~10x faster than sequential, because threads wait for responses concurrently.</p>
+          <p style="margin-top:8px;">Also useful when calling C extensions that release the GIL (NumPy, PIL, etc.) — those get true parallelism even with threads.</p>
+          <div class="qa-tip">💡 Give a concrete example: "Fetching 100 API endpoints sequentially takes 100 seconds. With 10 threads, it takes ~10 seconds because the waits overlap."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">4</span>
+        <span class="qa-text">How does multiprocessing bypass the GIL?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Each process has its own Python interpreter with its own GIL. Since processes don't share memory, their GILs are completely independent. Four processes on four cores = four threads of Python bytecode executing truly in parallel.</p>
+          <p style="margin-top:8px;">The trade-off: processes are heavier than threads (more memory, slower to create), and communication between them requires serialization (pickle) through queues or pipes.</p>
+          <div class="qa-tip">💡 Mention <code>ProcessPoolExecutor</code> as the modern API — same interface as <code>ThreadPoolExecutor</code>, just swap the class name.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">5</span>
+        <span class="qa-text">How often does the GIL switch between threads?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>In Python 3.2+, the GIL uses a <strong>time-based mechanism</strong> — it switches every <strong>5 milliseconds</strong> (configurable via <code>sys.setswitchinterval()</code>). Before 3.2, it switched every 100 bytecode instructions (tick-based), which caused unfairness and performance issues.</p>
+          <p style="margin-top:8px;">The 5ms interval means ~200 context switches per second per thread. For I/O-bound code this is fine. For CPU-bound code, it's pure overhead with no benefit.</p>
+          <div class="qa-tip">💡 You can check/change it: <code>sys.getswitchinterval()</code> returns 0.005 (5ms). Don't change it unless you really know what you're doing.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">6</span>
+        <span class="qa-text">What's the difference between concurrency and parallelism?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Concurrency</strong> = dealing with multiple things at once (structure). <strong>Parallelism</strong> = doing multiple things at once (execution). Python threads give you concurrency (tasks interleave) but not parallelism (they don't run simultaneously for Python code).</p>
+          <p style="margin-top:8px;">Analogy: One chef juggling 3 dishes (concurrency) vs. three chefs each cooking one dish (parallelism). The GIL makes Python threads like one chef — they can switch between tasks but only one runs at a time.</p>
+          <div class="qa-tip">💡 asyncio = concurrency (one thread, many tasks). multiprocessing = parallelism (many processes, truly simultaneous).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">7</span>
+        <span class="qa-text">Can you remove the GIL? What are the alternatives?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Removing the GIL has been attempted many times. The challenge: without it, you need fine-grained per-object locks, which slows down single-threaded code by 20-30%. Since most Python code is single-threaded, this trade-off was historically rejected.</p>
+          <p style="margin-top:8px;"><strong>Current alternatives:</strong></p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><code>multiprocessing</code> — separate processes, separate GILs</li>
+            <li>C extensions with <code>Py_BEGIN_ALLOW_THREADS</code> — release GIL in C code</li>
+            <li>Cython with <code>nogil</code> blocks</li>
+            <li><strong>Python 3.13+</strong> — experimental free-threaded build (PEP 703)</li>
+          </ul>
+          <div class="qa-tip">💡 PEP 703 (accepted) is bringing a no-GIL option to CPython. It's experimental in 3.13 and may become default in future versions.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">8</span>
+        <span class="qa-text">How do web frameworks like Django/Flask handle the GIL?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Web frameworks are mostly I/O-bound (waiting for databases, APIs, file reads), so the GIL barely affects them. They handle concurrency through:</p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><strong>Multi-worker deployment</strong> — Gunicorn/uWSGI spawn multiple processes (each with own GIL)</li>
+            <li><strong>Async frameworks</strong> — FastAPI/Starlette use asyncio (single thread, event loop)</li>
+            <li><strong>Thread pools</strong> — for blocking I/O within async frameworks</li>
+          </ul>
+          <p style="margin-top:8px;">A typical production setup: Gunicorn with 4-8 worker processes, each handling requests. The GIL is a non-issue because each worker is independent.</p>
+          <div class="qa-tip">💡 Formula: <code>workers = 2 * cpu_cores + 1</code>. For async workers (uvicorn), you can use fewer because they handle thousands of connections per worker.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">9</span>
+        <span class="qa-text">What is the "convoy effect" related to the GIL?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The convoy effect (mostly in Python 2 / early Python 3) happens when an I/O-bound thread and a CPU-bound thread compete for the GIL. The CPU-bound thread keeps re-acquiring the GIL immediately after releasing it (because it's always ready to run), starving the I/O-bound thread that just woke up from waiting.</p>
+          <p style="margin-top:8px;">Python 3.2+ fixed this with the new GIL implementation — it uses a timeout mechanism where a waiting thread can force the running thread to release the GIL after 5ms, ensuring fairer scheduling.</p>
+          <div class="qa-tip">💡 This is why Python 3.2 was a significant improvement for multi-threaded performance — the "new GIL" by Antoine Pitrou.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">10</span>
+        <span class="qa-text">How would you design a Python application that needs both CPU parallelism and high I/O concurrency?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Use a <strong>hybrid architecture</strong>: asyncio for I/O concurrency + ProcessPoolExecutor for CPU-bound work. The main event loop handles thousands of I/O operations, and offloads heavy computation to separate processes.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#ff7b72;">import</span> asyncio<br>
+            <span style="color:#ff7b72;">from</span> concurrent.futures <span style="color:#ff7b72;">import</span> ProcessPoolExecutor<br><br>
+            <span style="color:#ff7b72;">async def</span> <span style="color:#d2a8ff;">main</span>():<br>
+            &nbsp;&nbsp;loop = asyncio.get_event_loop()<br>
+            &nbsp;&nbsp;<span style="color:#8b949e;"># Offload CPU work to process pool</span><br>
+            &nbsp;&nbsp;result = <span style="color:#ff7b72;">await</span> loop.run_in_executor(<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;ProcessPoolExecutor(), cpu_heavy_func, data<br>
+            &nbsp;&nbsp;)
+          </div>
+          <div class="qa-tip">💡 Real example: a web server that accepts uploads (I/O) and processes images (CPU). Asyncio handles connections, ProcessPool handles image processing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="text-align:center; padding:80px 40px; border-top:1px solid var(--card-border);">
+  <div style="width:60px; height:3px; background:linear-gradient(90deg, var(--primary), #a78bfa); margin:0 auto 20px; border-radius:2px;"></div>
+  <p style="color:var(--text-muted); font-size:0.95rem;">Python GIL — Interactive Learning Guide</p>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">Built with HTML, CSS & vanilla JS</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+// Scroll Reveal
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// Active Nav Link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Accordion Toggle
+function toggleQA(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// Copy Code
+function copyCode(btn) {
+  const codeBody = btn.closest('.code-editor').querySelector('.code-body pre');
+  const text = codeBody.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

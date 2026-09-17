@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Basics — Interactive Learning Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224);
+  --primary-glow: rgba(58, 114, 224, 0.25);
+  --primary-light: #e8f0fe;
+  --primary-dark: #2a5db8;
+  --bg: #f5f7fb;
+  --bg-secondary: #eef2f7;
+  --card-bg: #ffffff;
+  --card-border: #dbe4ff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --code-bg: #1e293b;
+  --font: 'Inter','Segoe UI',Roboto,sans-serif;
+  --mono: 'Fira Code','JetBrains Mono','Cascadia Code',monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --glow: 0 4px 20px rgba(58,114,224,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border);
+  transition: all 0.3s;
+}
+
+.nav-logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--primary), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--primary);
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* Sections */
+section {
+  padding: 60px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Hero */
+.hero-section {
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 140px 40px 80px;
+  overflow: hidden;
+  background: #ffffff;
+  max-width: 100%;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(58,114,224,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 750px;
+}
+
+.hero-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--card-border);
+  background: #ffffff;
+  color: var(--text-muted);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.hero-badge.primary {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+.hero-title span {
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 36px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--primary-glow);
+}
+
+.btn-ghost {
+  background: #ffffff;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+}
+
+.btn-ghost:hover {
+  background: #f8fafc;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--glow);
+  transform: translateY(-4px);
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.section-desc {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Grids */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* Code Blocks */
+.code-editor {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #161b22;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.code-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.code-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+
+.code-dot.red { background: #ff5f57; }
+.code-dot.yellow { background: #febc2e; }
+.code-dot.green { background: #28c840; }
+
+.code-filename {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.code-copy {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+
+.code-copy:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+
+.code-body {
+  padding: 24px;
+  background: var(--code-bg);
+  overflow-x: auto;
+}
+
+.code-body pre {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #e6edf3;
+  margin: 0;
+}
+
+/* Syntax Colors */
+.kw { color: #ff7b72; }
+.fn { color: #d2a8ff; }
+.st { color: #a5d6ff; }
+.cm { color: #8b949e; }
+.op { color: #79c0ff; }
+.num { color: #79c0ff; }
+.dec { color: #ffa657; }
+.bi { color: #79c0ff; }
+.param { color: #ffa657; }
+.cls { color: #f0883e; }
+
+/* Output Block */
+.output-block {
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: #065f46;
+}
+
+.output-block::before {
+  content: '▶ Output';
+  display: block;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--success);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Diagram */
+.diagram-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 40px;
+  margin: 32px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.diagram-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+  color: var(--primary-dark);
+}
+
+.diagram-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  position: relative;
+}
+
+/* Flow Nodes */
+.flow-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.flow-node {
+  padding: 16px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 2px solid var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  position: relative;
+}
+
+.flow-node.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(58,114,224,0.3);
+}
+
+.flow-node.success {
+  border-color: var(--success);
+  background: rgba(16,185,129,0.1);
+  color: #065f46;
+}
+
+.flow-node.warning {
+  border-color: var(--warning);
+  background: rgba(245,158,11,0.1);
+  color: #92400e;
+}
+
+.flow-arrow {
+  color: var(--primary);
+  font-size: 1.4rem;
+}
+
+/* Interview Cards */
+.qa-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.qa-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--glow);
+}
+
+.qa-question {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  background: #f8fafc;
+}
+
+.qa-question:hover {
+  background: var(--primary-light);
+}
+
+.qa-num {
+  width: 32px; height: 32px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.qa-text {
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.qa-toggle {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+}
+
+.qa-card.open .qa-toggle {
+  transform: rotate(180deg);
+}
+
+.qa-answer {
+  padding: 0 24px;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qa-card.open .qa-answer {
+  padding: 0 24px 24px;
+  max-height: 800px;
+}
+
+.qa-answer-content {
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+  color: var(--text);
+  line-height: 1.8;
+}
+
+.qa-tip {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--primary-light);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  border-left: 3px solid var(--primary);
+}
+
+/* Use Case Cards */
+.usecase-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.usecase-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), #a78bfa);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.usecase-card:hover::before { opacity: 1; }
+
+.usecase-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+  box-shadow: var(--glow);
+}
+
+.usecase-icon {
+  width: 48px; height: 48px;
+  background: var(--primary-light);
+  border: 1px solid rgba(58,114,224,0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+}
+
+.usecase-card h4 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.usecase-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  display: table;
+}
+
+th {
+  background: var(--primary);
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 0.85rem;
+  color: var(--text);
+  vertical-align: top;
+}
+
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: var(--primary-light); }
+
+/* Comparison Cards */
+.compare-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.compare-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--glow);
+  transform: translateY(-4px);
+}
+
+.compare-card .icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 1.5rem;
+}
+
+.compare-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.compare-card .tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.compare-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Scroll Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  section { padding: 40px 20px; }
+  .nav { padding: 12px 20px; }
+  .nav-links { display: none; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .hero-title { font-size: 2.5rem; }
+  .hero-section { padding: 100px 20px 50px; }
+  .hero-subtitle { font-size: 1rem; }
+  .glass-card { padding: 20px; overflow-x: auto; }
+  table { min-width: 600px; }
+  .code-body { padding: 16px; }
+  .code-body pre { font-size: 0.8rem; }
+  .diagram-wrapper { padding: 20px 12px; }
+  .qa-question { padding: 16px; }
+  .qa-answer-content { font-size: 0.9rem; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🐍 PyBasics</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#collections">Collections</a></li>
+    <li><a href="#mapfilterreduce">Map/Filter/Reduce</a></li>
+    <li><a href="#lambda">Lambda</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badges">
+      <span class="hero-badge primary">🐍 Python</span>
+      <span class="hero-badge">📦 Data Structures</span>
+      <span class="hero-badge">⏱ 25 min read</span>
+      <span class="hero-badge">🎯 Essential</span>
+    </div>
+    <h1 class="hero-title">Python <span>Basics</span></h1>
+    <p class="hero-subtitle">Master the core building blocks — Lists, Tuples, Arrays, Sets, and functional tools like Map, Filter, Reduce & Lambda functions.</p>
+    <div class="hero-cta">
+      <a href="#collections" class="btn btn-primary">Start Learning →</a>
+      <a href="#examples" class="btn btn-ghost">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview">
+  <div class="section-header reveal">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-title">What You'll Learn</h2>
+    <p class="section-desc">Three fundamental topics every Python developer must know cold.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="glass-card reveal" style="border-left:4px solid rgb(58,114,224);">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">📦</div>
+        <h4 style="margin:0; font-size:1.05rem;">List vs Tuple vs Array vs Set</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Understand when to use which collection — mutability, ordering, uniqueness, and performance trade-offs.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #7c3aed;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#f3f0ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🔄</div>
+        <h4 style="margin:0; font-size:1.05rem;">Map vs Filter vs Reduce</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Functional programming tools for transforming, filtering, and aggregating data without writing loops.</p>
+    </div>
+
+    <div class="glass-card reveal" style="border-left:4px solid #059669;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">⚡</div>
+        <h4 style="margin:0; font-size:1.05rem;">Lambda Functions</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">One-line anonymous functions — perfect for quick operations, sorting keys, and functional programming.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Collections Section -->
+<section id="collections">
+  <div class="section-header reveal">
+    <div class="section-label">Data Structures</div>
+    <h2 class="section-title">List vs Tuple vs Array vs Set</h2>
+    <p class="section-desc">Four ways to store collections of data. Each has a purpose — pick the right one.</p>
+  </div>
+
+  <!-- Quick Overview Cards -->
+  <div class="grid-2 reveal" style="margin-bottom:40px;">
+    <div class="compare-card">
+      <div class="icon" style="background:#e8f0fe; border:1px solid rgba(58,114,224,0.3);">📋</div>
+      <h4>List</h4>
+      <span class="tag" style="background:#e8f0fe; color:var(--primary);">Mutable • Ordered</span>
+      <p>The Swiss Army knife. Use when you need a flexible, ordered collection that you'll modify — add, remove, sort, slice.</p>
+      <div style="margin-top:12px; padding:10px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3;">
+        fruits = ["apple", "banana", "cherry"]
+      </div>
+    </div>
+
+    <div class="compare-card">
+      <div class="icon" style="background:#ecfdf5; border:1px solid rgba(5,150,105,0.3);">🔒</div>
+      <h4>Tuple</h4>
+      <span class="tag" style="background:#ecfdf5; color:#059669;">Immutable • Ordered</span>
+      <p>Like a list, but frozen. Once created, you can't change it. Use for fixed data — coordinates, RGB colors, database rows.</p>
+      <div style="margin-top:12px; padding:10px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3;">
+        point = (10, 20, 30)
+      </div>
+    </div>
+
+    <div class="compare-card">
+      <div class="icon" style="background:#fff7ed; border:1px solid rgba(217,119,6,0.3);">⚡</div>
+      <h4>Array</h4>
+      <span class="tag" style="background:#fff7ed; color:#d97706;">Typed • Compact</span>
+      <p>Stores only one data type. Uses less memory than lists. Use for large numeric datasets or when performance matters.</p>
+      <div style="margin-top:12px; padding:10px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3;">
+        nums = array('i', [1, 2, 3, 4])
+      </div>
+    </div>
+
+    <div class="compare-card">
+      <div class="icon" style="background:#fef2f2; border:1px solid rgba(239,68,68,0.3);">🎯</div>
+      <h4>Set</h4>
+      <span class="tag" style="background:#fef2f2; color:#ef4444;">Unique • Unordered</span>
+      <p>No duplicates allowed. Lightning-fast lookups. Use when you need uniqueness or set operations (union, intersection).</p>
+      <div style="margin-top:12px; padding:10px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3;">
+        tags = {"python", "coding", "dev"}
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Full Comparison Table</h3>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>List</th><th>Tuple</th><th>Array</th><th>Set</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Syntax</strong></td><td><code>[1, 2, 3]</code></td><td><code>(1, 2, 3)</code></td><td><code>array('i', [1,2,3])</code></td><td><code>{1, 2, 3}</code></td></tr>
+        <tr><td><strong>Mutable?</strong></td><td>✅ Yes</td><td>❌ No</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+        <tr><td><strong>Ordered?</strong></td><td>✅ Yes</td><td>✅ Yes</td><td>✅ Yes</td><td>❌ No</td></tr>
+        <tr><td><strong>Indexing?</strong></td><td>✅ Yes</td><td>✅ Yes</td><td>✅ Yes</td><td>❌ No</td></tr>
+        <tr><td><strong>Duplicates?</strong></td><td>✅ Allowed</td><td>✅ Allowed</td><td>✅ Allowed</td><td>❌ No duplicates</td></tr>
+        <tr><td><strong>Mixed Types?</strong></td><td>✅ Yes</td><td>✅ Yes</td><td>❌ Single type</td><td>✅ Yes (hashable)</td></tr>
+        <tr><td><strong>Memory</strong></td><td>More</td><td>Less than list</td><td>Least (typed)</td><td>More (hash table)</td></tr>
+        <tr><td><strong>Lookup Speed</strong></td><td>O(n) linear</td><td>O(n) linear</td><td>O(n) linear</td><td>O(1) constant</td></tr>
+        <tr><td><strong>Import Needed?</strong></td><td>No</td><td>No</td><td><code>from array import array</code></td><td>No</td></tr>
+        <tr><td><strong>Use Case</strong></td><td>General purpose</td><td>Fixed data, dict keys</td><td>Numeric computation</td><td>Uniqueness, membership</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Visual Diagram: When to Use What -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Decision Tree: Which Collection Should I Use?</div>
+    <div class="diagram-desc">Follow the questions to pick the right data structure</div>
+    <div style="text-align:left; max-width:700px; margin:0 auto;">
+      <div style="padding:16px 20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border); margin-bottom:12px;">
+        <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+          <strong>❓ Do you need to modify the data after creation?</strong><br>
+          &nbsp;&nbsp;├─ <span style="color:var(--danger);">No</span> → <strong style="color:#059669;">Use a Tuple</strong> (immutable, faster, hashable)<br>
+          &nbsp;&nbsp;└─ <span style="color:var(--success);">Yes</span> → Keep going ↓
+        </p>
+      </div>
+      <div style="padding:16px 20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border); margin-bottom:12px;">
+        <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+          <strong>❓ Do you need unique values only?</strong><br>
+          &nbsp;&nbsp;├─ <span style="color:var(--success);">Yes</span> → <strong style="color:#ef4444;">Use a Set</strong> (auto-deduplication, O(1) lookup)<br>
+          &nbsp;&nbsp;└─ <span style="color:var(--danger);">No</span> → Keep going ↓
+        </p>
+      </div>
+      <div style="padding:16px 20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border); margin-bottom:12px;">
+        <p style="font-size:0.9rem; color:var(--text); line-height:1.8; margin:0;">
+          <strong>❓ Is all your data the same numeric type?</strong><br>
+          &nbsp;&nbsp;├─ <span style="color:var(--success);">Yes</span> → <strong style="color:#d97706;">Use an Array</strong> (memory efficient, typed)<br>
+          &nbsp;&nbsp;└─ <span style="color:var(--danger);">No</span> → <strong style="color:var(--primary);">Use a List</strong> (flexible, general purpose)
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code Examples for Collections -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">List — The Flexible Workhorse</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Ordered, mutable, allows duplicates. Your go-to for most situations.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">list_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Creating lists</span>
+fruits = [<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"cherry"</span>]
+mixed = [<span class="num">1</span>, <span class="st">"hello"</span>, <span class="num">3.14</span>, <span class="op">True</span>]  <span class="cm"># mixed types OK</span>
+
+<span class="cm"># Mutability — you can change it</span>
+fruits[<span class="num">0</span>] = <span class="st">"avocado"</span>       <span class="cm"># replace item</span>
+fruits.append(<span class="st">"date"</span>)        <span class="cm"># add to end</span>
+fruits.insert(<span class="num">1</span>, <span class="st">"blueberry"</span>) <span class="cm"># add at index</span>
+fruits.remove(<span class="st">"banana"</span>)      <span class="cm"># remove by value</span>
+popped = fruits.pop()         <span class="cm"># remove & return last</span>
+
+<span class="cm"># Slicing</span>
+first_two = fruits[:<span class="num">2</span>]       <span class="cm"># ["avocado", "blueberry"]</span>
+reversed_list = fruits[::-<span class="num">1</span>]  <span class="cm"># reverse the list</span>
+
+<span class="cm"># Useful operations</span>
+fruits.sort()                  <span class="cm"># sort in place</span>
+length = <span class="bi">len</span>(fruits)          <span class="cm"># count items</span>
+exists = <span class="st">"apple"</span> <span class="kw">in</span> fruits   <span class="cm"># membership check O(n)</span>
+
+<span class="bi">print</span>(fruits)</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+['avocado', 'blueberry', 'cherry']
+    </div>
+  </div>
+
+  <!-- Tuple -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Tuple — The Immutable Record</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Once created, it can't be changed. Faster than lists, can be used as dictionary keys.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">tuple_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Creating tuples</span>
+point = (<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>)
+rgb = (<span class="num">255</span>, <span class="num">128</span>, <span class="num">0</span>)
+single = (<span class="num">42</span>,)  <span class="cm"># single-element tuple needs trailing comma</span>
+
+<span class="cm"># Indexing works just like lists</span>
+x = point[<span class="num">0</span>]       <span class="cm"># 10</span>
+y = point[<span class="num">1</span>]       <span class="cm"># 20</span>
+
+<span class="cm"># Unpacking — super useful</span>
+x, y, z = point    <span class="cm"># x=10, y=20, z=30</span>
+first, *rest = (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>)  <span class="cm"># first=1, rest=[2,3,4]</span>
+
+<span class="cm"># Immutable — this would crash:</span>
+<span class="cm"># point[0] = 99  → TypeError!</span>
+
+<span class="cm"># Can be used as dictionary keys (lists can't)</span>
+locations = {
+    (<span class="num">40.7</span>, -<span class="num">74.0</span>): <span class="st">"New York"</span>,
+    (<span class="num">51.5</span>, -<span class="num">0.1</span>): <span class="st">"London"</span>,
+}
+
+<span class="cm"># Named tuples for clarity</span>
+<span class="kw">from</span> collections <span class="kw">import</span> namedtuple
+Point = namedtuple(<span class="st">"Point"</span>, [<span class="st">"x"</span>, <span class="st">"y"</span>])
+p = Point(<span class="num">10</span>, <span class="num">20</span>)
+<span class="bi">print</span>(p.x, p.y)  <span class="cm"># access by name</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+10 20
+    </div>
+  </div>
+
+  <!-- Array -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Array — The Memory-Efficient Specialist</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Stores only one data type. Uses way less memory than lists for large numeric datasets.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">array_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> array <span class="kw">import</span> array
+
+<span class="cm"># Type codes: 'i'=int, 'f'=float, 'd'=double, 'u'=unicode</span>
+integers = array(<span class="st">'i'</span>, [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+floats = array(<span class="st">'f'</span>, [<span class="num">1.5</span>, <span class="num">2.7</span>, <span class="num">3.14</span>])
+
+<span class="cm"># Mutable — can modify in place</span>
+integers[<span class="num">0</span>] = <span class="num">99</span>
+integers.append(<span class="num">6</span>)
+integers.extend([<span class="num">7</span>, <span class="num">8</span>])
+
+<span class="cm"># But type-restricted — this would crash:</span>
+<span class="cm"># integers.append("hello")  → TypeError!</span>
+<span class="cm"># integers.append(3.14)     → TypeError! (expects int)</span>
+
+<span class="cm"># Memory comparison</span>
+<span class="kw">import</span> sys
+list_nums = <span class="bi">list</span>(<span class="bi">range</span>(<span class="num">1000</span>))
+array_nums = array(<span class="st">'i'</span>, <span class="bi">range</span>(<span class="num">1000</span>))
+
+<span class="bi">print</span>(<span class="st">f"List:  {sys.getsizeof(list_nums)} bytes"</span>)
+<span class="bi">print</span>(<span class="st">f"Array: {sys.getsizeof(array_nums)} bytes"</span>)
+
+<span class="cm"># For serious number crunching, use NumPy instead</span>
+<span class="cm"># import numpy as np</span>
+<span class="cm"># np_array = np.array([1, 2, 3, 4, 5])</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+List:  8856 bytes
+Array: 4064 bytes
+    </div>
+  </div>
+
+  <!-- Set -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Set — The Uniqueness Enforcer</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">No duplicates, no ordering, but blazing fast lookups. Perfect for membership testing and deduplication.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">set_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Creating sets — duplicates auto-removed</span>
+colors = {<span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"red"</span>, <span class="st">"green"</span>}
+<span class="bi">print</span>(colors)  <span class="cm"># {'red', 'blue', 'green'} — no duplicate!</span>
+
+<span class="cm"># Deduplication trick</span>
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">3</span>, <span class="num">3</span>]
+unique = <span class="bi">list</span>(<span class="bi">set</span>(nums))  <span class="cm"># [1, 2, 3]</span>
+
+<span class="cm"># Fast membership testing — O(1) vs O(n) for lists</span>
+valid_users = {<span class="st">"alice"</span>, <span class="st">"bob"</span>, <span class="st">"charlie"</span>}
+<span class="bi">print</span>(<span class="st">"alice"</span> <span class="kw">in</span> valid_users)  <span class="cm"># True — instant lookup</span>
+
+<span class="cm"># Set operations — super powerful</span>
+a = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}
+b = {<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}
+
+<span class="bi">print</span>(a | b)   <span class="cm"># Union:        {1, 2, 3, 4, 5, 6}</span>
+<span class="bi">print</span>(a & b)   <span class="cm"># Intersection: {3, 4}</span>
+<span class="bi">print</span>(a - b)   <span class="cm"># Difference:   {1, 2}</span>
+<span class="bi">print</span>(a ^ b)   <span class="cm"># Symmetric:    {1, 2, 5, 6}</span>
+
+<span class="cm"># Modifying sets</span>
+colors.add(<span class="st">"yellow"</span>)
+colors.discard(<span class="st">"red"</span>)  <span class="cm"># remove without error if missing</span>
+
+<span class="cm"># Frozen set — immutable version (can be dict key)</span>
+frozen = <span class="bi">frozenset</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+{'red', 'blue', 'green'}
+True
+{1, 2, 3, 4, 5, 6}
+{3, 4}
+{1, 2}
+{1, 2, 5, 6}
+    </div>
+  </div>
+</section>
+
+<!-- Map, Filter, Reduce Section -->
+<section id="mapfilterreduce">
+  <div class="section-header reveal">
+    <div class="section-label">Functional Programming</div>
+    <h2 class="section-title">Map vs Filter vs Reduce</h2>
+    <p class="section-desc">Three tools that let you process data without writing explicit loops.</p>
+  </div>
+
+  <!-- Visual Overview -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">The Functional Trio — What Each One Does</div>
+    <div class="diagram-desc">Transform, select, or combine — each tool has one job</div>
+    <div class="flow-container" style="gap:32px;">
+      <div style="text-align:center; flex:1; min-width:200px;">
+        <div class="flow-node active" style="display:inline-block; margin-bottom:12px;">map()</div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;"><strong>Transform</strong><br>Apply a function to every item.<br><code>[1,2,3] → [2,4,6]</code></p>
+      </div>
+      <div style="text-align:center; flex:1; min-width:200px;">
+        <div class="flow-node warning" style="display:inline-block; margin-bottom:12px;">filter()</div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;"><strong>Select</strong><br>Keep items that pass a test.<br><code>[1,2,3,4] → [2,4]</code></p>
+      </div>
+      <div style="text-align:center; flex:1; min-width:200px;">
+        <div class="flow-node success" style="display:inline-block; margin-bottom:12px;">reduce()</div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;"><strong>Combine</strong><br>Reduce all items to one value.<br><code>[1,2,3,4] → 10</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">map() — Transform Every Item</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Applies a function to each element and returns a new iterable. Think: "do this to everything."</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">map_examples.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Syntax: map(function, iterable)</span>
+
+<span class="cm"># Double every number</span>
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+doubled = <span class="bi">list</span>(<span class="bi">map</span>(<span class="kw">lambda</span> x: x * <span class="num">2</span>, nums))
+<span class="bi">print</span>(doubled)  <span class="cm"># [2, 4, 6, 8, 10]</span>
+
+<span class="cm"># Convert strings to uppercase</span>
+names = [<span class="st">"alice"</span>, <span class="st">"bob"</span>, <span class="st">"charlie"</span>]
+upper = <span class="bi">list</span>(<span class="bi">map</span>(<span class="bi">str</span>.upper, names))
+<span class="bi">print</span>(upper)  <span class="cm"># ['ALICE', 'BOB', 'CHARLIE']</span>
+
+<span class="cm"># Convert list of strings to integers</span>
+str_nums = [<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>]
+int_nums = <span class="bi">list</span>(<span class="bi">map</span>(<span class="bi">int</span>, str_nums))
+<span class="bi">print</span>(int_nums)  <span class="cm"># [1, 2, 3]</span>
+
+<span class="cm"># Map with multiple iterables</span>
+a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+b = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+sums = <span class="bi">list</span>(<span class="bi">map</span>(<span class="kw">lambda</span> x, y: x + y, a, b))
+<span class="bi">print</span>(sums)  <span class="cm"># [11, 22, 33]</span>
+
+<span class="cm"># Equivalent list comprehension (often preferred)</span>
+doubled_lc = [x * <span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums]</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+[2, 4, 6, 8, 10]
+['ALICE', 'BOB', 'CHARLIE']
+[1, 2, 3]
+[11, 22, 33]
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">filter() — Keep Only What Passes</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Tests each element with a function. Keeps it if the function returns True, drops it otherwise.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">filter_examples.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Syntax: filter(function, iterable)</span>
+
+<span class="cm"># Keep only even numbers</span>
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>]
+evens = <span class="bi">list</span>(<span class="bi">filter</span>(<span class="kw">lambda</span> x: x % <span class="num">2</span> == <span class="num">0</span>, nums))
+<span class="bi">print</span>(evens)  <span class="cm"># [2, 4, 6, 8]</span>
+
+<span class="cm"># Filter out empty strings</span>
+words = [<span class="st">"hello"</span>, <span class="st">""</span>, <span class="st">"world"</span>, <span class="st">""</span>, <span class="st">"python"</span>]
+non_empty = <span class="bi">list</span>(<span class="bi">filter</span>(<span class="op">None</span>, words))  <span class="cm"># None = truthy test</span>
+<span class="bi">print</span>(non_empty)  <span class="cm"># ['hello', 'world', 'python']</span>
+
+<span class="cm"># Filter adults from a list of ages</span>
+ages = [<span class="num">12</span>, <span class="num">18</span>, <span class="num">25</span>, <span class="num">8</span>, <span class="num">30</span>, <span class="num">15</span>]
+adults = <span class="bi">list</span>(<span class="bi">filter</span>(<span class="kw">lambda</span> age: age >= <span class="num">18</span>, ages))
+<span class="bi">print</span>(adults)  <span class="cm"># [18, 25, 30]</span>
+
+<span class="cm"># Filter with a named function</span>
+<span class="kw">def</span> <span class="fn">is_positive</span>(<span class="param">n</span>):
+    <span class="kw">return</span> n > <span class="num">0</span>
+
+mixed = [-<span class="num">3</span>, -<span class="num">1</span>, <span class="num">0</span>, <span class="num">2</span>, <span class="num">5</span>]
+positives = <span class="bi">list</span>(<span class="bi">filter</span>(is_positive, mixed))
+<span class="bi">print</span>(positives)  <span class="cm"># [2, 5]</span>
+
+<span class="cm"># Equivalent list comprehension</span>
+evens_lc = [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+[2, 4, 6, 8]
+['hello', 'world', 'python']
+[18, 25, 30]
+[2, 5]
+    </div>
+  </div>
+
+  <!-- Reduce -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">reduce() — Collapse Into One Value</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Takes a list and reduces it to a single value by applying a function cumulatively. Think: sum, product, max.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">reduce_examples.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+<span class="cm"># Syntax: reduce(function, iterable, [initial])</span>
+
+<span class="cm"># Sum all numbers (reduce takes 2 args at a time)</span>
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+total = reduce(<span class="kw">lambda</span> acc, x: acc + x, nums)
+<span class="bi">print</span>(total)  <span class="cm"># 15  (1+2=3, 3+3=6, 6+4=10, 10+5=15)</span>
+
+<span class="cm"># Product of all numbers</span>
+product = reduce(<span class="kw">lambda</span> acc, x: acc * x, nums)
+<span class="bi">print</span>(product)  <span class="cm"># 120  (1*2*3*4*5)</span>
+
+<span class="cm"># Find maximum value</span>
+maximum = reduce(<span class="kw">lambda</span> a, b: a <span class="kw">if</span> a > b <span class="kw">else</span> b, nums)
+<span class="bi">print</span>(maximum)  <span class="cm"># 5</span>
+
+<span class="cm"># With initial value</span>
+total_with_init = reduce(<span class="kw">lambda</span> acc, x: acc + x, nums, <span class="num">100</span>)
+<span class="bi">print</span>(total_with_init)  <span class="cm"># 115  (starts from 100)</span>
+
+<span class="cm"># Flatten nested lists</span>
+nested = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>], [<span class="num">5</span>, <span class="num">6</span>]]
+flat = reduce(<span class="kw">lambda</span> acc, lst: acc + lst, nested)
+<span class="bi">print</span>(flat)  <span class="cm"># [1, 2, 3, 4, 5, 6]</span>
+
+<span class="cm"># Build a dictionary from pairs</span>
+pairs = [(<span class="st">"a"</span>, <span class="num">1</span>), (<span class="st">"b"</span>, <span class="num">2</span>), (<span class="st">"c"</span>, <span class="num">3</span>)]
+result = reduce(<span class="kw">lambda</span> d, pair: {**d, pair[<span class="num">0</span>]: pair[<span class="num">1</span>]}, pairs, {})
+<span class="bi">print</span>(result)  <span class="cm"># {'a': 1, 'b': 2, 'c': 3}</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+15
+120
+5
+115
+[1, 2, 3, 4, 5, 6]
+{'a': 1, 'b': 2, 'c': 3}
+    </div>
+  </div>
+
+  <!-- Chaining -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Chaining — Combining Map, Filter & Reduce</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The real power comes from chaining these together into a data pipeline.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">chaining_example.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+<span class="cm"># Problem: Sum the squares of all even numbers</span>
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>]
+
+<span class="cm"># Step 1: Filter even numbers → [2, 4, 6, 8, 10]</span>
+<span class="cm"># Step 2: Map to squares     → [4, 16, 36, 64, 100]</span>
+<span class="cm"># Step 3: Reduce to sum      → 220</span>
+
+result = reduce(
+    <span class="kw">lambda</span> acc, x: acc + x,
+    <span class="bi">map</span>(
+        <span class="kw">lambda</span> x: x ** <span class="num">2</span>,
+        <span class="bi">filter</span>(<span class="kw">lambda</span> x: x % <span class="num">2</span> == <span class="num">0</span>, nums)
+    )
+)
+<span class="bi">print</span>(<span class="st">f"Sum of squares of evens: {result}"</span>)
+
+<span class="cm"># Same thing with list comprehension + sum()</span>
+result_lc = <span class="bi">sum</span>(x ** <span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>)
+<span class="bi">print</span>(<span class="st">f"Same result: {result_lc}"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+Sum of squares of evens: 220
+Same result: 220
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.7; margin:0;">
+        <strong>When to use what:</strong> Use <code>map/filter/reduce</code> when you're working in a functional style or passing functions around. Use list comprehensions when readability matters more — they're often clearer for simple transformations. Both are valid Python.
+      </p>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="glass-card reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Map vs Filter vs Reduce — At a Glance</h3>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>map()</th><th>filter()</th><th>reduce()</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Purpose</strong></td><td>Transform each item</td><td>Select items by condition</td><td>Combine all into one value</td></tr>
+        <tr><td><strong>Input</strong></td><td>Iterable</td><td>Iterable</td><td>Iterable</td></tr>
+        <tr><td><strong>Output</strong></td><td>Same-length iterable</td><td>Shorter/same iterable</td><td>Single value</td></tr>
+        <tr><td><strong>Function takes</strong></td><td>1 arg (item)</td><td>1 arg (item) → bool</td><td>2 args (accumulator, item)</td></tr>
+        <tr><td><strong>Import needed?</strong></td><td>No (built-in)</td><td>No (built-in)</td><td>Yes: <code>from functools import reduce</code></td></tr>
+        <tr><td><strong>Returns</strong></td><td>map object (lazy)</td><td>filter object (lazy)</td><td>Final accumulated value</td></tr>
+        <tr><td><strong>Alternative</strong></td><td>List comprehension</td><td>List comp with <code>if</code></td><td><code>sum()</code>, <code>max()</code>, loops</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Lambda Section -->
+<section id="lambda">
+  <div class="section-header reveal">
+    <div class="section-label">Anonymous Functions</div>
+    <h2 class="section-title">Lambda Functions</h2>
+    <p class="section-desc">One-line throwaway functions. No name, no fuss — just logic.</p>
+  </div>
+
+  <!-- What is Lambda -->
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">What's a Lambda?</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">A lambda is a small anonymous function defined in a single expression. It can take any number of arguments but can only have one expression. Think of it as a quick, disposable function you use once and throw away.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">lambda arguments: expression</code>
+      <br><br>
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);"># Equivalent to:</code><br>
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">def anonymous(arguments): return expression</code>
+    </div>
+  </div>
+
+  <!-- Lambda Basics -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Lambda Basics — Inline Functions</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Simple one-liners that replace short function definitions.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">lambda_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Basic lambda — add two numbers</span>
+add = <span class="kw">lambda</span> x, y: x + y
+<span class="bi">print</span>(add(<span class="num">3</span>, <span class="num">5</span>))  <span class="cm"># 8</span>
+
+<span class="cm"># Square a number</span>
+square = <span class="kw">lambda</span> x: x ** <span class="num">2</span>
+<span class="bi">print</span>(square(<span class="num">4</span>))  <span class="cm"># 16</span>
+
+<span class="cm"># Multiple arguments</span>
+full_name = <span class="kw">lambda</span> first, last: <span class="st">f"</span>{first} {last}<span class="st">"</span>
+<span class="bi">print</span>(full_name(<span class="st">"John"</span>, <span class="st">"Doe"</span>))  <span class="cm"># John Doe</span>
+
+<span class="cm"># No arguments</span>
+greet = <span class="kw">lambda</span>: <span class="st">"Hello, World!"</span>
+<span class="bi">print</span>(greet())  <span class="cm"># Hello, World!</span>
+
+<span class="cm"># Default arguments</span>
+power = <span class="kw">lambda</span> base, exp=<span class="num">2</span>: base ** exp
+<span class="bi">print</span>(power(<span class="num">3</span>))     <span class="cm"># 9  (3²)</span>
+<span class="bi">print</span>(power(<span class="num">3</span>, <span class="num">3</span>))  <span class="cm"># 27 (3³)</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+8
+16
+John Doe
+Hello, World!
+9
+27
+    </div>
+  </div>
+
+  <!-- Lambda with Sorting -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Lambda with Sorting — Custom Sort Keys</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The most common real-world use of lambda — telling Python <em>how</em> to sort your data.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">lambda_sorting.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Sort strings by length</span>
+words = [<span class="st">"python"</span>, <span class="st">"is"</span>, <span class="st">"awesome"</span>, <span class="st">"and"</span>, <span class="st">"fun"</span>]
+by_length = <span class="bi">sorted</span>(words, key=<span class="kw">lambda</span> w: <span class="bi">len</span>(w))
+<span class="bi">print</span>(by_length)  <span class="cm"># ['is', 'and', 'fun', 'python', 'awesome']</span>
+
+<span class="cm"># Sort dictionaries by a specific key</span>
+students = [
+    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"grade"</span>: <span class="num">92</span>},
+    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"grade"</span>: <span class="num">85</span>},
+    {<span class="st">"name"</span>: <span class="st">"Charlie"</span>, <span class="st">"grade"</span>: <span class="num">98</span>},
+]
+by_grade = <span class="bi">sorted</span>(students, key=<span class="kw">lambda</span> s: s[<span class="st">"grade"</span>], reverse=<span class="op">True</span>)
+<span class="bi">print</span>(by_grade[<span class="num">0</span>][<span class="st">"name"</span>])  <span class="cm"># Charlie (highest grade)</span>
+
+<span class="cm"># Sort tuples by second element</span>
+pairs = [(<span class="num">1</span>, <span class="st">"b"</span>), (<span class="num">3</span>, <span class="st">"a"</span>), (<span class="num">2</span>, <span class="st">"c"</span>)]
+by_second = <span class="bi">sorted</span>(pairs, key=<span class="kw">lambda</span> p: p[<span class="num">1</span>])
+<span class="bi">print</span>(by_second)  <span class="cm"># [(3, 'a'), (1, 'b'), (2, 'c')]</span>
+
+<span class="cm"># Sort with multiple criteria</span>
+people = [(<span class="st">"Alice"</span>, <span class="num">30</span>), (<span class="st">"Bob"</span>, <span class="num">25</span>), (<span class="st">"Alice"</span>, <span class="num">25</span>)]
+by_name_age = <span class="bi">sorted</span>(people, key=<span class="kw">lambda</span> p: (p[<span class="num">0</span>], p[<span class="num">1</span>]))
+<span class="bi">print</span>(by_name_age)  <span class="cm"># [('Alice', 25), ('Alice', 30), ('Bob', 25)]</span>
+
+<span class="cm"># max/min with key</span>
+longest = <span class="bi">max</span>(words, key=<span class="kw">lambda</span> w: <span class="bi">len</span>(w))
+<span class="bi">print</span>(longest)  <span class="cm"># awesome</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+['is', 'and', 'fun', 'python', 'awesome']
+Charlie
+[(3, 'a'), (1, 'b'), (2, 'c')]
+[('Alice', 25), ('Alice', 30), ('Bob', 25)]
+awesome
+    </div>
+  </div>
+
+  <!-- Lambda with Map/Filter -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Lambda with Map & Filter</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Lambda shines when paired with functional tools — no need to define a named function for a one-off operation.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">lambda_functional.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Lambda + map: transform data</span>
+prices = [<span class="num">10.5</span>, <span class="num">20.0</span>, <span class="num">35.99</span>, <span class="num">8.75</span>]
+with_tax = <span class="bi">list</span>(<span class="bi">map</span>(<span class="kw">lambda</span> p: <span class="bi">round</span>(p * <span class="num">1.1</span>, <span class="num">2</span>), prices))
+<span class="bi">print</span>(with_tax)  <span class="cm"># [11.55, 22.0, 39.59, 9.62]</span>
+
+<span class="cm"># Lambda + filter: select data</span>
+temps = [<span class="num">72</span>, <span class="num">85</span>, <span class="num">60</span>, <span class="num">90</span>, <span class="num">68</span>, <span class="num">95</span>]
+hot_days = <span class="bi">list</span>(<span class="bi">filter</span>(<span class="kw">lambda</span> t: t > <span class="num">80</span>, temps))
+<span class="bi">print</span>(hot_days)  <span class="cm"># [85, 90, 95]</span>
+
+<span class="cm"># Lambda + map + filter: pipeline</span>
+names = [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>, <span class="st">"Dave"</span>, <span class="st">"Eve"</span>]
+<span class="cm"># Get uppercase names longer than 3 chars</span>
+result = <span class="bi">list</span>(
+    <span class="bi">map</span>(
+        <span class="kw">lambda</span> n: n.upper(),
+        <span class="bi">filter</span>(<span class="kw">lambda</span> n: <span class="bi">len</span>(n) > <span class="num">3</span>, names)
+    )
+)
+<span class="bi">print</span>(result)  <span class="cm"># ['ALICE', 'CHARLIE', 'DAVE']</span>
+
+<span class="cm"># Lambda with reduce</span>
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+sentence = [<span class="st">"Python"</span>, <span class="st">"is"</span>, <span class="st">"awesome"</span>]
+joined = reduce(<span class="kw">lambda</span> a, b: a + <span class="st">" "</span> + b, sentence)
+<span class="bi">print</span>(joined)  <span class="cm"># Python is awesome</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+[11.55, 22.0, 39.59, 9.62]
+[85, 90, 95]
+['ALICE', 'CHARLIE', 'DAVE']
+Python is awesome
+    </div>
+  </div>
+
+  <!-- Conditional Lambda -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Conditional Lambda — Ternary Expressions</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">You can use if/else inside a lambda for simple conditional logic.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">lambda_conditional.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Basic conditional lambda</span>
+classify = <span class="kw">lambda</span> x: <span class="st">"even"</span> <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span> <span class="kw">else</span> <span class="st">"odd"</span>
+<span class="bi">print</span>(classify(<span class="num">4</span>))  <span class="cm"># even</span>
+<span class="bi">print</span>(classify(<span class="num">7</span>))  <span class="cm"># odd</span>
+
+<span class="cm"># Grade classifier</span>
+grade = <span class="kw">lambda</span> score: <span class="st">"A"</span> <span class="kw">if</span> score >= <span class="num">90</span> <span class="kw">else</span> (<span class="st">"B"</span> <span class="kw">if</span> score >= <span class="num">80</span> <span class="kw">else</span> <span class="st">"C"</span>)
+<span class="bi">print</span>(grade(<span class="num">95</span>))  <span class="cm"># A</span>
+<span class="bi">print</span>(grade(<span class="num">85</span>))  <span class="cm"># B</span>
+<span class="bi">print</span>(grade(<span class="num">70</span>))  <span class="cm"># C</span>
+
+<span class="cm"># Clamp a value between min and max</span>
+clamp = <span class="kw">lambda</span> val, lo, hi: <span class="bi">max</span>(lo, <span class="bi">min</span>(val, hi))
+<span class="bi">print</span>(clamp(<span class="num">15</span>, <span class="num">0</span>, <span class="num">10</span>))  <span class="cm"># 10</span>
+<span class="bi">print</span>(clamp(-<span class="num">5</span>, <span class="num">0</span>, <span class="num">10</span>))  <span class="cm"># 0</span>
+<span class="bi">print</span>(clamp(<span class="num">7</span>, <span class="num">0</span>, <span class="num">10</span>))   <span class="cm"># 7</span>
+
+<span class="cm"># Conditional with map</span>
+nums = [<span class="num">1</span>, -<span class="num">2</span>, <span class="num">3</span>, -<span class="num">4</span>, <span class="num">5</span>]
+abs_vals = <span class="bi">list</span>(<span class="bi">map</span>(<span class="kw">lambda</span> x: x <span class="kw">if</span> x > <span class="num">0</span> <span class="kw">else</span> -x, nums))
+<span class="bi">print</span>(abs_vals)  <span class="cm"># [1, 2, 3, 4, 5]</span>
+
+<span class="cm"># Fizzbuzz with lambda (just for fun)</span>
+fizzbuzz = <span class="kw">lambda</span> n: <span class="st">"FizzBuzz"</span> <span class="kw">if</span> n % <span class="num">15</span> == <span class="num">0</span> <span class="kw">else</span> (<span class="st">"Fizz"</span> <span class="kw">if</span> n % <span class="num">3</span> == <span class="num">0</span> <span class="kw">else</span> (<span class="st">"Buzz"</span> <span class="kw">if</span> n % <span class="num">5</span> == <span class="num">0</span> <span class="kw">else</span> n))
+<span class="bi">print</span>([fizzbuzz(i) <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">1</span>, <span class="num">16</span>)])</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+even
+odd
+A
+B
+C
+10
+0
+7
+[1, 2, 3, 4, 5]
+[1, 2, 'Fizz', 4, 'Buzz', 'Fizz', 7, 8, 'Fizz', 'Buzz', 11, 'Fizz', 13, 14, 'FizzBuzz']
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(239,68,68,0.06); border-radius:var(--radius-sm); border-left:3px solid var(--danger);">
+      <p style="font-size:0.9rem; color:#991b1b; line-height:1.7; margin:0;">
+        <strong>⚠️ Don't overdo it:</strong> If your lambda needs nested ternaries or gets hard to read, just use a regular <code>def</code> function. Lambda is for simple, obvious logic — not for showing off.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Practical Examples Section -->
+<section id="examples">
+  <div class="section-header reveal">
+    <div class="section-label">Hands-On</div>
+    <h2 class="section-title">Real-World Examples</h2>
+    <p class="section-desc">Putting it all together — practical patterns you'll use in actual projects.</p>
+  </div>
+
+  <!-- Example 1: Data Processing Pipeline -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 1: Data Processing Pipeline</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Process a list of user records using all three concepts together.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">data_pipeline.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+<span class="cm"># Raw user data</span>
+users = [
+    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"age"</span>: <span class="num">28</span>, <span class="st">"salary"</span>: <span class="num">75000</span>},
+    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"age"</span>: <span class="num">22</span>, <span class="st">"salary"</span>: <span class="num">45000</span>},
+    {<span class="st">"name"</span>: <span class="st">"Charlie"</span>, <span class="st">"age"</span>: <span class="num">35</span>, <span class="st">"salary"</span>: <span class="num">95000</span>},
+    {<span class="st">"name"</span>: <span class="st">"Diana"</span>, <span class="st">"age"</span>: <span class="num">19</span>, <span class="st">"salary"</span>: <span class="num">30000</span>},
+    {<span class="st">"name"</span>: <span class="st">"Eve"</span>, <span class="st">"age"</span>: <span class="num">31</span>, <span class="st">"salary"</span>: <span class="num">82000</span>},
+]
+
+<span class="cm"># Task: Average salary of users aged 25+</span>
+
+<span class="cm"># Step 1: Filter — keep only 25+</span>
+seniors = <span class="bi">list</span>(<span class="bi">filter</span>(<span class="kw">lambda</span> u: u[<span class="st">"age"</span>] >= <span class="num">25</span>, users))
+
+<span class="cm"># Step 2: Map — extract just salaries</span>
+salaries = <span class="bi">list</span>(<span class="bi">map</span>(<span class="kw">lambda</span> u: u[<span class="st">"salary"</span>], seniors))
+
+<span class="cm"># Step 3: Reduce — calculate average</span>
+avg = reduce(<span class="kw">lambda</span> acc, s: acc + s, salaries) / <span class="bi">len</span>(salaries)
+
+<span class="bi">print</span>(<span class="st">f"Senior employees: {[u['name'] for u in seniors]}"</span>)
+<span class="bi">print</span>(<span class="st">f"Their salaries: {salaries}"</span>)
+<span class="bi">print</span>(<span class="st">f"Average salary (25+): ${avg:,.0f}"</span>)
+
+<span class="cm"># Sort by salary descending</span>
+top_earners = <span class="bi">sorted</span>(users, key=<span class="kw">lambda</span> u: u[<span class="st">"salary"</span>], reverse=<span class="op">True</span>)
+<span class="bi">print</span>(<span class="st">f"Top earner: {top_earners[0]['name']}"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+Senior employees: ['Alice', 'Charlie', 'Eve']
+Their salaries: [75000, 95000, 82000]
+Average salary (25+): $84,000
+Top earner: Charlie
+    </div>
+  </div>
+
+  <!-- Example 2: Set Operations -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 2: Set Operations for Real Problems</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Using sets to solve common problems — finding common elements, differences, and deduplication.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">set_operations.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Find common skills between two developers</span>
+alice_skills = {<span class="st">"python"</span>, <span class="st">"javascript"</span>, <span class="st">"sql"</span>, <span class="st">"docker"</span>}
+bob_skills = {<span class="st">"python"</span>, <span class="st">"java"</span>, <span class="st">"sql"</span>, <span class="st">"kubernetes"</span>}
+
+common = alice_skills & bob_skills
+<span class="bi">print</span>(<span class="st">f"Both know: {common}"</span>)
+
+only_alice = alice_skills - bob_skills
+<span class="bi">print</span>(<span class="st">f"Only Alice: {only_alice}"</span>)
+
+all_skills = alice_skills | bob_skills
+<span class="bi">print</span>(<span class="st">f"Combined: {all_skills}"</span>)
+
+<span class="cm"># Remove duplicates while preserving order</span>
+visits = [<span class="st">"home"</span>, <span class="st">"about"</span>, <span class="st">"home"</span>, <span class="st">"products"</span>, <span class="st">"about"</span>, <span class="st">"contact"</span>]
+seen = <span class="bi">set</span>()
+unique_visits = []
+<span class="kw">for</span> page <span class="kw">in</span> visits:
+    <span class="kw">if</span> page <span class="kw">not</span> <span class="kw">in</span> seen:
+        seen.add(page)
+        unique_visits.append(page)
+<span class="bi">print</span>(<span class="st">f"Unique pages: {unique_visits}"</span>)
+
+<span class="cm"># Fast membership check — is this user premium?</span>
+premium_users = {<span class="st">"user_001"</span>, <span class="st">"user_042"</span>, <span class="st">"user_099"</span>}
+<span class="bi">print</span>(<span class="st">"user_042"</span> <span class="kw">in</span> premium_users)  <span class="cm"># True — O(1)</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+Both know: {'python', 'sql'}
+Only Alice: {'javascript', 'docker'}
+Combined: {'python', 'javascript', 'sql', 'docker', 'java', 'kubernetes'}
+Unique pages: ['home', 'about', 'products', 'contact']
+True
+    </div>
+  </div>
+
+  <!-- Example 3: Tuple Unpacking -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 3: Tuple Unpacking & Named Tuples</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Tuples are perfect for returning multiple values and structuring lightweight data.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots">
+          <div class="code-dot red"></div>
+          <div class="code-dot yellow"></div>
+          <div class="code-dot green"></div>
+        </div>
+        <span class="code-filename">tuple_patterns.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Return multiple values from a function</span>
+<span class="kw">def</span> <span class="fn">get_stats</span>(<span class="param">numbers</span>):
+    <span class="kw">return</span> <span class="bi">min</span>(numbers), <span class="bi">max</span>(numbers), <span class="bi">sum</span>(numbers) / <span class="bi">len</span>(numbers)
+
+lo, hi, avg = get_stats([<span class="num">4</span>, <span class="num">8</span>, <span class="num">15</span>, <span class="num">16</span>, <span class="num">23</span>, <span class="num">42</span>])
+<span class="bi">print</span>(<span class="st">f"Min: {lo}, Max: {hi}, Avg: {avg:.1f}"</span>)
+
+<span class="cm"># Swap variables (tuple unpacking)</span>
+a, b = <span class="num">10</span>, <span class="num">20</span>
+a, b = b, a  <span class="cm"># swap without temp variable!</span>
+<span class="bi">print</span>(<span class="st">f"a={a}, b={b}"</span>)  <span class="cm"># a=20, b=10</span>
+
+<span class="cm"># Enumerate returns tuples</span>
+fruits = [<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"cherry"</span>]
+<span class="kw">for</span> index, fruit <span class="kw">in</span> <span class="bi">enumerate</span>(fruits):
+    <span class="bi">print</span>(<span class="st">f"{index}: {fruit}"</span>)
+
+<span class="cm"># Zip creates tuples</span>
+names = [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>]
+scores = [<span class="num">95</span>, <span class="num">87</span>]
+<span class="kw">for</span> name, score <span class="kw">in</span> <span class="bi">zip</span>(names, scores):
+    <span class="bi">print</span>(<span class="st">f"{name}: {score}"</span>)
+
+<span class="cm"># Tuples as dictionary keys (lists can't do this!)</span>
+grid = {}
+grid[(<span class="num">0</span>, <span class="num">0</span>)] = <span class="st">"start"</span>
+grid[(<span class="num">3</span>, <span class="num">4</span>)] = <span class="st">"treasure"</span>
+<span class="bi">print</span>(grid[(<span class="num">3</span>, <span class="num">4</span>)])  <span class="cm"># treasure</span></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+Min: 4, Max: 42, Avg: 18.0
+a=20, b=10
+0: apple
+1: banana
+2: cherry
+Alice: 95
+Bob: 87
+treasure
+    </div>
+  </div>
+</section>
+
+<!-- Interview Questions Section -->
+<section id="interview">
+  <div class="section-header reveal">
+    <div class="section-label">Career Prep</div>
+    <h2 class="section-title">Interview Questions</h2>
+    <p class="section-desc">Questions you'll likely get asked. Click to reveal the answers.</p>
+  </div>
+
+  <div class="reveal">
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">1</span>
+        <span class="qa-text">What's the difference between a list and a tuple? When would you use each?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Lists are mutable</strong> (you can add, remove, change items). <strong>Tuples are immutable</strong> (once created, they can't be changed).</p>
+          <p style="margin-top:12px;"><strong>Use a list when:</strong> You need to modify the collection — adding items, sorting, removing duplicates.</p>
+          <p><strong>Use a tuple when:</strong> The data shouldn't change — coordinates, RGB values, function return values, dictionary keys.</p>
+          <p style="margin-top:12px;">Tuples are also slightly faster and use less memory because Python can optimize immutable objects.</p>
+          <div class="qa-tip">💡 If you need a list that can't be accidentally modified, use a tuple. It signals intent: "this data is fixed."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">2</span>
+        <span class="qa-text">Why can't you use a list as a dictionary key, but you can use a tuple?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Dictionary keys must be <strong>hashable</strong> — meaning their hash value never changes. Since lists are mutable (you can change their contents), their hash would change, breaking the dictionary's internal lookup. Tuples are immutable, so their hash stays constant.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># This works:</span><br>
+            d = {(<span style="color:#79c0ff;">1</span>, <span style="color:#79c0ff;">2</span>): <span style="color:#a5d6ff;">"point"</span>}<br><br>
+            <span style="color:#8b949e;"># This crashes:</span><br>
+            d = {[<span style="color:#79c0ff;">1</span>, <span style="color:#79c0ff;">2</span>]: <span style="color:#a5d6ff;">"point"</span>}  <span style="color:#8b949e;"># TypeError!</span>
+          </div>
+          <div class="qa-tip">💡 Rule of thumb: if it's mutable, it's not hashable, and it can't be a dict key or set member.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">3</span>
+        <span class="qa-text">When would you use a set instead of a list?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Use a set when you need:</p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><strong>Uniqueness:</strong> Automatically removes duplicates</li>
+            <li><strong>Fast lookups:</strong> <code>x in my_set</code> is O(1) vs O(n) for lists</li>
+            <li><strong>Set operations:</strong> Union, intersection, difference</li>
+          </ul>
+          <p style="margin-top:12px;">Don't use a set when you need ordering or indexing — sets have neither.</p>
+          <div class="qa-tip">💡 Classic use case: checking if a username already exists in a system — sets give you instant O(1) lookup.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">4</span>
+        <span class="qa-text">What's the difference between <code>array</code> and <code>list</code> in Python?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A <code>list</code> can hold mixed types and is the default choice. An <code>array</code> (from the <code>array</code> module) stores only one type and uses significantly less memory — about 50% less for large numeric datasets.</p>
+          <p style="margin-top:12px;">In practice, most Python developers use <strong>NumPy arrays</strong> instead of the built-in <code>array</code> module when they need typed, memory-efficient arrays — NumPy adds vectorized operations, broadcasting, and much more.</p>
+          <div class="qa-tip">💡 Use <code>list</code> for general purpose. Use <code>array</code> or NumPy when you're doing heavy numeric work and memory/speed matters.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">5</span>
+        <span class="qa-text">Explain <code>map()</code> vs list comprehension. Which is better?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Both do the same thing — transform each item in a collection. The difference is style:</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># map + lambda</span><br>
+            result = list(map(<span style="color:#ff7b72;">lambda</span> x: x * <span style="color:#79c0ff;">2</span>, nums))<br><br>
+            <span style="color:#8b949e;"># list comprehension</span><br>
+            result = [x * <span style="color:#79c0ff;">2</span> <span style="color:#ff7b72;">for</span> x <span style="color:#ff7b72;">in</span> nums]
+          </div>
+          <p style="margin-top:12px;"><strong>List comprehensions</strong> are generally preferred in Python because they're more readable and Pythonic. Use <code>map()</code> when you already have a named function to apply (like <code>map(str.upper, names)</code>) or when working in a functional programming style.</p>
+          <div class="qa-tip">💡 Performance is nearly identical. Choose based on readability. If you need a lambda with map(), a list comprehension is almost always cleaner.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">6</span>
+        <span class="qa-text">Why was <code>reduce()</code> removed from built-ins in Python 3?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Guido van Rossum (Python's creator) felt that <code>reduce()</code> was often misused and hard to read. Most reduce operations have clearer alternatives:</p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><code>reduce(lambda a,b: a+b, nums)</code> → just use <code>sum(nums)</code></li>
+            <li><code>reduce(lambda a,b: a*b, nums)</code> → use <code>math.prod(nums)</code></li>
+            <li><code>reduce(lambda a,b: max(a,b), nums)</code> → just use <code>max(nums)</code></li>
+          </ul>
+          <p style="margin-top:12px;">It's still available via <code>from functools import reduce</code> — it wasn't removed from Python, just moved out of the global namespace.</p>
+          <div class="qa-tip">💡 Use reduce() only when there's no built-in alternative. For sum, max, min, any, all — use the built-in.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">7</span>
+        <span class="qa-text">What are the limitations of lambda functions?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Lambda functions have several constraints:</p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><strong>Single expression only</strong> — no statements (no <code>if/else</code> blocks, no <code>for</code> loops, no assignments)</li>
+            <li><strong>No docstrings</strong> — can't document what they do</li>
+            <li><strong>No annotations</strong> — can't add type hints</li>
+            <li><strong>Hard to debug</strong> — show up as <code>&lt;lambda&gt;</code> in tracebacks</li>
+            <li><strong>Can't use multiple lines</strong> — everything must fit in one expression</li>
+          </ul>
+          <p style="margin-top:12px;">If you need any of these things, use a regular <code>def</code> function instead.</p>
+          <div class="qa-tip">💡 PEP 8 says: don't assign a lambda to a variable. If you need a name, use <code>def</code>. Lambda is for inline, throwaway use.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">8</span>
+        <span class="qa-text">How does <code>filter(None, iterable)</code> work?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>When you pass <code>None</code> as the function, <code>filter()</code> uses Python's truthiness test. It keeps items that are "truthy" and drops items that are "falsy".</p>
+          <p style="margin-top:12px;"><strong>Falsy values that get removed:</strong> <code>None</code>, <code>0</code>, <code>""</code> (empty string), <code>[]</code> (empty list), <code>{}</code> (empty dict), <code>False</code></p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            data = [<span style="color:#79c0ff;">0</span>, <span style="color:#a5d6ff;">""</span>, <span style="color:#a5d6ff;">"hello"</span>, <span style="color:#79c0ff;">None</span>, <span style="color:#79c0ff;">42</span>, [], <span style="color:#79c0ff;">False</span>]<br>
+            result = list(filter(<span style="color:#79c0ff;">None</span>, data))<br>
+            <span style="color:#8b949e;"># ['hello', 42]</span>
+          </div>
+          <div class="qa-tip">💡 This is a quick way to clean up data — remove all empty/null/zero values in one line.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">9</span>
+        <span class="qa-text">What's the time complexity of lookup in list vs set?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>List:</strong> O(n) — Python has to check each element one by one until it finds a match (or reaches the end).</p>
+          <p style="margin-top:8px;"><strong>Set:</strong> O(1) average — uses a hash table internally, so it can jump directly to where the item would be.</p>
+          <p style="margin-top:12px;">For a list of 1 million items, checking membership could take up to 1 million comparisons. For a set, it's essentially instant regardless of size.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># Slow — O(n)</span><br>
+            <span style="color:#ff7b72;">if</span> <span style="color:#a5d6ff;">"target"</span> <span style="color:#ff7b72;">in</span> my_list: ...<br><br>
+            <span style="color:#8b949e;"># Fast — O(1)</span><br>
+            <span style="color:#ff7b72;">if</span> <span style="color:#a5d6ff;">"target"</span> <span style="color:#ff7b72;">in</span> my_set: ...
+          </div>
+          <div class="qa-tip">💡 If you're doing repeated membership checks on a large collection, convert it to a set first: <code>my_set = set(my_list)</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">10</span>
+        <span class="qa-text">Can a tuple contain mutable objects? What happens?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Yes!</strong> A tuple can contain mutable objects like lists. The tuple itself is immutable (you can't replace the list with something else), but the list inside can still be modified.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            t = ([<span style="color:#79c0ff;">1</span>, <span style="color:#79c0ff;">2</span>], [<span style="color:#79c0ff;">3</span>, <span style="color:#79c0ff;">4</span>])<br><br>
+            <span style="color:#8b949e;"># This works — modifying the list inside</span><br>
+            t[<span style="color:#79c0ff;">0</span>].append(<span style="color:#79c0ff;">99</span>)  <span style="color:#8b949e;"># t = ([1, 2, 99], [3, 4])</span><br><br>
+            <span style="color:#8b949e;"># This crashes — can't replace the reference</span><br>
+            t[<span style="color:#79c0ff;">0</span>] = [<span style="color:#79c0ff;">5</span>, <span style="color:#79c0ff;">6</span>]  <span style="color:#8b949e;"># TypeError!</span>
+          </div>
+          <p style="margin-top:12px;">This is a common gotcha. The tuple guarantees that its <em>references</em> don't change — but it can't control what happens inside the objects those references point to.</p>
+          <div class="qa-tip">💡 A tuple containing mutable objects is NOT hashable and can't be used as a dict key. Only tuples with all immutable contents are hashable.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">11</span>
+        <span class="qa-text">What's the difference between <code>map()</code> returning a map object vs a list?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>map()</code> returns a <strong>lazy iterator</strong> (map object), not a list. It doesn't compute anything until you iterate over it. This is memory-efficient for large datasets because it processes items one at a time.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># Lazy — nothing computed yet</span><br>
+            result = map(<span style="color:#ff7b72;">lambda</span> x: x * <span style="color:#79c0ff;">2</span>, range(<span style="color:#79c0ff;">1000000</span>))<br><br>
+            <span style="color:#8b949e;"># Only computes when you consume it</span><br>
+            first = next(result)  <span style="color:#8b949e;"># computes just the first item</span><br>
+            all_items = list(result)  <span style="color:#8b949e;"># computes the rest</span>
+          </div>
+          <p style="margin-top:12px;">Wrap in <code>list()</code> when you need all results at once. Leave it lazy when you're chaining operations or processing large data streams.</p>
+          <div class="qa-tip">💡 Same applies to <code>filter()</code> — it's also lazy. This is why you see <code>list(map(...))</code> and <code>list(filter(...))</code> everywhere.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">12</span>
+        <span class="qa-text">Write a lambda that sorts a list of tuples by the second element in descending order.</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <div style="padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            data = [(<span style="color:#a5d6ff;">"Alice"</span>, <span style="color:#79c0ff;">88</span>), (<span style="color:#a5d6ff;">"Bob"</span>, <span style="color:#79c0ff;">95</span>), (<span style="color:#a5d6ff;">"Charlie"</span>, <span style="color:#79c0ff;">72</span>)]<br><br>
+            result = sorted(data, key=<span style="color:#ff7b72;">lambda</span> x: x[<span style="color:#79c0ff;">1</span>], reverse=<span style="color:#79c0ff;">True</span>)<br>
+            <span style="color:#8b949e;"># [('Bob', 95), ('Alice', 88), ('Charlie', 72)]</span>
+          </div>
+          <p style="margin-top:12px;">The <code>key</code> parameter tells <code>sorted()</code> what value to compare. <code>lambda x: x[1]</code> extracts the second element of each tuple. <code>reverse=True</code> flips the order from ascending to descending.</p>
+          <div class="qa-tip">💡 This pattern works with any sortable data — dicts, objects, nested lists. The key function extracts the "sort value."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="text-align:center; padding:80px 40px; border-top:1px solid var(--card-border);">
+  <div style="width:60px; height:3px; background:linear-gradient(90deg, var(--primary), #a78bfa); margin:0 auto 20px; border-radius:2px;"></div>
+  <p style="color:var(--text-muted); font-size:0.95rem;">Python Basics — Interactive Learning Guide</p>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">Built with HTML, CSS & vanilla JS</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+// Scroll Reveal
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// Active Nav Link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Accordion Toggle
+function toggleQA(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// Copy Code
+function copyCode(btn) {
+  const codeBody = btn.closest('.code-editor').querySelector('.code-body pre');
+  const text = codeBody.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

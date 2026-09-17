@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python File Handling & Exceptions — Interactive Learning Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224);
+  --primary-glow: rgba(58, 114, 224, 0.25);
+  --primary-light: #e8f0fe;
+  --primary-dark: #2a5db8;
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --card-border: #dbe4ff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --code-bg: #1e293b;
+  --font: 'Inter','Segoe UI',Roboto,sans-serif;
+  --mono: 'Fira Code','JetBrains Mono','Cascadia Code',monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --glow: 0 4px 20px rgba(58,114,224,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border); }
+.nav-logo { font-weight: 800; font-size: 1.2rem; background: linear-gradient(135deg, var(--primary), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s; position: relative; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-links a.active::after { content: ''; position: absolute; bottom: -6px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+section { padding: 60px 40px; max-width: 1200px; margin: 0 auto; }
+.hero-section { min-height: auto; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; padding: 140px 40px 80px; overflow: hidden; background: #ffffff; max-width: 100%; }
+.hero-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: radial-gradient(ellipse at 20% 50%, rgba(58,114,224,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 40%), radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.05) 0%, transparent 40%); pointer-events: none; }
+.hero-content { position: relative; z-index: 2; max-width: 750px; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+.hero-badge { padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--card-border); background: #ffffff; color: var(--text-muted); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.hero-badge.primary { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.hero-title { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 18px; }
+.hero-title span { background: linear-gradient(135deg, var(--primary), #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 36px; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn { padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; border: none; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 20px var(--primary-glow); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+.btn-ghost { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); }
+.btn-ghost:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+.glass-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.glass-card:hover { border-color: var(--primary); box-shadow: var(--glow); transform: translateY(-4px); }
+.section-header { text-align: center; margin-bottom: 60px; }
+.section-label { font-size: 0.85rem; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+.section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; }
+.section-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.code-editor { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.code-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: #161b22; border-bottom: 1px solid var(--card-border); }
+.code-dots { display: flex; gap: 8px; }
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.code-dot.red { background: #ff5f57; } .code-dot.yellow { background: #febc2e; } .code-dot.green { background: #28c840; }
+.code-filename { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); }
+.code-copy { background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); color: var(--text-muted); padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
+.code-copy:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.code-body { padding: 24px; background: var(--code-bg); overflow-x: auto; }
+.code-body pre { font-family: var(--mono); font-size: 0.88rem; line-height: 1.7; color: #e6edf3; margin: 0; }
+.kw { color: #ff7b72; } .fn { color: #d2a8ff; } .st { color: #a5d6ff; } .cm { color: #8b949e; }
+.op { color: #79c0ff; } .num { color: #79c0ff; } .dec { color: #ffa657; } .bi { color: #79c0ff; }
+.param { color: #ffa657; } .cls { color: #f0883e; }
+.output-block { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: var(--radius-sm); padding: 16px 20px; margin: 16px 0; font-family: var(--mono); font-size: 0.85rem; color: #065f46; }
+.output-block::before { content: '▶ Output'; display: block; font-weight: 600; font-size: 0.7rem; color: var(--success); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.diagram-wrapper { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 40px; margin: 32px 0; text-align: center; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+.diagram-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark); }
+.diagram-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+.flow-container { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.flow-node { padding: 16px 24px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.85rem; border: 2px solid var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.flow-node.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(58,114,224,0.3); }
+.flow-node.success { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065f46; }
+.flow-node.warning { border-color: var(--warning); background: rgba(245,158,11,0.1); color: #92400e; }
+.flow-arrow { color: var(--primary); font-size: 1.4rem; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); display: table; }
+th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.85rem; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--card-border); font-size: 0.85rem; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: var(--primary-light); }
+
+.qa-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+.qa-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
+.qa-question { padding: 20px 24px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: background 0.3s; background: #f8fafc; }
+.qa-question:hover { background: var(--primary-light); }
+.qa-num { width: 32px; height: 32px; background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+.qa-text { font-weight: 600; font-size: 0.95rem; flex: 1; }
+.qa-toggle { color: var(--text-muted); font-size: 1.2rem; transition: transform 0.3s; }
+.qa-card.open .qa-toggle { transform: rotate(180deg); }
+.qa-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.qa-card.open .qa-answer { padding: 0 24px 24px; max-height: 800px; }
+.qa-answer-content { padding-top: 16px; border-top: 1px solid var(--card-border); color: var(--text); line-height: 1.8; }
+.qa-tip { margin-top: 12px; padding: 12px 16px; background: var(--primary-light); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--primary-dark); border-left: 3px solid var(--primary); }
+.usecase-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 28px; transition: all 0.4s; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+.usecase-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), #a78bfa); opacity: 0; transition: opacity 0.3s; }
+.usecase-card:hover::before { opacity: 1; }
+.usecase-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--glow); }
+.usecase-icon { width: 48px; height: 48px; background: var(--primary-light); border: 1px solid rgba(58,114,224,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.3rem; }
+.usecase-card h4 { font-size: 1.05rem; margin-bottom: 8px; }
+.usecase-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) {
+  section { padding: 40px 20px; } .nav { padding: 12px 20px; } .nav-links { display: none; }
+  .grid-2 { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; } .flow-arrow { transform: rotate(90deg); }
+  .hero-title { font-size: 2.2rem; } .hero-section { padding: 100px 20px 50px; }
+  .glass-card { padding: 20px; overflow-x: auto; } table { min-width: 600px; }
+  .code-body { padding: 16px; } .code-body pre { font-size: 0.8rem; }
+  .diagram-wrapper { padding: 20px 12px; }
+}
+::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🐍 PyFiles</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#operations">File Operations</a></li>
+    <li><a href="#working">Working with Files</a></li>
+    <li><a href="#structured">CSV & JSON</a></li>
+    <li><a href="#safe">Safe Handling</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badges">
+      <span class="hero-badge primary">🐍 Python</span>
+      <span class="hero-badge">📁 I/O</span>
+      <span class="hero-badge">⏱ 25 min read</span>
+      <span class="hero-badge">🎯 Essential</span>
+    </div>
+    <h1 class="hero-title">File <span>Handling</span></h1>
+    <p class="hero-subtitle">Read, write, and manage files safely — text, binary, CSV, JSON — with proper resource cleanup and exception handling.</p>
+    <div class="hero-cta">
+      <a href="#operations" class="btn btn-primary">Start Learning →</a>
+      <a href="#examples" class="btn btn-ghost">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview">
+  <div class="section-header reveal">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-title">File I/O in Python</h2>
+    <p class="section-desc">Everything you need to know about reading, writing, and managing files safely.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">The Core Pattern</h3>
+    <p style="color:var(--text); font-size:1rem; line-height:1.8;">File handling in Python follows a simple pattern: <strong>open</strong> a file, <strong>do something</strong> with it (read/write), then <strong>close</strong> it. The <code>with</code> statement handles closing automatically — even if your code crashes. Always use it.</p>
+    <div style="margin-top:16px; padding:14px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <code style="font-family:var(--mono); font-size:0.85rem; color:var(--primary-dark);">with open("file.txt", "r") as f: &nbsp;← opens, auto-closes, exception-safe</code>
+    </div>
+  </div>
+</section>
+
+<!-- File Operations Section -->
+<section id="operations">
+  <div class="section-header reveal">
+    <div class="section-label">Fundamentals</div>
+    <h2 class="section-title">File Operations</h2>
+    <p class="section-desc">Modes, text vs binary, append, and buffering — the building blocks.</p>
+  </div>
+
+  <!-- File Modes Table -->
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 File Modes — Complete Reference</h3>
+    <table>
+      <thead>
+        <tr><th>Mode</th><th>Name</th><th>Description</th><th>Creates File?</th><th>Overwrites?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>"r"</code></td><td>Read</td><td>Read only. File must exist.</td><td>❌</td><td>❌</td></tr>
+        <tr><td><code>"w"</code></td><td>Write</td><td>Write only. Creates or <strong>truncates</strong> (erases content).</td><td>✅</td><td>✅ Erases all</td></tr>
+        <tr><td><code>"a"</code></td><td>Append</td><td>Write to end. Creates if missing. Never erases.</td><td>✅</td><td>❌ Adds to end</td></tr>
+        <tr><td><code>"x"</code></td><td>Exclusive</td><td>Create and write. Fails if file already exists.</td><td>✅</td><td>Error if exists</td></tr>
+        <tr><td><code>"r+"</code></td><td>Read+Write</td><td>Both read and write. File must exist.</td><td>❌</td><td>Partial</td></tr>
+        <tr><td><code>"w+"</code></td><td>Write+Read</td><td>Read and write. Creates or truncates.</td><td>✅</td><td>✅ Erases all</td></tr>
+        <tr><td><code>"a+"</code></td><td>Append+Read</td><td>Read anywhere, write only at end.</td><td>✅</td><td>❌</td></tr>
+        <tr><td><code>"rb"</code></td><td>Read Binary</td><td>Read raw bytes (images, PDFs, etc.)</td><td>❌</td><td>❌</td></tr>
+        <tr><td><code>"wb"</code></td><td>Write Binary</td><td>Write raw bytes.</td><td>✅</td><td>✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Text vs Binary -->
+  <div class="grid-2 reveal" style="margin-top:32px;">
+    <div class="glass-card" style="border-left:4px solid rgb(58,114,224);">
+      <h4 style="margin-bottom:12px;">📝 Text Mode (default)</h4>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:12px;">Returns <code>str</code> objects. Handles encoding (UTF-8 by default) and newline translation (<code>\r\n</code> → <code>\n</code> on Windows).</p>
+      <div style="padding:12px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="cm"># Text mode</span><br>
+        open(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)<br>
+        open(<span class="st">"data.txt"</span>, <span class="st">"r"</span>, encoding=<span class="st">"utf-8"</span>)
+      </div>
+      <p style="font-size:0.8rem; color:var(--primary); margin-top:10px; font-weight:500;">Use for: .txt, .csv, .json, .html, .py, .log</p>
+    </div>
+    <div class="glass-card" style="border-left:4px solid #7c3aed;">
+      <h4 style="margin-bottom:12px;">🔢 Binary Mode</h4>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:12px;">Returns <code>bytes</code> objects. No encoding/decoding, no newline translation. Raw data as-is.</p>
+      <div style="padding:12px; background:var(--code-bg); border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.7;">
+        <span class="cm"># Binary mode</span><br>
+        open(<span class="st">"image.png"</span>, <span class="st">"rb"</span>)<br>
+        open(<span class="st">"data.bin"</span>, <span class="st">"wb"</span>)
+      </div>
+      <p style="font-size:0.8rem; color:#7c3aed; margin-top:10px; font-weight:500;">Use for: .png, .jpg, .pdf, .zip, .exe, .mp3</p>
+    </div>
+  </div>
+
+  <!-- Read/Write/Append Examples -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Read, Write, and Append — The Big Three</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The three operations you'll use 95% of the time.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">read_write_append.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># ✍️ WRITE — creates file or erases existing content</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    f.write(<span class="st">"Line 1: Hello\n"</span>)
+    f.write(<span class="st">"Line 2: World\n"</span>)
+    f.writelines([<span class="st">"Line 3: Foo\n"</span>, <span class="st">"Line 4: Bar\n"</span>])
+
+<span class="cm"># 📖 READ — multiple ways to read</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    content = f.read()        <span class="cm"># entire file as one string</span>
+    <span class="bi">print</span>(content)
+
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    lines = f.readlines()     <span class="cm"># list of lines (includes \n)</span>
+    <span class="bi">print</span>(lines[<span class="num">0</span>])            <span class="cm"># "Line 1: Hello\n"</span>
+
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    first_line = f.readline() <span class="cm"># just the first line</span>
+
+<span class="cm"># ➕ APPEND — adds to end without erasing</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"a"</span>) <span class="kw">as</span> f:
+    f.write(<span class="st">"Line 5: Appended!\n"</span>)
+
+<span class="cm"># Verify</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>) <span class="kw">as</span> f:
+    <span class="bi">print</span>(<span class="st">f"Total lines: {len(f.readlines())}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Line 1: Hello
+Line 2: World
+Line 3: Foo
+Line 4: Bar
+
+Total lines: 5
+    </div>
+  </div>
+
+  <!-- Buffering -->
+  <div class="glass-card reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">⚡ Buffering — When Data Actually Hits Disk</h3>
+    <p style="color:var(--text); font-size:0.95rem; line-height:1.8;">When you call <code>f.write()</code>, data goes to an in-memory buffer first — not directly to disk. Python flushes the buffer when it's full, when you close the file, or when you call <code>f.flush()</code> manually.</p>
+    <table style="margin-top:16px;">
+      <thead><tr><th>Buffering Value</th><th>Behavior</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td><code>buffering=0</code></td><td>Unbuffered (binary only)</td><td>Real-time logging, pipes</td></tr>
+        <tr><td><code>buffering=1</code></td><td>Line-buffered (text only)</td><td>Interactive output, log files</td></tr>
+        <tr><td><code>buffering=-1</code></td><td>System default (~8KB)</td><td>Normal file I/O (fastest)</td></tr>
+        <tr><td><code>buffering=N</code></td><td>Buffer of N bytes</td><td>Custom chunk sizes</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Working with Files Section -->
+<section id="working">
+  <div class="section-header reveal">
+    <div class="section-label">Techniques</div>
+    <h2 class="section-title">Working with Files</h2>
+    <p class="section-desc">File pointers, seek/tell, line-by-line reading, and chunk processing.</p>
+  </div>
+
+  <!-- File Pointer Diagram -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">The File Pointer — Your Position in the File</div>
+    <div class="diagram-desc">Every open file has an invisible cursor that tracks where you are. Reading advances it forward.</div>
+    <div style="text-align:left; max-width:600px; margin:0 auto; padding:20px; background:#f8fafc; border-radius:var(--radius-sm); border:1px solid var(--card-border);">
+      <p style="font-family:var(--mono); font-size:0.85rem; line-height:2; color:var(--text);">
+        <code>H e l l o , &nbsp;W o r l d !</code><br>
+        <code style="color:var(--primary);">↑</code> <span style="font-size:0.8rem; color:var(--text-muted);">← pointer starts at position 0</span><br><br>
+        After <code>f.read(5)</code>: reads "Hello"<br>
+        <code>H e l l o , &nbsp;W o r l d !</code><br>
+        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--primary);">↑</span></code> <span style="font-size:0.8rem; color:var(--text-muted);">← pointer now at position 5</span><br><br>
+        <code>f.tell()</code> → returns <code>5</code> (current position)<br>
+        <code>f.seek(0)</code> → moves pointer back to start
+      </p>
+    </div>
+  </div>
+
+  <!-- Seek/Tell -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">seek() and tell() — Navigate Within a File</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Move the file pointer to any position. Essential for re-reading or skipping sections.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">seek_tell.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    <span class="cm"># Read first 10 characters</span>
+    chunk = f.read(<span class="num">10</span>)
+    <span class="bi">print</span>(<span class="st">f"Read: '{chunk}'"</span>)
+    <span class="bi">print</span>(<span class="st">f"Position: {f.tell()}"</span>)  <span class="cm"># 10</span>
+
+    <span class="cm"># Go back to the beginning</span>
+    f.seek(<span class="num">0</span>)
+    <span class="bi">print</span>(<span class="st">f"After seek(0): {f.tell()}"</span>)  <span class="cm"># 0</span>
+
+    <span class="cm"># Read again from start</span>
+    <span class="bi">print</span>(<span class="st">f"Re-read: '{f.read(5)}'"</span>)
+
+    <span class="cm"># Jump to position 20</span>
+    f.seek(<span class="num">20</span>)
+    <span class="bi">print</span>(<span class="st">f"From pos 20: '{f.read(10)}'"</span>)
+
+<span class="cm"># seek(offset, whence):</span>
+<span class="cm"># whence=0 → from start (default)</span>
+<span class="cm"># whence=1 → from current position (binary mode only)</span>
+<span class="cm"># whence=2 → from end (binary mode only)</span>
+
+<span class="cm"># Read last 20 bytes of a binary file</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"notes.txt"</span>, <span class="st">"rb"</span>) <span class="kw">as</span> f:
+    f.seek(-<span class="num">20</span>, <span class="num">2</span>)  <span class="cm"># 20 bytes before end</span>
+    <span class="bi">print</span>(<span class="st">f"Last 20 bytes: {f.read()}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Read: 'Line 1: He'
+Position: 10
+After seek(0): 0
+Re-read: 'Line '
+From pos 20: 'orld\nLine '
+Last 20 bytes: b'Line 5: Appended!\n'
+    </div>
+  </div>
+
+  <!-- Line-by-Line and Chunk Reading -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Line-by-Line & Chunk Reading — Handling Large Files</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Never load a 10GB file into memory at once. Iterate line by line or read in chunks.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">large_files.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># ✅ BEST: Iterate line by line (memory efficient)</span>
+<span class="cm"># Only one line in memory at a time — works for ANY file size</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"huge_log.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> line_num, line <span class="kw">in</span> <span class="bi">enumerate</span>(f, <span class="num">1</span>):
+        <span class="kw">if</span> <span class="st">"ERROR"</span> <span class="kw">in</span> line:
+            <span class="bi">print</span>(<span class="st">f"Line {line_num}: {line.strip()}"</span>)
+
+<span class="cm"># ✅ Chunk reading — for binary files or custom processing</span>
+<span class="kw">def</span> <span class="fn">read_in_chunks</span>(<span class="param">filepath</span>, <span class="param">chunk_size</span>=<span class="num">8192</span>):
+    <span class="st">"""Read a file in fixed-size chunks."""</span>
+    <span class="kw">with</span> <span class="bi">open</span>(filepath, <span class="st">"rb"</span>) <span class="kw">as</span> f:
+        <span class="kw">while</span> <span class="op">True</span>:
+            chunk = f.read(chunk_size)
+            <span class="kw">if</span> <span class="kw">not</span> chunk:
+                <span class="kw">break</span>
+            <span class="kw">yield</span> chunk
+
+<span class="cm"># Process a large file without loading it all</span>
+total_size = <span class="num">0</span>
+<span class="kw">for</span> chunk <span class="kw">in</span> read_in_chunks(<span class="st">"large_file.bin"</span>):
+    total_size += <span class="bi">len</span>(chunk)
+<span class="bi">print</span>(<span class="st">f"File size: {total_size:,} bytes"</span>)
+
+<span class="cm"># ❌ BAD: Don't do this for large files!</span>
+<span class="cm"># content = f.read()  ← loads ENTIRE file into RAM</span>
+<span class="cm"># lines = f.readlines()  ← same problem</span></pre>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.7; margin:0;">
+        <strong>Memory rule:</strong> <code>for line in f:</code> uses ~1 line of memory. <code>f.read()</code> uses memory equal to the file size. For a 5GB log file, that's the difference between 100 bytes and 5GB of RAM.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Structured Files Section -->
+<section id="structured">
+  <div class="section-header reveal">
+    <div class="section-label">Data Formats</div>
+    <h2 class="section-title">CSV & JSON Handling</h2>
+    <p class="section-desc">The two most common structured file formats — Python has built-in modules for both.</p>
+  </div>
+
+  <!-- CSV -->
+  <div class="reveal">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">CSV Handling — Tabular Data</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The <code>csv</code> module handles quoting, escaping, and different delimiters for you.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">csv_handling.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> csv
+
+<span class="cm"># ✍️ Write CSV</span>
+data = [
+    [<span class="st">"name"</span>, <span class="st">"age"</span>, <span class="st">"city"</span>],
+    [<span class="st">"Alice"</span>, <span class="num">28</span>, <span class="st">"New York"</span>],
+    [<span class="st">"Bob"</span>, <span class="num">34</span>, <span class="st">"San Francisco"</span>],
+    [<span class="st">"Charlie"</span>, <span class="num">22</span>, <span class="st">"London"</span>],
+]
+
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"users.csv"</span>, <span class="st">"w"</span>, newline=<span class="st">""</span>) <span class="kw">as</span> f:
+    writer = csv.writer(f)
+    writer.writerows(data)
+
+<span class="cm"># 📖 Read CSV — as lists</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"users.csv"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    reader = csv.reader(f)
+    header = <span class="bi">next</span>(reader)  <span class="cm"># skip header row</span>
+    <span class="kw">for</span> row <span class="kw">in</span> reader:
+        <span class="bi">print</span>(<span class="st">f"{row[0]} is {row[1]} from {row[2]}"</span>)
+
+<span class="cm"># 📖 Read CSV — as dictionaries (best for named columns)</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"users.csv"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    reader = csv.DictReader(f)
+    <span class="kw">for</span> row <span class="kw">in</span> reader:
+        <span class="bi">print</span>(<span class="st">f"{row['name']}: {row['city']}"</span>)
+
+<span class="cm"># ✍️ Write CSV from dicts</span>
+users = [{<span class="st">"name"</span>: <span class="st">"Dave"</span>, <span class="st">"age"</span>: <span class="num">30</span>}, {<span class="st">"name"</span>: <span class="st">"Eve"</span>, <span class="st">"age"</span>: <span class="num">25</span>}]
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"output.csv"</span>, <span class="st">"w"</span>, newline=<span class="st">""</span>) <span class="kw">as</span> f:
+    writer = csv.DictWriter(f, fieldnames=[<span class="st">"name"</span>, <span class="st">"age"</span>])
+    writer.writeheader()
+    writer.writerows(users)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Alice is 28 from New York
+Bob is 34 from San Francisco
+Charlie is 22 from London
+    </div>
+  </div>
+
+  <!-- JSON -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">JSON Handling — Structured Data Exchange</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The <code>json</code> module converts between Python dicts/lists and JSON strings/files.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">json_handling.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> json
+
+<span class="cm"># Python dict → JSON file</span>
+config = {
+    <span class="st">"app_name"</span>: <span class="st">"MyApp"</span>,
+    <span class="st">"version"</span>: <span class="st">"2.1.0"</span>,
+    <span class="st">"debug"</span>: <span class="op">False</span>,
+    <span class="st">"database"</span>: {
+        <span class="st">"host"</span>: <span class="st">"localhost"</span>,
+        <span class="st">"port"</span>: <span class="num">5432</span>,
+        <span class="st">"name"</span>: <span class="st">"mydb"</span>
+    },
+    <span class="st">"allowed_hosts"</span>: [<span class="st">"localhost"</span>, <span class="st">"0.0.0.0"</span>]
+}
+
+<span class="cm"># ✍️ Write JSON (dump to file)</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"config.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    json.dump(config, f, indent=<span class="num">2</span>)  <span class="cm"># indent for readability</span>
+
+<span class="cm"># 📖 Read JSON (load from file)</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">"config.json"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    loaded = json.load(f)
+
+<span class="bi">print</span>(<span class="st">f"App: {loaded['app_name']}"</span>)
+<span class="bi">print</span>(<span class="st">f"DB port: {loaded['database']['port']}"</span>)
+
+<span class="cm"># String conversion (no file involved)</span>
+json_string = json.dumps(config, indent=<span class="num">2</span>)  <span class="cm"># dict → string</span>
+parsed = json.loads(json_string)              <span class="cm"># string → dict</span>
+
+<span class="cm"># Handle special types with custom encoder</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">class</span> <span class="cls">DateEncoder</span>(json.JSONEncoder):
+    <span class="kw">def</span> <span class="fn">default</span>(<span class="param">self</span>, <span class="param">obj</span>):
+        <span class="kw">if</span> <span class="bi">isinstance</span>(obj, datetime):
+            <span class="kw">return</span> obj.isoformat()
+        <span class="kw">return</span> <span class="bi">super</span>().default(obj)
+
+data = {<span class="st">"event"</span>: <span class="st">"deploy"</span>, <span class="st">"time"</span>: datetime.now()}
+<span class="bi">print</span>(json.dumps(data, cls=DateEncoder))</pre>
+      </div>
+    </div>
+    <div class="output-block">
+App: MyApp
+DB port: 5432
+{"event": "deploy", "time": "2026-05-31T10:30:00.123456"}
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.7; margin:0;">
+        <strong>dump vs dumps:</strong> <code>json.dump()</code> writes to a <strong>file</strong>. <code>json.dumps()</code> returns a <strong>string</strong>. Same for <code>load()</code> (file) vs <code>loads()</code> (string). The "s" stands for "string."
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Safe File Handling Section -->
+<section id="safe">
+  <div class="section-header reveal">
+    <div class="section-label">Best Practices</div>
+    <h2 class="section-title">Safe File Handling</h2>
+    <p class="section-desc">The <code>with</code> statement, resource cleanup, and exception-safe patterns.</p>
+  </div>
+
+  <!-- With Statement -->
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:12px; font-size:1.1rem;">The <code>with</code> Statement — Why It Matters</h3>
+    <p style="color:var(--text); font-size:0.95rem; line-height:1.8;">The <code>with</code> statement is a context manager that guarantees the file is closed — even if an exception occurs. Without it, a crash between <code>open()</code> and <code>close()</code> leaves the file handle open, potentially corrupting data or leaking resources.</p>
+    <div class="grid-2" style="margin-top:20px;">
+      <div style="padding:16px; background:#fef2f2; border-radius:var(--radius-sm); border:1px solid rgba(239,68,68,0.3);">
+        <p style="font-weight:600; color:var(--danger); margin-bottom:8px;">❌ Unsafe — file might not close</p>
+        <div style="padding:10px; background:var(--code-bg); border-radius:6px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3; line-height:1.7;">
+          f = open("data.txt")<br>
+          data = f.read()&nbsp;&nbsp;<span class="cm"># if this crashes...</span><br>
+          f.close()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># ...this never runs!</span>
+        </div>
+      </div>
+      <div style="padding:16px; background:#ecfdf5; border-radius:var(--radius-sm); border:1px solid rgba(16,185,129,0.3);">
+        <p style="font-weight:600; color:var(--success); margin-bottom:8px;">✅ Safe — always closes</p>
+        <div style="padding:10px; background:var(--code-bg); border-radius:6px; font-family:var(--mono); font-size:0.8rem; color:#e6edf3; line-height:1.7;">
+          <span class="kw">with</span> open("data.txt") <span class="kw">as</span> f:<br>
+          &nbsp;&nbsp;data = f.read()<br>
+          <span class="cm"># auto-closed here, even on crash</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exception-Safe Handling -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Exception-Safe File Handling</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Handle common file errors gracefully — missing files, permission issues, encoding problems.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">exception_safe.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> os
+
+<span class="cm"># Pattern 1: Handle specific file errors</span>
+<span class="kw">def</span> <span class="fn">read_config</span>(<span class="param">filepath</span>):
+    <span class="st">"""Read a config file with proper error handling."""</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="bi">open</span>(filepath, <span class="st">"r"</span>, encoding=<span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+            <span class="kw">return</span> f.read()
+    <span class="kw">except</span> <span class="bi">FileNotFoundError</span>:
+        <span class="bi">print</span>(<span class="st">f"❌ File not found: {filepath}"</span>)
+        <span class="kw">return</span> <span class="op">None</span>
+    <span class="kw">except</span> <span class="bi">PermissionError</span>:
+        <span class="bi">print</span>(<span class="st">f"🔒 No permission to read: {filepath}"</span>)
+        <span class="kw">return</span> <span class="op">None</span>
+    <span class="kw">except</span> <span class="bi">UnicodeDecodeError</span>:
+        <span class="bi">print</span>(<span class="st">f"⚠️ Encoding error — try binary mode"</span>)
+        <span class="kw">return</span> <span class="op">None</span>
+
+<span class="cm"># Pattern 2: Safe write with atomic replacement</span>
+<span class="kw">import</span> tempfile
+
+<span class="kw">def</span> <span class="fn">safe_write</span>(<span class="param">filepath</span>, <span class="param">content</span>):
+    <span class="st">"""Write atomically — file is never half-written."""</span>
+    dir_name = os.path.dirname(filepath) <span class="kw">or</span> <span class="st">"."</span>
+    <span class="kw">try</span>:
+        <span class="cm"># Write to temp file first</span>
+        <span class="kw">with</span> tempfile.NamedTemporaryFile(
+            mode=<span class="st">"w"</span>, dir=dir_name, delete=<span class="op">False</span>
+        ) <span class="kw">as</span> tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
+        <span class="cm"># Rename atomically (all-or-nothing)</span>
+        os.replace(tmp_path, filepath)
+    <span class="kw">except</span> <span class="bi">Exception</span>:
+        <span class="cm"># Clean up temp file on failure</span>
+        <span class="kw">if</span> os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+        <span class="kw">raise</span>
+
+<span class="cm"># Pattern 3: Check before opening</span>
+filepath = <span class="st">"data.txt"</span>
+<span class="kw">if</span> os.path.exists(filepath) <span class="kw">and</span> os.path.isfile(filepath):
+    <span class="kw">with</span> <span class="bi">open</span>(filepath) <span class="kw">as</span> f:
+        <span class="bi">print</span>(f.read())
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="st">"File doesn't exist"</span>)</pre>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(245,158,11,0.08); border-radius:var(--radius-sm); border-left:3px solid var(--warning);">
+      <p style="font-size:0.9rem; color:#92400e; line-height:1.7; margin:0;">
+        <strong>EAFP vs LBYL:</strong> Python prefers "Easier to Ask Forgiveness than Permission" (try/except) over "Look Before You Leap" (if/else checks). Use try/except for file operations — the file could disappear between your check and your open.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Examples Section -->
+<section id="examples">
+  <div class="section-header reveal">
+    <div class="section-label">Hands-On</div>
+    <h2 class="section-title">Real-World Examples</h2>
+    <p class="section-desc">Complete patterns you'll use in actual projects.</p>
+  </div>
+
+  <!-- Example 1: Log File Analyzer -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 1: Log File Analyzer</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Process a large log file line by line — count errors, extract timestamps, memory efficient.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">log_analyzer.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">analyze_log</span>(<span class="param">filepath</span>):
+    <span class="st">"""Analyze a log file — memory efficient for any size."""</span>
+    stats = Counter()
+    errors = []
+
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="bi">open</span>(filepath, <span class="st">"r"</span>) <span class="kw">as</span> f:
+            <span class="kw">for</span> line_num, line <span class="kw">in</span> <span class="bi">enumerate</span>(f, <span class="num">1</span>):
+                <span class="cm"># Count log levels</span>
+                <span class="kw">if</span> <span class="st">"ERROR"</span> <span class="kw">in</span> line:
+                    stats[<span class="st">"errors"</span>] += <span class="num">1</span>
+                    errors.append((line_num, line.strip()))
+                <span class="kw">elif</span> <span class="st">"WARNING"</span> <span class="kw">in</span> line:
+                    stats[<span class="st">"warnings"</span>] += <span class="num">1</span>
+                <span class="kw">else</span>:
+                    stats[<span class="st">"info"</span>] += <span class="num">1</span>
+                stats[<span class="st">"total"</span>] += <span class="num">1</span>
+
+    <span class="kw">except</span> <span class="bi">FileNotFoundError</span>:
+        <span class="bi">print</span>(<span class="st">f"Log file not found: {filepath}"</span>)
+        <span class="kw">return</span> <span class="op">None</span>
+
+    <span class="kw">return</span> {<span class="st">"stats"</span>: <span class="bi">dict</span>(stats), <span class="st">"recent_errors"</span>: errors[-<span class="num">5</span>:]}
+
+result = analyze_log(<span class="st">"app.log"</span>)
+<span class="kw">if</span> result:
+    <span class="bi">print</span>(<span class="st">f"Total lines: {result['stats']['total']}"</span>)
+    <span class="bi">print</span>(<span class="st">f"Errors: {result['stats'].get('errors', 0)}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Total lines: 15234
+Errors: 42
+    </div>
+  </div>
+
+  <!-- Example 2: Config Manager -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 2: JSON Config Manager with Defaults</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Load config from JSON, merge with defaults, save changes back — a common application pattern.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">config_manager.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> json
+<span class="kw">import</span> os
+
+<span class="kw">class</span> <span class="cls">ConfigManager</span>:
+    DEFAULTS = {
+        <span class="st">"theme"</span>: <span class="st">"dark"</span>,
+        <span class="st">"language"</span>: <span class="st">"en"</span>,
+        <span class="st">"auto_save"</span>: <span class="op">True</span>,
+        <span class="st">"max_retries"</span>: <span class="num">3</span>,
+    }
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="param">self</span>, <span class="param">filepath</span>):
+        self.filepath = filepath
+        self.config = self._load()
+
+    <span class="kw">def</span> <span class="fn">_load</span>(<span class="param">self</span>):
+        <span class="st">"""Load config, falling back to defaults."""</span>
+        <span class="kw">if</span> os.path.exists(self.filepath):
+            <span class="kw">with</span> <span class="bi">open</span>(self.filepath, <span class="st">"r"</span>) <span class="kw">as</span> f:
+                user_config = json.load(f)
+            <span class="kw">return</span> {**self.DEFAULTS, **user_config}
+        <span class="kw">return</span> self.DEFAULTS.copy()
+
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="param">self</span>, <span class="param">key</span>, <span class="param">default</span>=<span class="op">None</span>):
+        <span class="kw">return</span> self.config.get(key, default)
+
+    <span class="kw">def</span> <span class="fn">set</span>(<span class="param">self</span>, <span class="param">key</span>, <span class="param">value</span>):
+        self.config[key] = value
+        self._save()
+
+    <span class="kw">def</span> <span class="fn">_save</span>(<span class="param">self</span>):
+        <span class="kw">with</span> <span class="bi">open</span>(self.filepath, <span class="st">"w"</span>) <span class="kw">as</span> f:
+            json.dump(self.config, f, indent=<span class="num">2</span>)
+
+<span class="cm"># Usage</span>
+cfg = ConfigManager(<span class="st">"settings.json"</span>)
+<span class="bi">print</span>(cfg.get(<span class="st">"theme"</span>))       <span class="cm"># "dark" (default)</span>
+cfg.set(<span class="st">"theme"</span>, <span class="st">"light"</span>)   <span class="cm"># saves to file</span>
+<span class="bi">print</span>(cfg.get(<span class="st">"theme"</span>))       <span class="cm"># "light"</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+dark
+light
+    </div>
+  </div>
+
+  <!-- Example 3: CSV Data Pipeline -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 3: CSV Data Pipeline — Filter and Transform</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Read a CSV, filter rows, transform data, write results — a common ETL pattern.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">csv_pipeline.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> csv
+
+<span class="kw">def</span> <span class="fn">process_sales</span>(<span class="param">input_file</span>, <span class="param">output_file</span>, <span class="param">min_amount</span>=<span class="num">100</span>):
+    <span class="st">"""Filter sales above threshold and add tax column."""</span>
+    processed = <span class="num">0</span>
+
+    <span class="kw">with</span> <span class="bi">open</span>(input_file, <span class="st">"r"</span>) <span class="kw">as</span> infile, \
+         <span class="bi">open</span>(output_file, <span class="st">"w"</span>, newline=<span class="st">""</span>) <span class="kw">as</span> outfile:
+
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames + [<span class="st">"tax"</span>, <span class="st">"total"</span>]
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        <span class="kw">for</span> row <span class="kw">in</span> reader:
+            amount = <span class="bi">float</span>(row[<span class="st">"amount"</span>])
+            <span class="kw">if</span> amount >= min_amount:
+                row[<span class="st">"tax"</span>] = <span class="bi">round</span>(amount * <span class="num">0.1</span>, <span class="num">2</span>)
+                row[<span class="st">"total"</span>] = <span class="bi">round</span>(amount * <span class="num">1.1</span>, <span class="num">2</span>)
+                writer.writerow(row)
+                processed += <span class="num">1</span>
+
+    <span class="bi">print</span>(<span class="st">f"Processed {processed} sales above ${min_amount}"</span>)
+
+<span class="cm"># Multiple files open at once with 'with' — both auto-close</span>
+process_sales(<span class="st">"sales.csv"</span>, <span class="st">"filtered_sales.csv"</span>, min_amount=<span class="num">50</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Processed 847 sales above $50
+    </div>
+  </div>
+</section>
+
+<!-- Interview Questions Section -->
+<section id="interview">
+  <div class="section-header reveal">
+    <div class="section-label">Career Prep</div>
+    <h2 class="section-title">Interview Questions</h2>
+    <p class="section-desc">Common file handling questions. Click to reveal answers.</p>
+  </div>
+
+  <div class="reveal">
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">1</span>
+        <span class="qa-text">What's the difference between <code>"r"</code>, <code>"w"</code>, and <code>"a"</code> modes?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>"r"</code> = read only (file must exist). <code>"w"</code> = write only (creates file or <strong>erases existing content</strong>). <code>"a"</code> = append (creates file or adds to end without erasing). The critical difference: <code>"w"</code> destroys existing data, <code>"a"</code> preserves it.</p>
+          <div class="qa-tip">💡 Common mistake: using "w" when you meant "a" — and accidentally erasing your entire file. Always double-check the mode.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">2</span>
+        <span class="qa-text">Why should you always use <code>with open()</code> instead of <code>open()</code> + <code>close()</code>?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The <code>with</code> statement guarantees the file is closed even if an exception occurs between open and close. Without it, a crash leaves the file handle open — potentially corrupting data, leaking file descriptors, or preventing other programs from accessing the file.</p>
+          <p style="margin-top:8px;">Under the hood, <code>with</code> calls <code>__enter__()</code> on open and <code>__exit__()</code> when the block ends (which calls <code>f.close()</code>). It's a context manager pattern.</p>
+          <div class="qa-tip">💡 There's no good reason to NOT use <code>with</code>. It's shorter, safer, and more Pythonic.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">3</span>
+        <span class="qa-text">How do you read a very large file without running out of memory?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Iterate line by line with <code>for line in f:</code> — this loads only one line at a time regardless of file size. For binary files, read in fixed chunks: <code>while chunk := f.read(8192):</code>. Never use <code>f.read()</code> or <code>f.readlines()</code> on large files — they load everything into RAM.</p>
+          <div class="qa-tip">💡 <code>for line in f:</code> is both memory-efficient AND fast — Python's file iterator is implemented in C and uses internal buffering.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">4</span>
+        <span class="qa-text">What's the difference between text mode and binary mode?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Text mode</strong> (<code>"r"</code>, <code>"w"</code>): returns <code>str</code>, handles encoding (UTF-8 default), translates newlines (<code>\r\n</code> → <code>\n</code> on Windows). <strong>Binary mode</strong> (<code>"rb"</code>, <code>"wb"</code>): returns <code>bytes</code>, no encoding, no newline translation — raw data as-is.</p>
+          <p style="margin-top:8px;">Use text for human-readable files (.txt, .csv, .json). Use binary for everything else (images, PDFs, executables, compressed files).</p>
+          <div class="qa-tip">💡 If you get <code>UnicodeDecodeError</code>, you're probably opening a binary file in text mode. Switch to <code>"rb"</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">5</span>
+        <span class="qa-text">What do <code>seek()</code> and <code>tell()</code> do?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>tell()</code> returns the current position of the file pointer (in bytes). <code>seek(offset, whence)</code> moves the pointer to a specific position. <code>whence=0</code> means from start, <code>1</code> from current position (binary only), <code>2</code> from end (binary only).</p>
+          <p style="margin-top:8px;">Use case: reading a file header, then seeking to a specific offset to read data. Or re-reading a file from the beginning without reopening it.</p>
+          <div class="qa-tip">💡 After <code>f.read()</code>, the pointer is at the end. To read again, you need <code>f.seek(0)</code> to go back to the start.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">6</span>
+        <span class="qa-text">What's the difference between <code>json.dump()</code> and <code>json.dumps()</code>?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><code>json.dump(obj, file)</code> writes JSON directly to a <strong>file object</strong>. <code>json.dumps(obj)</code> returns a JSON <strong>string</strong>. Same for reading: <code>json.load(file)</code> reads from a file, <code>json.loads(string)</code> parses a string. The "s" stands for "string."</p>
+          <div class="qa-tip">💡 Use <code>dump/load</code> when working with files. Use <code>dumps/loads</code> when working with API responses, network data, or in-memory strings.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">7</span>
+        <span class="qa-text">How do you handle file encoding issues?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Always specify encoding explicitly: <code>open("file.txt", encoding="utf-8")</code>. If you get <code>UnicodeDecodeError</code>, the file might use a different encoding (latin-1, cp1252, etc.). Use <code>errors="replace"</code> or <code>errors="ignore"</code> as a fallback, or detect encoding with the <code>chardet</code> library.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># Safe reading with fallback</span><br>
+            open("file.txt", encoding="utf-8", errors="replace")
+          </div>
+          <div class="qa-tip">💡 UTF-8 handles 99% of cases. If you're reading old Windows files, try <code>encoding="cp1252"</code>. For CSV from Excel, try <code>encoding="utf-8-sig"</code> (handles BOM).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">8</span>
+        <span class="qa-text">What is buffering and when would you change it?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Buffering means Python collects writes in memory and flushes them to disk in batches (default ~8KB). This is faster than writing every byte individually. You'd change it when you need: real-time logging (<code>buffering=1</code> for line-buffered), or immediate writes (<code>f.flush()</code> after each write).</p>
+          <p style="margin-top:8px;"><code>buffering=0</code> (unbuffered) is only available in binary mode. For text files, the minimum is line-buffered (<code>buffering=1</code>).</p>
+          <div class="qa-tip">💡 If your log file appears empty until the program exits, it's a buffering issue. Use <code>flush=True</code> in print() or <code>f.flush()</code> after writes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">9</span>
+        <span class="qa-text">How do you write to a file atomically (all-or-nothing)?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Write to a temporary file first, then rename it to the target path using <code>os.replace()</code>. Renaming is atomic on most filesystems — the file is either fully old or fully new, never half-written. This prevents data corruption if your program crashes mid-write.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#8b949e;"># Write to temp, then atomic rename</span><br>
+            <span style="color:#ff7b72;">with</span> tempfile.NamedTemporaryFile(delete=<span style="color:#79c0ff;">False</span>) <span style="color:#ff7b72;">as</span> tmp:<br>
+            &nbsp;&nbsp;tmp.write(data)<br>
+            os.replace(tmp.name, <span style="color:#a5d6ff;">"config.json"</span>)
+          </div>
+          <div class="qa-tip">💡 This pattern is used by databases, editors (VS Code), and config managers. Never write directly to important files.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">10</span>
+        <span class="qa-text">Why does <code>csv.writer</code> need <code>newline=""</code> on Windows?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The CSV module handles line endings itself. Without <code>newline=""</code>, Python's text mode ALSO translates newlines — resulting in double newlines (<code>\r\r\n</code>) on Windows, which shows up as blank rows between your data.</p>
+          <p style="margin-top:8px;"><code>newline=""</code> tells Python: "don't do any newline translation — let the csv module handle it." Always include it when opening files for csv reading or writing.</p>
+          <div class="qa-tip">💡 This is a Windows-specific issue but including <code>newline=""</code> is harmless on macOS/Linux — always add it for portability.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="text-align:center; padding:80px 40px; border-top:1px solid var(--card-border);">
+  <div style="width:60px; height:3px; background:linear-gradient(90deg, var(--primary), #a78bfa); margin:0 auto 20px; border-radius:2px;"></div>
+  <p style="color:var(--text-muted); font-size:0.95rem;">Python File Handling — Interactive Learning Guide</p>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">Built with HTML, CSS & vanilla JS</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+revealElements.forEach(el => revealObserver.observe(el));
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    if (window.scrollY >= section.offsetTop - 120) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+function toggleQA(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-editor').querySelector('.code-body pre');
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

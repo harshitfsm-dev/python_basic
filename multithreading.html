@@ -1,0 +1,2773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Multithreading & Multiprocessing — Interactive Learning Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224);
+  --primary-glow: rgba(58, 114, 224, 0.25);
+  --primary-light: #e8f0fe;
+  --primary-dark: #2a5db8;
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --card-border: #dbe4ff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --code-bg: #1e293b;
+  --font: 'Inter','Segoe UI',Roboto,sans-serif;
+  --mono: 'Fira Code','JetBrains Mono','Cascadia Code',monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --glow: 0 4px 20px rgba(58,114,224,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border); }
+.nav-logo { font-weight: 800; font-size: 1.2rem; background: linear-gradient(135deg, var(--primary), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.nav-links { display: flex; gap: 20px; list-style: none; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s; position: relative; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-links a.active::after { content: ''; position: absolute; bottom: -6px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+section { padding: 60px 40px; max-width: 1200px; margin: 0 auto; }
+
+.hero-section { min-height: auto; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; padding: 140px 40px 80px; overflow: hidden; background: #ffffff; max-width: 100%; }
+.hero-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: radial-gradient(ellipse at 20% 50%, rgba(58,114,224,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 40%), radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.05) 0%, transparent 40%); pointer-events: none; }
+.hero-content { position: relative; z-index: 2; max-width: 750px; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+.hero-badge { padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--card-border); background: #ffffff; color: var(--text-muted); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.hero-badge.primary { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.hero-title { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 18px; }
+.hero-title span { background: linear-gradient(135deg, var(--primary), #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 36px; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn { padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; border: none; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 20px var(--primary-glow); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+.btn-ghost { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); }
+.btn-ghost:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+.glass-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.glass-card:hover { border-color: var(--primary); box-shadow: var(--glow); transform: translateY(-4px); }
+.section-header { text-align: center; margin-bottom: 60px; }
+.section-label { font-size: 0.85rem; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+.section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; }
+.section-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+.code-editor { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.code-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: #161b22; border-bottom: 1px solid var(--card-border); }
+.code-dots { display: flex; gap: 8px; }
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.code-dot.red { background: #ff5f57; } .code-dot.yellow { background: #febc2e; } .code-dot.green { background: #28c840; }
+.code-filename { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); }
+.code-copy { background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); color: var(--text-muted); padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
+.code-copy:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.code-body { padding: 24px; background: var(--code-bg); overflow-x: auto; }
+.code-body pre { font-family: var(--mono); font-size: 0.88rem; line-height: 1.7; color: #e6edf3; margin: 0; }
+.kw { color: #ff7b72; } .fn { color: #d2a8ff; } .st { color: #a5d6ff; } .cm { color: #8b949e; }
+.op { color: #79c0ff; } .num { color: #79c0ff; } .dec { color: #ffa657; } .bi { color: #79c0ff; }
+.param { color: #ffa657; } .cls { color: #f0883e; }
+
+.output-block { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: var(--radius-sm); padding: 16px 20px; margin: 16px 0; font-family: var(--mono); font-size: 0.85rem; color: #065f46; }
+.output-block::before { content: '▶ Output'; display: block; font-weight: 600; font-size: 0.7rem; color: var(--success); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+.diagram-wrapper { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 40px; margin: 32px 0; text-align: center; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+.diagram-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark); }
+.diagram-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+.flow-container { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.flow-node { padding: 16px 24px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.85rem; border: 2px solid var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.flow-node.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(58,114,224,0.3); }
+.flow-node.success { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065f46; }
+.flow-node.warning { border-color: var(--warning); background: rgba(245,158,11,0.1); color: #92400e; }
+.flow-node.danger { border-color: var(--danger); background: rgba(239,68,68,0.1); color: #991b1b; }
+.flow-arrow { color: var(--primary); font-size: 1.4rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); display: table; }
+th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.85rem; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--card-border); font-size: 0.85rem; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: var(--primary-light); }
+
+.qa-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+.qa-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
+.qa-question { padding: 20px 24px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: background 0.3s; background: #f8fafc; }
+.qa-question:hover { background: var(--primary-light); }
+.qa-num { width: 32px; height: 32px; background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+.qa-text { font-weight: 600; font-size: 0.95rem; flex: 1; }
+.qa-toggle { color: var(--text-muted); font-size: 1.2rem; transition: transform 0.3s; }
+.qa-card.open .qa-toggle { transform: rotate(180deg); }
+.qa-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.qa-card.open .qa-answer { padding: 0 24px 24px; max-height: 800px; }
+.qa-answer-content { padding-top: 16px; border-top: 1px solid var(--card-border); color: var(--text); line-height: 1.8; }
+.qa-tip { margin-top: 12px; padding: 12px 16px; background: var(--primary-light); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--primary-dark); border-left: 3px solid var(--primary); }
+
+.usecase-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 28px; transition: all 0.4s; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+.usecase-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), #a78bfa); opacity: 0; transition: opacity 0.3s; }
+.usecase-card:hover::before { opacity: 1; }
+.usecase-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--glow); }
+.usecase-icon { width: 48px; height: 48px; background: var(--primary-light); border: 1px solid rgba(58,114,224,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.3rem; }
+.usecase-card h4 { font-size: 1.05rem; margin-bottom: 8px; }
+.usecase-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Execution timeline diagrams ───────────────────────────── */
+.timeline { display: flex; flex-direction: column; gap: 8px; max-width: 780px; margin: 0 auto; }
+.tl-row { display: flex; align-items: center; gap: 12px; }
+.tl-label { width: 96px; flex-shrink: 0; text-align: right; font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+.tl-track { display: flex; gap: 4px; flex: 1; }
+.tl-slot { flex: 1; min-width: 0; height: 30px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.4px; overflow: hidden; white-space: nowrap; }
+.tl-slot.run { background: var(--success); color: #fff; }
+.tl-slot.wait { background: #eef2f7; color: #a3aebd; border: 1px dashed #cbd5e1; }
+.tl-slot.io { background: #fbbf24; color: #4a2c00; }
+.tl-slot.gil { background: var(--primary); color: #fff; }
+.tl-axis { margin-top: 2px; }
+.tl-axis .tl-label { color: var(--text-dim); font-weight: 600; }
+.tl-axis .tl-track span { flex: 1; text-align: center; font-size: 0.6rem; color: var(--text-dim); font-family: var(--mono); }
+.legend { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; color: var(--text-muted); }
+.legend-swatch { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+
+/* ── CPU core grid ─────────────────────────────────────────── */
+.core-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 720px; margin: 0 auto; }
+.core { border-radius: 12px; padding: 18px 8px; font-size: 0.8rem; font-weight: 700; border: 2px solid; }
+.core small { display: block; font-weight: 500; font-size: 0.68rem; margin-top: 6px; line-height: 1.4; }
+.core.busy { border-color: var(--success); background: rgba(16,185,129,0.12); color: #065f46; }
+.core.idle { border-color: #cbd5e1; background: #f1f5f9; color: var(--text-dim); }
+
+/* ── Event loop / task chips ───────────────────────────────── */
+.stack-box { border: 2px solid var(--primary); border-radius: 12px; padding: 16px; background: var(--primary-light); max-width: 720px; margin: 0 auto; }
+.stack-title { font-size: 0.72rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.chip-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.chip { padding: 8px 14px; border-radius: 20px; font-size: 0.74rem; font-weight: 600; background: #fff; border: 1px solid var(--card-border); color: var(--text); }
+.chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 3px 10px var(--primary-glow); }
+.chip.pending { border-style: dashed; color: var(--text-dim); }
+.chip.done { background: rgba(16,185,129,0.12); border-color: var(--success); color: #065f46; }
+
+/* ── Switch-point bar ──────────────────────────────────────── */
+.switch-bar { display: flex; align-items: center; gap: 3px; max-width: 640px; margin: 10px auto 0; }
+.switch-bar .seg { flex: 1; height: 22px; background: var(--primary-light); border-radius: 4px; }
+.switch-bar .mark { width: 9px; height: 32px; border-radius: 3px; background: var(--danger); flex-shrink: 0; }
+.switch-bar .mark.awaitp { background: var(--warning); width: 14px; }
+
+/* ── Two-panel compare ────────────────────────────────────── */
+.panel-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+.panel { border-radius: 14px; padding: 24px; border: 2px solid; }
+.panel.blue { border-color: var(--primary); background: rgba(58,114,224,0.05); }
+.panel.purple { border-color: #7c3aed; background: rgba(124,58,237,0.05); }
+.panel h4 { font-size: 1rem; margin-bottom: 10px; }
+.panel p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.7; }
+.panel ul { padding-left: 18px; font-size: 0.83rem; color: var(--text-muted); line-height: 1.9; margin-top: 10px; }
+
+/* ── Version timeline ─────────────────────────────────────── */
+.version-timeline { max-width: 740px; margin: 0 auto; text-align: left; }
+.vt-item { display: flex; gap: 16px; }
+.vt-marker { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 16px; }
+.vt-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); margin-top: 6px; flex-shrink: 0; }
+.vt-dot.done { background: var(--success); box-shadow: 0 0 0 3px rgba(16,185,129,0.18); }
+.vt-dot.now { background: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+.vt-dot.future { background: #fff; border: 2px dashed #cbd5e1; box-shadow: none; }
+.vt-line { width: 2px; flex: 1; background: var(--card-border); min-height: 20px; }
+.vt-body { padding-bottom: 24px; }
+.vt-ver { font-family: var(--mono); font-weight: 700; font-size: 0.88rem; color: var(--primary-dark); }
+.vt-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ══════════════════════════════════════════════════════════════
+   ANIMATION ENGINE
+   Nothing animates until JS adds .anim-run to a [data-anim] stage
+   (only while it is on screen). .anim-paused freezes the frame.
+   ══════════════════════════════════════════════════════════════ */
+.anim-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+.anim-btn { background: #fff; border: 1px solid var(--card-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 0.74rem; font-weight: 600; cursor: pointer; font-family: var(--font); transition: all 0.2s; }
+.anim-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.anim-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.anim-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700; color: var(--text-dim); }
+.anim-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; }
+.anim-run .anim-status { color: var(--success); }
+.anim-run .anim-status::before { background: var(--success); animation: dotBlink 1.3s ease-in-out infinite; }
+@keyframes dotBlink { 0%, 100% { opacity: 1 } 50% { opacity: 0.2 } }
+.anim-paused, .anim-paused * { animation-play-state: paused !important; }
+
+/* ── Timeline: sweeping playhead + slots filling in as it passes ── */
+.timeline { position: relative; --tlw: 108px; --cols: 8; --sweep: 3.6s; }
+.tl-scan { position: absolute; left: var(--tlw); right: 0; top: -12px; bottom: 20px; pointer-events: none; opacity: 0; }
+.tl-scan i { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; border-radius: 2px;
+  background: linear-gradient(180deg, rgba(58,114,224,0) 0%, var(--primary) 15%, var(--primary) 85%, rgba(58,114,224,0) 100%); }
+.tl-scan i::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid var(--primary); }
+.anim-run .tl-scan { opacity: 1; }
+.anim-run .tl-scan i { animation: tlSweep var(--sweep) linear both; }
+@keyframes tlSweep { from { left: 0 } to { left: 100% } }
+
+.anim-run .tl-slot { animation: slotWake 0.5s cubic-bezier(.2,.8,.25,1) both;
+  animation-delay: calc(var(--sweep) / var(--cols) * var(--c, 0)); }
+@keyframes slotWake {
+  0%   { opacity: 0.12; filter: grayscale(1); transform: scaleY(0.45); }
+  60%  { opacity: 1; filter: none; transform: scaleY(1.16); }
+  100% { opacity: 1; transform: scaleY(1); }
+}
+.anim-run .tl-slot.run, .anim-run .tl-slot.gil, .anim-run .tl-slot.io {
+  animation-name: slotWakeHot; animation-duration: 0.62s; }
+@keyframes slotWakeHot {
+  0%   { opacity: 0.1; filter: grayscale(1); transform: scale(0.55); }
+  55%  { opacity: 1; filter: brightness(1.25); transform: scale(1.2); }
+  100% { opacity: 1; filter: none; transform: scale(1); }
+}
+.anim-run .tl-axis .tl-track span { animation: axisTick 0.35s ease both;
+  animation-delay: calc(var(--sweep) / var(--cols) * var(--c, 0)); }
+@keyframes axisTick { from { opacity: 0.12 } to { opacity: 1 } }
+
+/* ── Diagram 1: the GIL token hopping from core to core ── */
+.gil-stage { position: relative; max-width: 720px; margin: 0 auto; padding-top: 52px; --cyc: 8s; --n: 4; }
+.gil-token { position: absolute; top: 0; left: 12.5%; transform: translateX(-50%); padding: 7px 15px; border-radius: 20px;
+  background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;
+  box-shadow: 0 5px 16px var(--primary-glow); }
+.gil-token::after { content: ''; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%);
+  border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--primary); }
+.anim-run .gil-token { animation: gilHop var(--cyc) cubic-bezier(.65,0,.35,1) infinite; }
+@keyframes gilHop {
+  0%, 18%  { left: 12.5% }
+  25%, 43% { left: 37.5% }
+  50%, 68% { left: 62.5% }
+  75%, 93% { left: 87.5% }
+  100%     { left: 12.5% }
+}
+.core.cyc { border-color: #cbd5e1; background: #f1f5f9; color: var(--text-dim); transition: none; }
+.core.cyc.lead { border-color: var(--success); background: rgba(16,185,129,0.12); color: #065f46; }
+.core-states { position: relative; display: block; height: 2.9em; margin-top: 6px; }
+.core-states b { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 500; font-size: 0.68rem; line-height: 1.25; }
+.core-states .s-run { opacity: 0; } .core-states .s-idle { opacity: 1; }
+.core.cyc.lead .core-states .s-run { opacity: 1; } .core.cyc.lead .core-states .s-idle { opacity: 0; }
+.anim-run .core.cyc { animation: coreTurn var(--cyc, 8s) linear infinite;
+  animation-delay: calc(var(--i) * (var(--cyc, 8s) / 4) - var(--cyc, 8s)); }
+@keyframes coreTurn {
+  0%, 24%  { border-color: var(--success); background: rgba(16,185,129,0.14); color: #065f46;
+             box-shadow: 0 9px 24px rgba(16,185,129,0.22); transform: translateY(-4px); }
+  25%, 100%{ border-color: #cbd5e1; background: #f1f5f9; color: var(--text-dim);
+             box-shadow: none; transform: translateY(0); }
+}
+.anim-run .core.cyc .s-run  { animation: sliceOn  var(--cyc, 8s) linear infinite; animation-delay: calc(var(--i) * (var(--cyc, 8s) / 4) - var(--cyc, 8s)); }
+.anim-run .core.cyc .s-idle { animation: sliceOff var(--cyc, 8s) linear infinite; animation-delay: calc(var(--i) * (var(--cyc, 8s) / 4) - var(--cyc, 8s)); }
+@keyframes sliceOn  { 0%, 24% { opacity: 1 } 25%, 100% { opacity: 0 } }
+@keyframes sliceOff { 0%, 24% { opacity: 0 } 25%, 100% { opacity: 1 } }
+
+/* ── Diagram 4: every core busy at once ── */
+.anim-run .core.pulse { animation: corePulse 2.1s ease-in-out infinite; animation-delay: calc(var(--i) * 0.06s); }
+@keyframes corePulse {
+  0%, 100% { transform: translateY(0); box-shadow: 0 0 0 rgba(16,185,129,0); }
+  50%      { transform: translateY(-5px); box-shadow: 0 11px 26px rgba(16,185,129,0.28); }
+}
+
+/* ── Thread lifecycle: a token walking the states ── */
+.flow-container.walk { --cyc: 6s; --n: 5; }
+.anim-run .flow-container.walk .flow-node { animation: nodeStep var(--cyc) linear infinite;
+  animation-delay: calc(var(--i) * (var(--cyc) / var(--n)) - var(--cyc)); }
+@keyframes nodeStep {
+  0%, 17%  { transform: translateY(-6px) scale(1.06); box-shadow: 0 11px 26px var(--primary-glow); filter: none; }
+  20%, 100%{ transform: none; box-shadow: none; filter: saturate(0.5) opacity(0.72); }
+}
+.anim-run .flow-container.walk .flow-arrow { animation: arrowStep var(--cyc) linear infinite;
+  animation-delay: calc((var(--j) + 0.55) * (var(--cyc) / var(--n)) - var(--cyc)); }
+@keyframes arrowStep {
+  0%, 9%   { transform: translateX(5px) scale(1.35); opacity: 1; }
+  13%, 100%{ transform: none; opacity: 0.4; }
+}
+
+/* ── Diagram 7: a program counter travelling the bar ── */
+.sb-wrap { position: relative; max-width: 640px; margin: 10px auto 0; }
+.sb-wrap .switch-bar { margin: 0; }
+.sb-cursor { position: absolute; top: -5px; left: 0; width: 11px; height: 32px; border-radius: 4px; opacity: 0;
+  background: var(--primary-dark); box-shadow: 0 0 12px 3px var(--primary-glow); }
+.anim-run .sb-cursor { opacity: 1; }
+/* 0.833s jolt period = one jolt per mark across the 5s sweep */
+.anim-run .sb-wrap.preempt .sb-cursor { animation: pcLinear 5s linear infinite, pcJolt 0.833s ease-in-out infinite; }
+.anim-run .sb-wrap.coop .sb-cursor { animation: pcCoop 5s ease-in-out infinite; }
+@keyframes pcLinear { from { left: 0 } to { left: calc(100% - 11px) } }
+@keyframes pcJolt {
+  0%, 88%  { transform: translateY(0) scaleY(1); background: var(--primary-dark); }
+  97%      { transform: translateY(-9px) scaleY(1.4); background: var(--danger); }
+  100%     { transform: translateY(0) scaleY(1); background: var(--primary-dark); }
+}
+@keyframes pcCoop {
+  0%   { left: 0 }
+  20%  { left: 24% }
+  34%  { left: 24% }
+  56%  { left: 62% }
+  70%  { left: 62% }
+  100% { left: calc(100% - 11px) }
+}
+.anim-run .switch-bar .mark { animation: markFlash 5s linear infinite;
+  animation-delay: calc(var(--m) * 0.83s - 5s); }
+.anim-run .switch-bar .mark.awaitp { animation-delay: calc(var(--m) * 2s - 5.4s); }
+@keyframes markFlash {
+  0%       { transform: scaleY(1); filter: brightness(1); }
+  7%       { transform: scaleY(1.55); filter: brightness(1.6); }
+  16%, 100%{ transform: scaleY(1); filter: brightness(1); }
+}
+
+/* ── Reusable "data flowing" track ── */
+.flowtrack { display: flex; align-items: center; justify-content: center; max-width: 780px; margin: 0 auto; flex-wrap: wrap; gap: 6px; }
+.ft-stage { padding: 13px 16px; border-radius: 11px; border: 2px solid var(--primary); background: var(--primary-light);
+  color: var(--primary-dark); font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.ft-stage.warn { border-color: var(--warning); background: rgba(245,158,11,0.1); color: #92400e; }
+.ft-stage.ok { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065f46; }
+.ft-stage small { display: block; font-weight: 500; font-size: 0.66rem; opacity: 0.85; margin-top: 3px; }
+.ft-pipe { position: relative; flex: 1; min-width: 54px; height: 6px; border-radius: 3px; background: var(--card-border); }
+.ft-dot { position: absolute; top: 50%; left: 0; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%;
+  background: var(--primary); box-shadow: 0 0 9px var(--primary-glow); opacity: 0; }
+.ft-dot.amber { background: var(--warning); box-shadow: 0 0 9px rgba(245,158,11,0.5); }
+.ft-dot.green { background: var(--success); box-shadow: 0 0 9px rgba(16,185,129,0.5); }
+.anim-run .ft-dot { animation: ftFlow 2s linear infinite; animation-delay: var(--d, 0s); }
+@keyframes ftFlow {
+  0%   { left: 0; opacity: 0; transform: scale(0.6); }
+  12%  { opacity: 1; transform: scale(1); }
+  88%  { opacity: 1; transform: scale(1); }
+  100% { left: 100%; opacity: 0; transform: scale(0.6); }
+}
+.anim-run .chip-row .chip { animation: chipIn 0.5s ease both; animation-delay: calc(var(--k, 0) * 0.11s); }
+@keyframes chipIn { from { opacity: 0; transform: translateY(9px) scale(0.94) } to { opacity: 1; transform: none } }
+
+/* ── Race condition interleaving ── */
+.race-stage { max-width: 660px; margin: 0 auto; --cyc: 6.6s; --n: 6; }
+.race-mem { display: inline-block; padding: 10px 18px; border-radius: 10px; border: 2px solid var(--primary);
+  background: var(--primary-light); font-family: var(--mono); font-weight: 700; font-size: 0.82rem;
+  color: var(--primary-dark); margin-bottom: 22px; }
+.race-lanes { display: flex; flex-direction: column; gap: 12px; }
+.race-lane { display: flex; align-items: center; gap: 9px; }
+.race-lane::before { content: attr(data-t); width: 82px; flex-shrink: 0; text-align: right; font-family: var(--mono);
+  font-size: 0.73rem; font-weight: 700; color: var(--text-muted); }
+.race-op { flex: 1; min-width: 0; padding: 10px 6px; border-radius: 7px; font-family: var(--mono); font-size: 0.68rem;
+  font-weight: 700; background: #f1f5f9; color: #9aa6b5; border: 1px solid var(--card-border); white-space: nowrap; overflow: hidden; }
+.anim-run .race-op { animation: opFire var(--cyc) linear infinite;
+  animation-delay: calc(var(--i) * (var(--cyc) / var(--n)) - var(--cyc)); }
+@keyframes opFire {
+  0%, 13%  { background: var(--primary); color: #fff; border-color: var(--primary);
+             transform: translateY(-4px) scale(1.04); box-shadow: 0 7px 18px var(--primary-glow); }
+  17%, 100%{ background: #f1f5f9; color: #9aa6b5; border-color: var(--card-border);
+             transform: none; box-shadow: none; }
+}
+.race-op.bad { border-color: rgba(239,68,68,0.4); }
+.anim-run .race-op.bad { animation-name: opFireBad; }
+@keyframes opFireBad {
+  0%, 13%  { background: var(--danger); color: #fff; border-color: var(--danger);
+             transform: translateY(-4px) scale(1.04); box-shadow: 0 7px 18px rgba(239,68,68,0.35); }
+  17%, 100%{ background: #fef2f2; color: #b91c1c; border-color: rgba(239,68,68,0.4);
+             transform: none; box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-run, .anim-run * { animation: none !important; }
+  .anim-bar, .tl-scan, .sb-cursor { display: none !important; }
+  .anim-run .ft-dot { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .timeline { --tlw: 64px; }
+  .gil-stage { padding-top: 46px; }
+  .race-lane::before { width: 56px; font-size: 0.62rem; }
+  .race-op { font-size: 0.56rem; padding: 8px 3px; }
+  .flowtrack { flex-direction: column; }
+  .ft-pipe { width: 6px; height: 42px; flex: none; margin: 0 auto; }
+  .ft-stage { width: 100%; text-align: center; }
+  .ft-dot { left: 50%; }
+  .anim-run .ft-dot { animation-name: ftFlowV; }
+  @keyframes ftFlowV { 0% { top: 0; opacity: 0 } 12% { opacity: 1 } 88% { opacity: 1 } 100% { top: 100%; opacity: 0 } }
+  .anim-run .flow-container.walk .flow-arrow { animation: none; transform: rotate(90deg); opacity: 1; }
+  .core-grid { grid-template-columns: repeat(2, 1fr); }
+  .panel-2 { grid-template-columns: 1fr; }
+  .tl-label { width: 58px; font-size: 0.62rem; }
+  .tl-slot { height: 26px; font-size: 0.44rem; }
+  .timeline { gap: 6px; } .tl-row { gap: 6px; }
+  section { padding: 40px 20px; } .nav { padding: 12px 20px; } .nav-links { display: none; }
+  .grid-2 { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; } .flow-arrow { transform: rotate(90deg); }
+  .hero-title { font-size: 2.2rem; } .hero-section { padding: 100px 20px 50px; }
+  .glass-card { padding: 20px; overflow-x: auto; } table { min-width: 600px; }
+  .code-body { padding: 16px; } .code-body pre { font-size: 0.8rem; }
+  .diagram-wrapper { padding: 20px 12px; }
+}
+::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🐍 PyConcurrency</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#threading">Threading</a></li>
+    <li><a href="#gil-cores">GIL &amp; Cores</a></li>
+    <li><a href="#multiprocessing">Processes</a></li>
+    <li><a href="#comparison">Comparison</a></li>
+    <li><a href="#asyncio">vs Asyncio</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badges">
+      <span class="hero-badge primary">🐍 Python</span>
+      <span class="hero-badge">🧵 Concurrency</span>
+      <span class="hero-badge">🔓 Free-Threading</span>
+      <span class="hero-badge">⚡ Asyncio</span>
+      <span class="hero-badge">⏱ 45 min read</span>
+    </div>
+    <h1 class="hero-title"><span>Multithreading</span> & Multiprocessing</h1>
+    <p class="hero-subtitle">Threads vs processes vs asyncio — lifecycle, locks, race conditions, IPC, shared memory, and how the free-threaded builds finally let threads use every core.</p>
+    <div class="hero-cta">
+      <a href="#threading" class="btn btn-primary">Start Learning →</a>
+      <a href="#examples" class="btn btn-ghost">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview">
+  <div class="section-header reveal">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-title">Three Ways to Do More at Once</h2>
+    <p class="section-desc">Threads share memory. Processes are isolated and bypass the GIL. Asyncio multiplexes thousands of waits onto one thread.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="glass-card reveal" style="border-left:4px solid rgb(58,114,224);">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🧵</div>
+        <h4 style="margin:0; font-size:1.05rem;">Multithreading</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Multiple threads within ONE process. They share memory, are lightweight to create, but limited by the GIL for CPU work. Perfect for I/O-bound tasks — network calls, file reads, database queries.</p>
+    </div>
+    <div class="glass-card reveal" style="border-left:4px solid #059669;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">⚙️</div>
+        <h4 style="margin:0; font-size:1.05rem;">Multiprocessing</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Multiple processes, each with its own Python interpreter and GIL. True parallelism on multiple cores. Heavier to create, separate memory spaces, but no GIL limitation. Perfect for CPU-bound tasks.</p>
+    </div>
+    <div class="glass-card reveal" style="border-left:4px solid #7c3aed;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:42px; height:42px; background:#f3e8ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">⚡</div>
+        <h4 style="margin:0; font-size:1.05rem;">Asyncio</h4>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">A single thread running an event loop. Switches only at <code>await</code>, so a task costs kilobytes instead of megabytes. Handles 100,000 concurrent waits — but needs async-native libraries and never uses a second core.</p>
+    </div>
+  </div>
+
+  <div class="glass-card reveal" style="margin-top:24px; border-left:4px solid var(--warning);">
+    <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.8; margin:0;">
+      <strong>A note on the GIL, up front:</strong> for most of Python's history, threads could never run Python bytecode on
+      more than one core at a time. That changed with the free-threaded builds — experimental in 3.13, officially supported
+      in 3.14, still opt-in. <a href="#gil-cores" style="color:var(--primary); font-weight:600;">Jump to the deep dive →</a>
+    </p>
+  </div>
+</section>
+
+<!-- Threading Section -->
+<section id="threading">
+  <div class="section-header reveal">
+    <div class="section-label">Threads</div>
+    <h2 class="section-title">Multithreading</h2>
+    <p class="section-desc">Thread lifecycle, pools, locks, race conditions, and synchronization.</p>
+  </div>
+
+  <!-- Thread Lifecycle Diagram -->
+  <div class="diagram-wrapper reveal" data-anim="loop">
+    <div class="diagram-title">Thread Lifecycle — From Birth to Death</div>
+    <div class="diagram-desc">Watch one thread walk the states — each stop is where the OS or the GIL takes over</div>
+    <div class="flow-container walk">
+      <div class="flow-node">New<br><small>(created)</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node active">Runnable<br><small>(start() called)</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node success">Running<br><small>(has GIL)</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node warning">Blocked<br><small>(I/O or lock)</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node danger">Dead<br><small>(finished)</small></div>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:600px; margin-left:auto; margin-right:auto;">
+      <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.8;">
+        <strong>New:</strong> Thread object created but not started.<br>
+        <strong>Runnable:</strong> <code>start()</code> called — waiting for GIL/CPU time.<br>
+        <strong>Running:</strong> Actively executing Python bytecode (holds GIL).<br>
+        <strong>Blocked:</strong> Waiting for I/O, a lock, or sleep. GIL released.<br>
+        <strong>Dead:</strong> Target function returned or raised an exception. Can't restart.
+      </p>
+    </div>
+  </div>
+
+  <!-- Thread Basics -->
+  <div class="reveal" style="margin-top:32px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Thread Basics — Creating and Managing Threads</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The <code>threading</code> module gives you real OS threads with a clean Python API.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">thread_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">worker</span>(<span class="param">name</span>, <span class="param">delay</span>):
+    <span class="st">"""A simple worker function."""</span>
+    <span class="bi">print</span>(<span class="st">f"[{name}] Starting..."</span>)
+    time.sleep(delay)
+    <span class="bi">print</span>(<span class="st">f"[{name}] Done after {delay}s"</span>)
+
+<span class="cm"># Create threads</span>
+t1 = threading.Thread(target=worker, args=(<span class="st">"Thread-1"</span>, <span class="num">2</span>))
+t2 = threading.Thread(target=worker, args=(<span class="st">"Thread-2"</span>, <span class="num">1</span>))
+
+<span class="cm"># Start threads (moves to Runnable state)</span>
+t1.start()
+t2.start()
+
+<span class="cm"># Wait for both to finish</span>
+t1.join()  <span class="cm"># blocks until t1 is done</span>
+t2.join()
+
+<span class="bi">print</span>(<span class="st">"All threads finished!"</span>)
+
+<span class="cm"># Useful thread properties</span>
+<span class="bi">print</span>(<span class="st">f"Active threads: {threading.active_count()}"</span>)
+<span class="bi">print</span>(<span class="st">f"Current thread: {threading.current_thread().name}"</span>)
+<span class="bi">print</span>(<span class="st">f"t1 alive? {t1.is_alive()}"</span>)  <span class="cm"># False — it's done</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+[Thread-1] Starting...
+[Thread-2] Starting...
+[Thread-2] Done after 1s
+[Thread-1] Done after 2s
+All threads finished!
+Active threads: 1
+Current thread: MainThread
+t1 alive? False
+    </div>
+  </div>
+
+  <!-- Thread Pools -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Thread Pools — Reuse Threads Efficiently</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Creating threads has overhead. A pool pre-creates a fixed number of threads and reuses them for multiple tasks.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">thread_pool.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">fetch_url</span>(<span class="param">url</span>):
+    <span class="st">"""Simulate fetching a URL."""</span>
+    time.sleep(<span class="num">0.5</span>)  <span class="cm"># simulate network delay</span>
+    <span class="kw">return</span> <span class="st">f"✓ {url} (200 OK)"</span>
+
+urls = [<span class="st">f"https://api.example.com/page/{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">10</span>)]
+
+<span class="cm"># ThreadPoolExecutor — the modern way</span>
+start = time.perf_counter()
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> pool:
+    <span class="cm"># map() distributes work across the pool</span>
+    results = <span class="bi">list</span>(pool.map(fetch_url, urls))
+
+elapsed = time.perf_counter() - start
+<span class="bi">print</span>(<span class="st">f"Fetched {len(results)} URLs in {elapsed:.1f}s"</span>)
+<span class="bi">print</span>(<span class="st">f"(Sequential would take {len(urls) * 0.5:.1f}s)"</span>)
+
+<span class="cm"># submit() for more control — returns Future objects</span>
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">3</span>) <span class="kw">as</span> pool:
+    future = pool.submit(fetch_url, <span class="st">"https://api.example.com/special"</span>)
+    <span class="bi">print</span>(<span class="st">f"Result: {future.result()}"</span>)  <span class="cm"># blocks until done</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+Fetched 10 URLs in 1.0s
+(Sequential would take 5.0s)
+Result: ✓ https://api.example.com/special (200 OK)
+    </div>
+  </div>
+
+  <!-- Race Conditions & Locks -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Race Conditions — The Bug That Hides</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">When two threads modify shared data without coordination, you get unpredictable results. This is a race condition.</p>
+
+    <div class="diagram-wrapper" style="margin-top:0;" data-anim="loop">
+      <div class="diagram-title">Watch <code>counter += 1</code> Lose an Update</div>
+      <div class="diagram-desc">One statement, three bytecodes. The steps light up in the order the interpreter actually ran them.</div>
+
+      <div class="race-stage">
+        <div class="race-mem">shared memory &nbsp;→&nbsp; counter = 100</div>
+        <div class="race-lanes">
+          <div class="race-lane" data-t="Thread A">
+            <span class="race-op" style="--i:0">1 · LOAD → 100</span>
+            <span class="race-op" style="--i:2">3 · ADD → 101</span>
+            <span class="race-op" style="--i:4">5 · STORE 101</span>
+          </div>
+          <div class="race-lane" data-t="Thread B">
+            <span class="race-op" style="--i:1">2 · LOAD → 100</span>
+            <span class="race-op" style="--i:3">4 · ADD → 101</span>
+            <span class="race-op bad" style="--i:5">6 · STORE 101 💥</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px; max-width:620px; margin-left:auto; margin-right:auto; padding:14px 18px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.22); border-radius:var(--radius-sm); text-align:left;">
+        <p style="font-size:0.86rem; color:#991b1b; margin:0; line-height:1.75;">
+          Step 2 read <strong>before</strong> step 5 wrote. Both threads computed 101 from the same stale 100, so step 6
+          overwrites step 5 with the identical value. Two increments happened; the counter moved by one.
+          <strong>That single lost update, repeated thousands of times, is the missing ~112,000 in the output below.</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">race_condition.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+
+<span class="cm"># ❌ BROKEN — Race condition!</span>
+counter = <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">increment_unsafe</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">100_000</span>):
+        counter += <span class="num">1</span>  <span class="cm"># NOT atomic! (LOAD → ADD → STORE)</span>
+
+threads = [threading.Thread(target=increment_unsafe) <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>)]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+
+<span class="bi">print</span>(<span class="st">f"Expected: 500,000"</span>)
+<span class="bi">print</span>(<span class="st">f"Got:      {counter}"</span>)  <span class="cm"># Wrong! Different every run!</span>
+
+<span class="cm"># What happened:</span>
+<span class="cm"># Thread A reads counter = 100</span>
+<span class="cm"># Thread B reads counter = 100 (same value!)</span>
+<span class="cm"># Thread A writes counter = 101</span>
+<span class="cm"># Thread B writes counter = 101 (overwrites A's work!)</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+Expected: 500,000
+Got:      387,421  (varies each run!)
+    </div>
+  </div>
+
+  <!-- Locks & Synchronization -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Locks & Synchronization — Fixing Race Conditions</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A Lock ensures only one thread can access a critical section at a time. Always use <code>with</code> to avoid forgetting to release.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">locks_synchronization.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+
+<span class="cm"># ✅ FIXED — Using a Lock</span>
+counter = <span class="num">0</span>
+lock = threading.Lock()
+
+<span class="kw">def</span> <span class="fn">increment_safe</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">100_000</span>):
+        <span class="kw">with</span> lock:  <span class="cm"># only one thread at a time here</span>
+            counter += <span class="num">1</span>
+
+threads = [threading.Thread(target=increment_safe) <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>)]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+
+<span class="bi">print</span>(<span class="st">f"Expected: 500,000"</span>)
+<span class="bi">print</span>(<span class="st">f"Got:      {counter}"</span>)  <span class="cm"># Always correct!</span>
+
+<span class="cm"># Other synchronization primitives:</span>
+rlock = threading.RLock()      <span class="cm"># reentrant lock (same thread can acquire twice)</span>
+sem = threading.Semaphore(<span class="num">3</span>)   <span class="cm"># allow up to 3 threads at once</span>
+event = threading.Event()      <span class="cm"># signal between threads</span>
+barrier = threading.Barrier(<span class="num">4</span>) <span class="cm"># wait until 4 threads arrive</span>
+
+<span class="cm"># Semaphore example — rate limiting</span>
+<span class="kw">def</span> <span class="fn">limited_worker</span>(<span class="param">n</span>):
+    <span class="kw">with</span> sem:  <span class="cm"># max 3 concurrent</span>
+        <span class="bi">print</span>(<span class="st">f"Worker {n} running"</span>)
+        <span class="kw">import</span> time; time.sleep(<span class="num">1</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Expected: 500,000
+Got:      500,000  ✓ Always correct!
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.7; margin:0;">
+        <strong>Rule:</strong> If multiple threads read AND write the same variable, you need a lock. If they only read, no lock needed. Always use <code>with lock:</code> (context manager) — it guarantees the lock is released even if an exception occurs.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- GIL & Multi-Core Section -->
+<section id="gil-cores">
+  <div class="section-header reveal">
+    <div class="section-label">Deep Dive</div>
+    <h2 class="section-title">The GIL &amp; Your CPU Cores</h2>
+    <p class="section-desc">Why threads historically never used more than one core — and what changed when Python shipped a build without the GIL.</p>
+  </div>
+
+  <!-- What the GIL is -->
+  <div class="glass-card reveal" style="border-left:4px solid rgb(58,114,224);">
+    <h3 style="margin-bottom:12px; font-size:1.15rem;">🔒 What the GIL Actually Is</h3>
+    <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.8;">
+      The <strong>Global Interpreter Lock</strong> is one mutex per interpreter. A thread must hold it to execute Python bytecode.
+      It exists because CPython objects carry a plain, non-atomic reference count — <code>ob_refcnt</code>. If two threads
+      incremented and decremented that counter at the same time without protection, counts would drift, and objects would be
+      freed while still in use (crash) or never freed at all (leak).
+    </p>
+    <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.8; margin-top:12px;">
+      Instead of putting a lock on every object, CPython put one lock around the whole interpreter. That made the interpreter
+      simple and single-threaded code fast — at the cost of never running two threads of Python bytecode simultaneously.
+    </p>
+    <div style="margin-top:16px; padding:16px 18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.88rem; color:var(--primary-dark); margin:0; line-height:1.7;">
+        <strong>The precise claim:</strong> the GIL never stopped you from <em>creating</em> many threads, and it never stopped
+        the OS from putting them on different cores. It stopped more than one of them from running <em>Python bytecode</em>
+        at the same instant. That distinction is the whole story.
+      </p>
+    </div>
+  </div>
+
+  <!-- Diagram: cores under GIL -->
+  <div class="diagram-wrapper reveal" data-anim="loop">
+    <div class="diagram-title">Diagram 1 — 4 Threads, 4 Cores, With the GIL</div>
+    <div class="diagram-desc">CPU-bound work. Follow the GIL token: whoever holds it runs, the other three cores go idle.</div>
+
+    <div class="gil-stage">
+      <div class="gil-token" aria-hidden="true">🔒 THE ONE GIL</div>
+      <div class="core-grid cycle">
+        <div class="core cyc lead">Core 0
+          <small class="core-states"><b class="s-run">Thread-1 🔥<br>running</b><b class="s-idle">Thread-1 💤<br>waiting for GIL</b></small>
+        </div>
+        <div class="core cyc">Core 1
+          <small class="core-states"><b class="s-run">Thread-2 🔥<br>running</b><b class="s-idle">Thread-2 💤<br>waiting for GIL</b></small>
+        </div>
+        <div class="core cyc">Core 2
+          <small class="core-states"><b class="s-run">Thread-3 🔥<br>running</b><b class="s-idle">Thread-3 💤<br>waiting for GIL</b></small>
+        </div>
+        <div class="core cyc">Core 3
+          <small class="core-states"><b class="s-run">Thread-4 🔥<br>running</b><b class="s-idle">Thread-4 💤<br>waiting for GIL</b></small>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:26px; max-width:620px; margin-left:auto; margin-right:auto; line-height:1.8;">
+      Exactly one core is green at any moment. Total throughput ≈ <strong>one core's worth</strong>, no matter how many
+      threads you spawn. Add threads and you add context-switch overhead, so CPU-bound threaded code is often
+      <em>slower</em> than the plain sequential version.
+    </p>
+  </div>
+
+  <!-- Diagram: GIL handoff timeline -->
+  <div class="diagram-wrapper reveal" data-anim="once" data-anim-dur="4300" data-anim-gap="1500">
+    <div class="diagram-title">Diagram 2 — GIL Hand-Off Timeline (CPU-Bound)</div>
+    <div class="diagram-desc">The playhead is wall-clock time. Every ~5 ms the running thread drops the GIL so another can take it — turns, not parallelism.</div>
+
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-label">Thread-1</div>
+        <div class="tl-track">
+          <span class="tl-slot run">RUN</span><span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot wait"></span>
+          <span class="tl-slot run">RUN</span><span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot wait"></span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-2</div>
+        <div class="tl-track">
+          <span class="tl-slot wait"></span><span class="tl-slot run">RUN</span><span class="tl-slot wait"></span><span class="tl-slot wait"></span>
+          <span class="tl-slot wait"></span><span class="tl-slot run">RUN</span><span class="tl-slot wait"></span><span class="tl-slot wait"></span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-3</div>
+        <div class="tl-track">
+          <span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot run">RUN</span><span class="tl-slot wait"></span>
+          <span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot run">RUN</span><span class="tl-slot wait"></span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-4</div>
+        <div class="tl-track">
+          <span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot run">RUN</span>
+          <span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot run">RUN</span>
+        </div>
+      </div>
+      <div class="tl-row tl-axis">
+        <div class="tl-label">time →</div>
+        <div class="tl-track">
+          <span>0ms</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span><span>35</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-swatch" style="background:#10b981;"></span> Running Python bytecode (holds GIL)</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#eef2f7; border:1px dashed #cbd5e1;"></span> Runnable but blocked on the GIL</div>
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:22px; max-width:640px; margin-left:auto; margin-right:auto; line-height:1.8;">
+      Read any vertical slice: exactly one green cell. That is the GIL. The switch interval is tunable with
+      <code>sys.setswitchinterval(0.005)</code>, but tuning it only changes how often turns rotate — never how many
+      threads run at once.
+    </p>
+  </div>
+
+  <!-- Diagram: why IO-bound still wins -->
+  <div class="diagram-wrapper reveal" data-anim="once" data-anim-dur="4300" data-anim-gap="1500">
+    <div class="diagram-title">Diagram 3 — Why Threads Still Helped for I/O</div>
+    <div class="diagram-desc">Same playhead. Blocking I/O releases the GIL, so the amber waits stack up in parallel and four threads finish roughly 4× sooner.</div>
+
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-label">Thread-1</div>
+        <div class="tl-track">
+          <span class="tl-slot gil">GIL</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot gil">GIL</span><span class="tl-slot wait"></span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-2</div>
+        <div class="tl-track">
+          <span class="tl-slot wait"></span><span class="tl-slot gil">GIL</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot gil">GIL</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-3</div>
+        <div class="tl-track">
+          <span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot gil">GIL</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-4</div>
+        <div class="tl-track">
+          <span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot wait"></span><span class="tl-slot gil">GIL</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span><span class="tl-slot io">WAIT</span>
+        </div>
+      </div>
+      <div class="tl-row tl-axis">
+        <div class="tl-label">time →</div>
+        <div class="tl-track"><span>t0</span><span></span><span></span><span></span><span></span><span></span><span></span><span>t7</span></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-swatch" style="background:rgb(58,114,224);"></span> Holding GIL (issuing the call, parsing the reply)</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#fbbf24;"></span> Blocked in the OS — GIL released</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#eef2f7; border:1px dashed #cbd5e1;"></span> Waiting for GIL</div>
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:22px; max-width:640px; margin-left:auto; margin-right:auto; line-height:1.8;">
+      The yellow bars overlap — that is the entire value of threading on a GIL build. Every blocking call in the standard
+      library (<code>socket.recv</code>, <code>file.read</code>, <code>time.sleep</code>) releases the GIL before it waits.
+      Well-written C extensions do the same: <code>numpy</code>, <code>hashlib</code>, <code>zlib</code>, and
+      <code>lxml</code> drop the GIL around their heavy loops, which is why they can actually scale with threads even on a
+      GIL build.
+    </p>
+  </div>
+
+  <!-- Proof code -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Proving It — Same Code, Two Builds</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">This script reports whether the GIL is active and then scales a CPU-bound workload across threads.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">gil_scaling_test.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> sys, sysconfig, time, os
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+
+<span class="kw">def</span> <span class="fn">gil_status</span>():
+    <span class="st">"""Report which build we're running on."""</span>
+    free_threaded = <span class="bi">bool</span>(sysconfig.get_config_var(<span class="st">"Py_GIL_DISABLED"</span>))
+    <span class="cm"># sys._is_gil_enabled() exists on 3.13+ and reflects the *runtime* state</span>
+    enabled = <span class="bi">getattr</span>(sys, <span class="st">"_is_gil_enabled"</span>, <span class="kw">lambda</span>: <span class="op">True</span>)()
+    <span class="kw">return</span> free_threaded, enabled
+
+<span class="kw">def</span> <span class="fn">burn</span>(<span class="param">n</span>=<span class="num">6_000_000</span>):
+    <span class="st">"""Pure-Python CPU work — nothing releases the GIL here."""</span>
+    total = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n):
+        total += i * i
+    <span class="kw">return</span> total
+
+<span class="kw">def</span> <span class="fn">timed</span>(<span class="param">workers</span>, <span class="param">tasks</span>=<span class="num">4</span>):
+    start = time.perf_counter()
+    <span class="kw">with</span> ThreadPoolExecutor(max_workers=workers) <span class="kw">as</span> pool:
+        <span class="bi">list</span>(pool.map(<span class="kw">lambda</span> _: burn(), <span class="bi">range</span>(tasks)))
+    <span class="kw">return</span> time.perf_counter() - start
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    ft, gil_on = gil_status()
+    <span class="bi">print</span>(<span class="st">f"Python        : {sys.version.split()[0]}"</span>)
+    <span class="bi">print</span>(<span class="st">f"Free-threaded : {ft}"</span>)          <span class="cm"># True on a 3.13t / 3.14t build</span>
+    <span class="bi">print</span>(<span class="st">f"GIL enabled   : {gil_on}"</span>)      <span class="cm"># False = threads run in parallel</span>
+    <span class="bi">print</span>(<span class="st">f"Cores         : {os.cpu_count()}\n"</span>)
+
+    one  = timed(<span class="num">1</span>)
+    four = timed(<span class="num">4</span>)
+    <span class="bi">print</span>(<span class="st">f"1 thread  : {one:.2f}s"</span>)
+    <span class="bi">print</span>(<span class="st">f"4 threads : {four:.2f}s"</span>)
+    <span class="bi">print</span>(<span class="st">f"Speedup   : {one / four:.2f}x"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:8px;">
+      <div>
+        <p style="font-size:0.8rem; font-weight:700; color:var(--danger); margin-bottom:6px; letter-spacing:0.5px;">▼ RUN ON <code>python3.14</code> (GIL BUILD)</p>
+        <div class="output-block" style="background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.2); color:#991b1b;">
+Free-threaded : False
+GIL enabled   : True
+Cores         : 8
+
+1 thread  : 2.02s
+4 threads : 2.11s
+Speedup   : 0.96x   ← no gain, slightly worse
+        </div>
+      </div>
+      <div>
+        <p style="font-size:0.8rem; font-weight:700; color:var(--success); margin-bottom:6px; letter-spacing:0.5px;">▼ RUN ON <code>python3.14t</code> (FREE-THREADED)</p>
+        <div class="output-block">
+Free-threaded : True
+GIL enabled   : False
+Cores         : 8
+
+1 thread  : 2.15s
+4 threads : 0.58s
+Speedup   : 3.71x   ← real cores, real parallelism
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.82rem; color:var(--text-dim); margin-top:10px; text-align:center;">Illustrative numbers from an 8-core machine — the shape of the result is what matters, not the exact values.</p>
+  </div>
+
+  <!-- Diagram: free-threaded cores -->
+  <div class="diagram-wrapper reveal" data-anim="once" data-anim-dur="4300" data-anim-gap="1500">
+    <div class="diagram-title">Diagram 4 — Same 4 Threads on a Free-Threaded Build</div>
+    <div class="diagram-desc">No interpreter-wide lock, no token to pass. Every core stays lit and the playhead fills whole columns at once.</div>
+
+    <div class="core-grid">
+      <div class="core busy pulse" style="--i:0">Core 0<br><small>Thread-1 🔥<br>running</small></div>
+      <div class="core busy pulse" style="--i:1">Core 1<br><small>Thread-2 🔥<br>running</small></div>
+      <div class="core busy pulse" style="--i:2">Core 2<br><small>Thread-3 🔥<br>running</small></div>
+      <div class="core busy pulse" style="--i:3">Core 3<br><small>Thread-4 🔥<br>running</small></div>
+    </div>
+
+    <div class="timeline" style="margin-top:32px;">
+      <div class="tl-row">
+        <div class="tl-label">Thread-1</div>
+        <div class="tl-track"><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-2</div>
+        <div class="tl-track"><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-3</div>
+        <div class="tl-track"><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-label">Thread-4</div>
+        <div class="tl-track"><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span><span class="tl-slot run">RUN</span></div>
+      </div>
+      <div class="tl-row tl-axis">
+        <div class="tl-label">time →</div>
+        <div class="tl-track"><span>0ms</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span><span>35</span></div>
+      </div>
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:24px; max-width:640px; margin-left:auto; margin-right:auto; line-height:1.8;">
+      Compare with Diagram 2: same threads, same work, but now every vertical slice is fully green. The work finishes in a
+      quarter of the wall-clock time, and you never had to serialize arguments, spawn processes, or set up a Queue.
+    </p>
+  </div>
+
+  <!-- Side-by-side architecture diagram -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Diagram 5 — What Changed Inside the Interpreter</div>
+    <div class="diagram-desc">One coarse lock became many fine-grained mechanisms</div>
+
+    <div class="panel-2">
+      <div class="panel" style="border-color:var(--danger); background:rgba(239,68,68,0.04);">
+        <h4 style="color:#dc2626;">🔒 GIL Build (the default)</h4>
+        <div style="font-family:var(--mono); font-size:0.72rem; line-height:1.9; color:var(--text); background:#fff; padding:14px; border-radius:8px; border:1px solid #fecaca; margin-bottom:12px;">
+          T1 T2 T3 T4<br>
+          &nbsp;│&nbsp; │&nbsp; │&nbsp; │<br>
+          &nbsp;└──┴──┴──┘<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;┌──▼───┐<br>
+          &nbsp;&nbsp;│ GIL&nbsp;&nbsp;│ ← single mutex<br>
+          &nbsp;&nbsp;└──┬───┘<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;interpreter + heap
+        </div>
+        <ul style="font-size:0.83rem; color:var(--text-muted); line-height:1.9; padding-left:18px;">
+          <li>Plain, non-atomic <code>ob_refcnt</code></li>
+          <li>One lock guards every object</li>
+          <li>Shared free lists and allocator state</li>
+          <li>Container ops are atomic <em>because</em> of the GIL</li>
+          <li>Bottleneck: 1 core for bytecode</li>
+        </ul>
+      </div>
+      <div class="panel" style="border-color:var(--success); background:rgba(16,185,129,0.04);">
+        <h4 style="color:#059669;">🔓 Free-Threaded Build</h4>
+        <div style="font-family:var(--mono); font-size:0.72rem; line-height:1.9; color:var(--text); background:#fff; padding:14px; border-radius:8px; border:1px solid #a7f3d0; margin-bottom:12px;">
+          T1&nbsp;&nbsp;T2&nbsp;&nbsp;T3&nbsp;&nbsp;T4<br>
+          &nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;▼&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;▼<br>
+          ┌───┐┌───┐┌───┐┌───┐<br>
+          │obj││obj││obj││obj│ ← per-object<br>
+          └───┘└───┘└───┘└───┘&nbsp;&nbsp; locks<br>
+          &nbsp;└────┴────┴────┘<br>
+          &nbsp;&nbsp;thread-safe heap
+        </div>
+        <ul style="font-size:0.83rem; color:var(--text-muted); line-height:1.9; padding-left:18px;">
+          <li><strong>Biased reference counting</strong> — cheap non-atomic counts for the owning thread, atomic only when shared</li>
+          <li><strong>Immortal objects</strong> (PEP 683) — <code>None</code>, small ints, interned strings never refcounted</li>
+          <li><strong>Deferred refcounting</strong> for hot objects like modules and functions</li>
+          <li><strong>Critical sections</strong> — short per-object locks for <code>list</code>/<code>dict</code> mutation</li>
+          <li><strong>QSBR</strong> lets readers walk containers lock-free while writers swap them</li>
+          <li><strong>mimalloc</strong> + per-thread free lists remove allocator contention</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Version timeline -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Diagram 6 — The Three-Phase Rollout (PEP 703)</div>
+    <div class="diagram-desc">Where free-threading stands today, and where it's headed</div>
+
+    <div class="version-timeline">
+      <div class="vt-item">
+        <div class="vt-marker"><div class="vt-dot done"></div><div class="vt-line"></div></div>
+        <div class="vt-body">
+          <div class="vt-ver">Python ≤ 3.12 — GIL only</div>
+          <div class="vt-text">No option. CPU-bound parallelism means <code>multiprocessing</code>, a C extension that drops the GIL, or another language.</div>
+        </div>
+      </div>
+      <div class="vt-item">
+        <div class="vt-marker"><div class="vt-dot done"></div><div class="vt-line"></div></div>
+        <div class="vt-body">
+          <div class="vt-ver">Python 3.13 — Phase I: experimental</div>
+          <div class="vt-text">PEP 703 lands. A separate build (<code>--disable-gil</code>, shipped as <code>python3.13t</code>) can run threads in parallel, labelled explicitly experimental. Large single-thread penalty, thin ecosystem support.</div>
+        </div>
+      </div>
+      <div class="vt-item">
+        <div class="vt-marker"><div class="vt-dot now"></div><div class="vt-line"></div></div>
+        <div class="vt-body">
+          <div class="vt-ver">Python 3.14 — Phase II: officially supported ← we are here</div>
+          <div class="vt-text">PEP 779 was accepted in June 2025, dropping the "experimental" label. The free-threaded build is supported but still <strong>optional and not the default</strong> — you install <code>python3.14t</code> alongside the regular interpreter. Single-thread penalty is down to roughly 10% (about 3% on macOS), memory use around 15–20% higher.</div>
+        </div>
+      </div>
+      <div class="vt-item">
+        <div class="vt-marker"><div class="vt-dot future"></div></div>
+        <div class="vt-body" style="padding-bottom:0;">
+          <div class="vt-ver">Phase III — free-threaded becomes the default</div>
+          <div class="vt-text">Not scheduled yet. It needs a future PEP plus broad ecosystem support, since every C extension must be rebuilt and audited for thread safety before the flip can happen.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Getting it / enabling it -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Getting and Controlling a Free-Threaded Interpreter</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The free-threaded interpreter is a separate binary with a <code>t</code> suffix. It installs side by side with the normal one.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">setup_free_threaded.sh</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># ── Install (uv is the easiest route) ──────────────────────────</span>
+uv python install <span class="num">3.14</span>+freethreaded
+uv venv --python <span class="num">3.14</span>t
+
+<span class="cm"># pyenv</span>
+pyenv install <span class="num">3.14</span>.<span class="num">0</span>t
+
+<span class="cm"># Homebrew ships it as a separate formula</span>
+brew install python-freethreading
+
+<span class="cm"># Building from source</span>
+./configure --disable-gil --enable-optimizations
+make -j8 &amp;&amp; make install
+
+<span class="cm"># ── Verify ─────────────────────────────────────────────────────</span>
+python3.14t -VV
+<span class="cm"># Python 3.14.0 free-threading build (main, ...) [Clang ...]</span>
+
+python3.14t -c <span class="st">'import sys; print(sys._is_gil_enabled())'</span>
+<span class="cm"># False</span>
+
+<span class="cm"># ── Toggle at runtime (free-threaded build only) ───────────────</span>
+python3.14t -X gil=<span class="num">1</span> app.py    <span class="cm"># turn the GIL back ON (debugging / bad extension)</span>
+python3.14t -X gil=<span class="num">0</span> app.py    <span class="cm"># force it OFF</span>
+PYTHON_GIL=<span class="num">0</span> python3.14t app.py  <span class="cm"># same thing via env var</span>
+
+<span class="cm"># A C extension that isn't marked free-thread-safe will silently</span>
+<span class="cm"># re-enable the GIL on import. Catch it with:</span>
+PYTHONWARNINGS=default python3.14t -W error::RuntimeWarning app.py</pre>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(245,158,11,0.08); border-radius:var(--radius-sm); border-left:3px solid var(--warning);">
+      <p style="font-size:0.9rem; color:#92400e; line-height:1.75; margin:0;">
+        <strong>Silent fallback gotcha:</strong> importing a C extension built without the <code>Py_mod_gil</code> free-threaded
+        marker makes CPython re-enable the GIL for the whole process. Your parallel speedup vanishes with no error. Always
+        assert <code>sys._is_gil_enabled() is False</code> <em>after</em> your imports, not before.
+      </p>
+    </div>
+  </div>
+
+  <!-- The catch -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">🚨 No GIL Does Not Mean No Locks</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">This is the single most common misconception. Removing the GIL removes a <em>performance</em> ceiling, not a <em>correctness</em> guarantee. Race conditions get <strong>easier</strong> to hit, not harder.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">still_need_locks.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+
+<span class="cm"># counter += 1 is STILL three bytecodes: LOAD, ADD, STORE.</span>
+<span class="cm"># On a GIL build a switch between them is unlikely (every ~5ms).</span>
+<span class="cm"># On a free-threaded build the threads are genuinely simultaneous,</span>
+<span class="cm"># so the interleaving happens constantly.</span>
+
+counter = <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">unsafe</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">200_000</span>):
+        counter += <span class="num">1</span>          <span class="cm"># ❌ loses far more updates without the GIL</span>
+
+<span class="cm"># ✅ Still the same fix</span>
+lock = threading.Lock()
+safe_counter = <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">safe</span>():
+    <span class="kw">global</span> safe_counter
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">200_000</span>):
+        <span class="kw">with</span> lock:
+            safe_counter += <span class="num">1</span>
+
+<span class="cm"># ✅ Better: don't share mutable state at all.</span>
+<span class="cm"># Give each thread its own accumulator, combine at the end.</span>
+<span class="kw">def</span> <span class="fn">chunk_sum</span>(<span class="param">rng</span>):
+    <span class="kw">return</span> <span class="bi">sum</span>(rng)        <span class="cm"># local only — zero contention, scales linearly</span>
+
+<span class="kw">with</span> ThreadPoolExecutor(<span class="num">4</span>) <span class="kw">as</span> pool:
+    chunks = [<span class="bi">range</span>(i, <span class="num">4_000_000</span>, <span class="num">4</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">4</span>)]
+    total = <span class="bi">sum</span>(pool.map(chunk_sum, chunks))
+
+<span class="cm"># What free-threading does NOT change:</span>
+<span class="cm">#   • += / -= on shared variables is not atomic</span>
+<span class="cm">#   • read-modify-write on a shared dict/list needs a lock</span>
+<span class="cm">#   • deadlocks are still deadlocks</span>
+<span class="cm">#   • threading.local() is still how you get per-thread state</span>
+<span class="cm"># What it DOES guarantee: individual list/dict operations stay</span>
+<span class="cm"># internally consistent — no interpreter crashes, no corruption.</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decision guidance -->
+  <div class="glass-card reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">🧭 Free-Threaded Threads vs Multiprocessing</h3>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:18px;">Free-threading doesn't make <code>multiprocessing</code> obsolete. It gives you a cheaper option for CPU work when your data is large and your tasks need to share it.</p>
+    <table>
+      <thead>
+        <tr><th>Concern</th><th>Threads (free-threaded build)</th><th>Multiprocessing</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Uses all cores</strong></td><td>✅ Yes</td><td>✅ Yes</td></tr>
+        <tr><td><strong>Startup cost</strong></td><td>~1 ms per thread</td><td>~50–100 ms per process</td></tr>
+        <tr><td><strong>Passing 2 GB of data</strong></td><td>Free — same address space</td><td>Pickled and copied, or needs <code>shared_memory</code></td></tr>
+        <tr><td><strong>Memory footprint</strong></td><td>One interpreter</td><td>One interpreter per worker</td></tr>
+        <tr><td><strong>Crash isolation</strong></td><td>❌ A segfault kills everything</td><td>✅ Contained to one worker</td></tr>
+        <tr><td><strong>Correctness burden</strong></td><td>High — you own every shared mutation</td><td>Low — isolated by default</td></tr>
+        <tr><td><strong>Single-thread speed</strong></td><td>~10% slower interpreter (≈3% on macOS)</td><td>Full speed</td></tr>
+        <tr><td><strong>C extension support</strong></td><td>Needs free-thread-safe builds</td><td>Works with everything</td></tr>
+        <tr><td><strong>Availability</strong></td><td>Opt-in build, 3.13+ / supported in 3.14+</td><td>Every Python version</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:18px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.75; margin:0;">
+        <strong>Practical rule for today:</strong> ship on the default GIL build and keep using
+        <code>multiprocessing</code> for CPU-bound work. Reach for the free-threaded build when process overhead is the
+        actual bottleneck — big shared read-only datasets, low-latency request handling, or fan-out where pickling costs
+        more than the computation. Benchmark both; the ~10% interpreter penalty can eat a modest speedup.
+      </p>
+    </div>
+  </div>
+
+  <!-- Subinterpreters -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">A Third Route to Multiple Cores — Subinterpreters</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Free-threading isn't the only answer to the GIL. PEP 684 gave each interpreter its own GIL in Python 3.12, and PEP 734 put them in the standard library as <code>concurrent.interpreters</code> in 3.14.</p>
+
+    <div class="diagram-wrapper" style="margin-top:0;">
+      <div class="diagram-desc" style="margin-bottom:22px;">One process, several interpreters, one GIL each</div>
+      <div style="font-family:var(--mono); font-size:0.74rem; line-height:1.9; color:var(--text); background:#f8fafc; padding:20px; border-radius:10px; border:1px solid var(--card-border); display:inline-block; text-align:left;">
+        ┌──────────── ONE OS PROCESS ────────────┐<br>
+        │&nbsp;┌────────┐┌────────┐┌────────┐┌────────┐│<br>
+        │&nbsp;│Interp 0││Interp 1││Interp 2││Interp 3││<br>
+        │&nbsp;│&nbsp;+ GIL&nbsp; ││&nbsp;+ GIL&nbsp; ││&nbsp;+ GIL&nbsp; ││&nbsp;+ GIL&nbsp; ││<br>
+        │&nbsp;└───┬────┘└───┬────┘└───┬────┘└───┬────┘│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;Core 0&nbsp;&nbsp; Core 1&nbsp;&nbsp; Core 2&nbsp;&nbsp; Core 3&nbsp; │<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─── interpreters.Queue ───┘&nbsp;&nbsp;&nbsp;│<br>
+        └────────────────────────────────────────┘
+      </div>
+    </div>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">subinterpreters.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># Python 3.14+ — PEP 734</span>
+<span class="kw">from</span> concurrent <span class="kw">import</span> interpreters
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> InterpreterPoolExecutor
+
+<span class="cm"># ── Low-level API ─────────────────────────────────────────────</span>
+interp = interpreters.create()
+interp.exec(<span class="st">"import math; print(math.factorial(20))"</span>)
+
+<span class="cm"># Each interpreter has isolated module state and its own GIL,</span>
+<span class="cm"># so threads driving different interpreters run truly in parallel.</span>
+
+<span class="cm"># ── Pool API — same shape as the other executors ───────────────</span>
+<span class="kw">def</span> <span class="fn">crunch</span>(<span class="param">n</span>):
+    <span class="kw">return</span> <span class="bi">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n))
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    <span class="kw">with</span> InterpreterPoolExecutor(max_workers=<span class="num">4</span>) <span class="kw">as</span> pool:
+        results = <span class="bi">list</span>(pool.map(crunch, [<span class="num">3_000_000</span>] * <span class="num">4</span>))
+    <span class="bi">print</span>(<span class="bi">len</span>(results))
+
+<span class="cm"># Trade-offs vs the alternatives:</span>
+<span class="cm">#   • vs processes      → faster startup, one address space, but no</span>
+<span class="cm">#                         crash isolation and some C extensions break</span>
+<span class="cm">#   • vs free-threading → parallel on the DEFAULT build, isolation by</span>
+<span class="cm">#                         default, so far fewer race conditions</span>
+<span class="cm">#   • the catch         → objects are not shared; data crosses via</span>
+<span class="cm">#                         interpreters.Queue or channels</span></pre>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:var(--primary-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+      <p style="font-size:0.9rem; color:var(--primary-dark); line-height:1.75; margin:0;">
+        <strong>Three routes to multiple cores as of Python 3.14:</strong> <code>multiprocessing</code> — isolated, works on
+        every version, highest overhead. <strong>Subinterpreters</strong> — isolated, cheaper, available on the default build.
+        <strong>Free-threaded threads</strong> — shared memory, zero-copy data sharing, and all the correctness risk that
+        comes with it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Multiprocessing Section -->
+<section id="multiprocessing">
+  <div class="section-header reveal">
+    <div class="section-label">Processes</div>
+    <h2 class="section-title">Multiprocessing</h2>
+    <p class="section-desc">Separate processes, process pools, inter-process communication, queues, and shared memory.</p>
+  </div>
+
+  <!-- Process Basics -->
+  <div class="reveal">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Process Basics — True Parallelism</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Each process has its own Python interpreter, its own GIL, and its own memory space. They run truly in parallel.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">process_basics.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> multiprocessing
+<span class="kw">import</span> os
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">cpu_task</span>(<span class="param">name</span>):
+    <span class="st">"""CPU-intensive work in a separate process."""</span>
+    <span class="bi">print</span>(<span class="st">f"[{name}] PID: {os.getpid()}, computing..."</span>)
+    result = <span class="bi">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5_000_000</span>))
+    <span class="bi">print</span>(<span class="st">f"[{name}] Done!"</span>)
+    <span class="kw">return</span> result
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    <span class="bi">print</span>(<span class="st">f"Main process PID: {os.getpid()}"</span>)
+    <span class="bi">print</span>(<span class="st">f"CPU cores available: {multiprocessing.cpu_count()}"</span>)
+
+    <span class="cm"># Create processes</span>
+    p1 = multiprocessing.Process(target=cpu_task, args=(<span class="st">"P1"</span>,))
+    p2 = multiprocessing.Process(target=cpu_task, args=(<span class="st">"P2"</span>,))
+
+    start = time.perf_counter()
+    p1.start()  <span class="cm"># spawns a new OS process</span>
+    p2.start()
+
+    p1.join()   <span class="cm"># wait for completion</span>
+    p2.join()
+
+    <span class="bi">print</span>(<span class="st">f"Both done in {time.perf_counter()-start:.2f}s"</span>)
+    <span class="bi">print</span>(<span class="st">f"(Sequential would take ~2x longer)"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Main process PID: 12345
+CPU cores available: 8
+[P1] PID: 12346, computing...
+[P2] PID: 12347, computing...
+[P1] Done!
+[P2] Done!
+Both done in 0.42s
+(Sequential would take ~2x longer)
+    </div>
+  </div>
+
+  <!-- Process Pools -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Process Pools — Distribute Work Across Cores</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A pool manages a fixed number of worker processes and distributes tasks to them automatically.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">process_pool.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">process_image</span>(<span class="param">image_id</span>):
+    <span class="st">"""Simulate CPU-heavy image processing."""</span>
+    result = <span class="bi">sum</span>(i ** <span class="num">2</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">2_000_000</span>))
+    <span class="kw">return</span> <span class="st">f"Image {image_id}: processed ({result})"</span>
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    images = <span class="bi">list</span>(<span class="bi">range</span>(<span class="num">8</span>))
+
+    <span class="cm"># Sequential — slow</span>
+    start = time.perf_counter()
+    <span class="kw">for</span> img <span class="kw">in</span> images:
+        process_image(img)
+    seq_time = time.perf_counter() - start
+
+    <span class="cm"># Process pool — fast (true parallelism)</span>
+    start = time.perf_counter()
+    <span class="kw">with</span> ProcessPoolExecutor(max_workers=<span class="num">4</span>) <span class="kw">as</span> pool:
+        results = <span class="bi">list</span>(pool.map(process_image, images))
+    pool_time = time.perf_counter() - start
+
+    <span class="bi">print</span>(<span class="st">f"Sequential:   {seq_time:.2f}s"</span>)
+    <span class="bi">print</span>(<span class="st">f"4 processes:  {pool_time:.2f}s"</span>)
+    <span class="bi">print</span>(<span class="st">f"Speedup:      {seq_time/pool_time:.1f}x"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Sequential:   2.84s
+4 processes:  0.78s
+Speedup:      3.6x
+    </div>
+  </div>
+
+  <!-- IPC: Queues -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Inter-Process Communication — Queues</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Processes don't share memory. Use Queues to safely pass data between them — thread/process-safe by design.</p>
+
+    <div class="diagram-wrapper" style="margin-top:0;" data-anim="loop">
+      <div class="diagram-title">How an Object Actually Crosses a Process Boundary</div>
+      <div class="diagram-desc">Nothing is shared — every item is pickled, pushed through a pipe, and rebuilt on the other side</div>
+
+      <div class="flowtrack">
+        <div class="ft-stage">🏭 Producer<br><small>process A</small></div>
+        <div class="ft-pipe"><i class="ft-dot" style="--d:0s"></i><i class="ft-dot" style="--d:-0.66s"></i><i class="ft-dot" style="--d:-1.33s"></i></div>
+        <div class="ft-stage warn">📦 pickle.dumps<br><small>object → bytes</small></div>
+        <div class="ft-pipe"><i class="ft-dot amber" style="--d:-0.2s"></i><i class="ft-dot amber" style="--d:-0.86s"></i><i class="ft-dot amber" style="--d:-1.53s"></i></div>
+        <div class="ft-stage">🔀 OS pipe<br><small>Queue buffer</small></div>
+        <div class="ft-pipe"><i class="ft-dot amber" style="--d:-0.4s"></i><i class="ft-dot amber" style="--d:-1.06s"></i><i class="ft-dot amber" style="--d:-1.73s"></i></div>
+        <div class="ft-stage warn">📤 pickle.loads<br><small>bytes → object</small></div>
+        <div class="ft-pipe"><i class="ft-dot green" style="--d:-0.6s"></i><i class="ft-dot green" style="--d:-1.26s"></i><i class="ft-dot green" style="--d:-1.93s"></i></div>
+        <div class="ft-stage ok">🛠 Consumer<br><small>process B</small></div>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-top:26px; max-width:660px; margin-left:auto; margin-right:auto; line-height:1.8;">
+        Each dot is one item making the round trip. Two serialization hops per item is why <code>Queue</code> gets expensive
+        for large payloads — and why <code>shared_memory</code> exists. Compare with threading, where handing an object to
+        another thread is just passing a pointer: zero copies, zero cost.
+      </p>
+    </div>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">ipc_queues.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> multiprocessing
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">producer</span>(<span class="param">queue</span>):
+    <span class="st">"""Puts items into the queue."""</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>):
+        item = <span class="st">f"item_{i}"</span>
+        queue.put(item)
+        <span class="bi">print</span>(<span class="st">f"  Produced: {item}"</span>)
+        time.sleep(<span class="num">0.3</span>)
+    queue.put(<span class="op">None</span>)  <span class="cm"># sentinel — signals "I'm done"</span>
+
+<span class="kw">def</span> <span class="fn">consumer</span>(<span class="param">queue</span>):
+    <span class="st">"""Takes items from the queue."""</span>
+    <span class="kw">while</span> <span class="op">True</span>:
+        item = queue.get()  <span class="cm"># blocks until item available</span>
+        <span class="kw">if</span> item <span class="kw">is</span> <span class="op">None</span>:
+            <span class="kw">break</span>
+        <span class="bi">print</span>(<span class="st">f"  Consumed: {item}"</span>)
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    queue = multiprocessing.Queue()  <span class="cm"># process-safe queue</span>
+
+    p = multiprocessing.Process(target=producer, args=(queue,))
+    c = multiprocessing.Process(target=consumer, args=(queue,))
+
+    p.start()
+    c.start()
+
+    p.join()
+    c.join()
+    <span class="bi">print</span>(<span class="st">"Producer-Consumer done!"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+  Produced: item_0
+  Consumed: item_0
+  Produced: item_1
+  Consumed: item_1
+  Produced: item_2
+  Consumed: item_2
+  Produced: item_3
+  Consumed: item_3
+  Produced: item_4
+  Consumed: item_4
+Producer-Consumer done!
+    </div>
+  </div>
+
+  <!-- Shared Memory -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Shared Memory — When Queues Are Too Slow</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">For high-performance scenarios, processes can share a block of memory directly — no serialization overhead.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">shared_memory.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> multiprocessing
+<span class="kw">from</span> multiprocessing <span class="kw">import</span> Value, Array
+
+<span class="kw">def</span> <span class="fn">increment_shared</span>(<span class="param">shared_counter</span>, <span class="param">lock</span>):
+    <span class="st">"""Modify shared memory safely."""</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">10_000</span>):
+        <span class="kw">with</span> lock:
+            shared_counter.value += <span class="num">1</span>
+
+<span class="kw">def</span> <span class="fn">fill_array</span>(<span class="param">shared_arr</span>, <span class="param">start</span>, <span class="param">end</span>):
+    <span class="st">"""Fill a portion of shared array."""</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(start, end):
+        shared_arr[i] = i * i
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    <span class="cm"># Value — single shared value</span>
+    counter = Value(<span class="st">'i'</span>, <span class="num">0</span>)  <span class="cm"># 'i' = integer, initial value 0</span>
+    lock = multiprocessing.Lock()
+
+    procs = [multiprocessing.Process(target=increment_shared, args=(counter, lock))
+             <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">4</span>)]
+    <span class="kw">for</span> p <span class="kw">in</span> procs: p.start()
+    <span class="kw">for</span> p <span class="kw">in</span> procs: p.join()
+    <span class="bi">print</span>(<span class="st">f"Shared counter: {counter.value}"</span>)  <span class="cm"># 40,000 ✓</span>
+
+    <span class="cm"># Array — shared array</span>
+    arr = Array(<span class="st">'i'</span>, <span class="num">10</span>)  <span class="cm"># 10 integers, initialized to 0</span>
+    p1 = multiprocessing.Process(target=fill_array, args=(arr, <span class="num">0</span>, <span class="num">5</span>))
+    p2 = multiprocessing.Process(target=fill_array, args=(arr, <span class="num">5</span>, <span class="num">10</span>))
+    p1.start(); p2.start()
+    p1.join(); p2.join()
+    <span class="bi">print</span>(<span class="st">f"Shared array: {list(arr)}"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Shared counter: 40000
+Shared array: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(245,158,11,0.08); border-radius:var(--radius-sm); border-left:3px solid var(--warning);">
+      <p style="font-size:0.9rem; color:#92400e; line-height:1.7; margin:0;">
+        <strong>IPC Options Summary:</strong> <code>Queue</code> — safe, easy, moderate speed. <code>Pipe</code> — fast, two-way, for 2 processes. <code>Value/Array</code> — fastest, shared memory, needs locks. <code>Manager</code> — supports dicts/lists across processes, slowest.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Section -->
+<section id="comparison">
+  <div class="section-header reveal">
+    <div class="section-label">Head to Head</div>
+    <h2 class="section-title">Threading vs Multiprocessing</h2>
+    <p class="section-desc">A complete comparison to help you pick the right tool for the job.</p>
+  </div>
+
+  <div class="glass-card reveal">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Full Comparison Table</h3>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Threading</th><th>Multiprocessing</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Unit</strong></td><td>Thread (within a process)</td><td>Process (separate OS process)</td></tr>
+        <tr><td><strong>Memory</strong></td><td>Shared (same address space)</td><td>Separate (each has own copy)</td></tr>
+        <tr><td><strong>GIL</strong></td><td>All threads share one GIL</td><td>Each process has its own GIL</td></tr>
+        <tr><td><strong>True parallelism?</strong></td><td>❌ No on the default build &mdash; ✅ yes on a free-threaded build (3.13+)</td><td>✅ Yes (on multiple cores)</td></tr>
+        <tr><td><strong>Best for</strong></td><td>I/O-bound (network, files, DB)</td><td>CPU-bound (math, processing)</td></tr>
+        <tr><td><strong>Creation overhead</strong></td><td>Low (~1ms)</td><td>High (~50-100ms)</td></tr>
+        <tr><td><strong>Memory overhead</strong></td><td>Low (shared memory)</td><td>High (full process copy)</td></tr>
+        <tr><td><strong>Communication</strong></td><td>Shared variables + locks</td><td>Queue, Pipe, shared memory</td></tr>
+        <tr><td><strong>Data sharing</strong></td><td>Easy (same memory)</td><td>Hard (needs serialization)</td></tr>
+        <tr><td><strong>Crash isolation</strong></td><td>❌ One thread crash kills all</td><td>✅ One process crash is isolated</td></tr>
+        <tr><td><strong>Debugging</strong></td><td>Hard (race conditions)</td><td>Easier (isolated state)</td></tr>
+        <tr><td><strong>Max practical count</strong></td><td>~100-1000 threads</td><td>~CPU core count (4-16)</td></tr>
+        <tr><td><strong>Python module</strong></td><td><code>threading</code>, <code>ThreadPoolExecutor</code></td><td><code>multiprocessing</code>, <code>ProcessPoolExecutor</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CPU-bound vs IO-bound Visual -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">CPU-Bound vs I/O-Bound — Visual Decision</div>
+    <div class="diagram-desc">The nature of your task determines which tool to use</div>
+    <div style="display:flex; gap:32px; justify-content:center; flex-wrap:wrap; text-align:left;">
+      <div style="flex:1; min-width:300px; max-width:420px; padding:24px; background:#fef2f2; border:2px solid #ef4444; border-radius:12px;">
+        <h4 style="color:#dc2626; margin-bottom:12px;">🔥 CPU-Bound Tasks</h4>
+        <p style="font-size:0.88rem; color:var(--text); line-height:1.7; margin-bottom:12px;">The bottleneck is the <strong>processor</strong>. Your code spends most time computing, not waiting.</p>
+        <ul style="font-size:0.85rem; color:var(--text-muted); line-height:2; padding-left:18px;">
+          <li>Image/video processing</li>
+          <li>Mathematical computations</li>
+          <li>Data compression</li>
+          <li>Machine learning training</li>
+          <li>Cryptography</li>
+        </ul>
+        <div style="margin-top:12px; padding:10px 14px; background:#ffffff; border-radius:8px; border:1px solid #fecaca;">
+          <p style="font-size:0.85rem; color:#991b1b; margin:0;"><strong>→ Use multiprocessing</strong> (bypasses GIL)<br><span style="font-size:0.78rem;">or threads on a <a href="#gil-cores" style="color:#dc2626;">free-threaded build</a>. Never asyncio.</span></p>
+        </div>
+      </div>
+      <div style="flex:1; min-width:300px; max-width:420px; padding:24px; background:#ecfdf5; border:2px solid #10b981; border-radius:12px;">
+        <h4 style="color:#059669; margin-bottom:12px;">⏳ I/O-Bound Tasks</h4>
+        <p style="font-size:0.88rem; color:var(--text); line-height:1.7; margin-bottom:12px;">The bottleneck is <strong>waiting</strong> — for network, disk, or user input. CPU is mostly idle.</p>
+        <ul style="font-size:0.85rem; color:var(--text-muted); line-height:2; padding-left:18px;">
+          <li>HTTP requests / API calls</li>
+          <li>Database queries</li>
+          <li>File reading/writing</li>
+          <li>Web scraping</li>
+          <li>Email sending</li>
+        </ul>
+        <div style="margin-top:12px; padding:10px 14px; background:#ffffff; border-radius:8px; border:1px solid #a7f3d0;">
+          <p style="font-size:0.85rem; color:#065f46; margin:0;"><strong>→ Use threading</strong> for sync libraries<br><span style="font-size:0.78rem;">or <a href="#asyncio" style="color:#059669;">asyncio</a> past ~500 concurrent waits.</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Asyncio Comparison Section -->
+<section id="asyncio">
+  <div class="section-header reveal">
+    <div class="section-label">Third Option</div>
+    <h2 class="section-title">Threading vs Asyncio</h2>
+    <p class="section-desc">Both give you concurrency for I/O. They differ in who decides when to switch — and that one difference drives every trade-off.</p>
+  </div>
+
+  <!-- Core difference -->
+  <div class="diagram-wrapper reveal" data-anim="loop">
+    <div class="diagram-title">Diagram 7 — Preemptive vs Cooperative Switching</div>
+    <div class="diagram-desc">The single most important distinction between the two models</div>
+
+    <div class="panel-2">
+      <div class="panel blue">
+        <h4>🧵 Threading — <em>preemptive</em></h4>
+        <p>The <strong>OS scheduler</strong> decides. It can suspend your thread between any two bytecodes, at any moment, without asking. You have no control over where a switch happens.</p>
+        <div style="margin-top:16px;">
+          <p style="font-size:0.72rem; font-weight:700; color:var(--text-muted); letter-spacing:0.5px;">SWITCH CAN HAPPEN ANYWHERE ↓</p>
+          <div class="sb-wrap preempt">
+            <i class="sb-cursor" aria-hidden="true"></i>
+            <div class="switch-bar">
+              <span class="seg"></span><span class="mark"></span><span class="seg"></span><span class="mark"></span>
+              <span class="seg"></span><span class="mark"></span><span class="seg"></span><span class="mark"></span>
+              <span class="seg"></span><span class="mark"></span><span class="seg"></span>
+            </div>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-dim); margin-top:10px;">The cursor is your thread. It gets yanked at red marks — involuntary switch points you can neither see nor predict.</p>
+        </div>
+        <ul>
+          <li>Every shared mutation is a potential race</li>
+          <li>You need locks, and you need them in the right order</li>
+          <li>A tight CPU loop can't starve the others</li>
+          <li>Blocking calls just work — nothing to annotate</li>
+        </ul>
+      </div>
+      <div class="panel purple">
+        <h4>⚡ Asyncio — <em>cooperative</em></h4>
+        <p>The <strong>event loop</strong> runs on one thread and only switches where you wrote <code>await</code>. Between two awaits your code is effectively atomic. You control every switch point.</p>
+        <div style="margin-top:16px;">
+          <p style="font-size:0.72rem; font-weight:700; color:var(--text-muted); letter-spacing:0.5px;">SWITCH ONLY AT <code>await</code> ↓</p>
+          <div class="sb-wrap coop">
+            <i class="sb-cursor" aria-hidden="true"></i>
+            <div class="switch-bar">
+              <span class="seg"></span><span class="seg"></span><span class="mark awaitp"></span>
+              <span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="mark awaitp"></span>
+              <span class="seg"></span><span class="seg"></span><span class="seg"></span>
+            </div>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-dim); margin-top:10px;">The cursor runs straight through and only pauses where you wrote <code>await</code> — explicit, visible, in your source.</p>
+        </div>
+        <ul>
+          <li>Far fewer races — you can read the switch points</li>
+          <li>Locks are rarely needed for simple counters</li>
+          <li>One task that forgets to await freezes everything</li>
+          <li>Blocking calls are poison — the whole loop stalls</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture diagram -->
+  <div class="diagram-wrapper reveal" data-anim="loop">
+    <div class="diagram-title">Diagram 8 — Execution Architecture</div>
+    <div class="diagram-desc">N OS threads taking turns on the GIL vs N coroutines multiplexed by one loop</div>
+
+    <div class="panel-2">
+      <div class="panel blue" style="text-align:center;">
+        <h4 style="text-align:left;">Threading: N OS threads</h4>
+        <div style="font-family:var(--mono); font-size:0.7rem; line-height:1.85; color:var(--text); background:#fff; padding:16px; border-radius:8px; border:1px solid var(--card-border); text-align:left; margin-top:12px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS SCHEDULER<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;┌────┬───┴───┬────┐<br>
+          &nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+          ┌───┐┌───┐┌───┐┌───┐<br>
+          │ T1││ T2││ T3││ T4│&nbsp;&nbsp;~8 MB stack each<br>
+          └─┬─┘└─┬─┘└─┬─┘└─┬─┘<br>
+          &nbsp;&nbsp;└────┴──┬──┴────┘<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;┌─▼─┐<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│GIL│ (default build)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└───┘
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:12px; text-align:left;">Kernel-level context switches. Memory grows with thread count, so a few thousand threads is the practical ceiling.</p>
+      </div>
+      <div class="panel purple" style="text-align:center;">
+        <h4 style="text-align:left;">Asyncio: 1 thread, N coroutines</h4>
+        <div style="font-family:var(--mono); font-size:0.7rem; line-height:1.85; color:var(--text); background:#fff; padding:16px; border-radius:8px; border:1px solid var(--card-border); text-align:left; margin-top:12px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;ONE OS THREAD<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;┌──────▼───────┐<br>
+          &nbsp;&nbsp;│&nbsp; EVENT LOOP&nbsp; │<br>
+          &nbsp;&nbsp;│ (epoll/kqueue)│<br>
+          &nbsp;&nbsp;└──┬────────┬──┘<br>
+          &nbsp;ready│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│waiting<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+          &nbsp;[c1 c2 c3]&nbsp; [c4 … c9999]<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~KB each
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:12px; text-align:left;">Switches happen in userspace — no kernel involvement. A coroutine costs a few KB, so 100k concurrent tasks is routine.</p>
+      </div>
+    </div>
+
+    <div class="stack-box" style="margin-top:28px;">
+      <div class="stack-title">One tick of the event loop</div>
+      <div class="chip-row">
+        <span class="chip active">▶ running: fetch(url_3)</span>
+        <span class="chip done">✓ ready: fetch(url_1)</span>
+        <span class="chip done">✓ ready: fetch(url_7)</span>
+        <span class="chip pending">⏳ awaiting socket: url_4</span>
+        <span class="chip pending">⏳ awaiting socket: url_5</span>
+        <span class="chip pending">⏳ sleep(2): retry_job</span>
+      </div>
+      <p style="font-size:0.78rem; color:var(--primary-dark); margin-top:14px;">
+        The loop asks the OS "which of these 10,000 sockets are ready?" in one syscall, moves those tasks to the ready
+        queue, and runs each until its next <code>await</code>. Nothing is preempted.
+      </p>
+    </div>
+  </div>
+
+  <!-- Diagram: the asyncio task cycle -->
+  <div class="diagram-wrapper reveal" data-anim="loop">
+    <div class="diagram-title">Diagram 8b — Where a Task Goes, Over and Over</div>
+    <div class="diagram-desc">Every dot is a task circulating through the loop. It only moves forward when it hits an <code>await</code>.</div>
+
+    <div class="flowtrack">
+      <div class="ft-stage">📋 Ready queue<br><small>can run now</small></div>
+      <div class="ft-pipe"><i class="ft-dot" style="--d:0s"></i><i class="ft-dot" style="--d:-0.7s"></i><i class="ft-dot" style="--d:-1.4s"></i></div>
+      <div class="ft-stage ok">⚙️ Running<br><small>until next await</small></div>
+      <div class="ft-pipe"><i class="ft-dot green" style="--d:-0.25s"></i><i class="ft-dot green" style="--d:-0.95s"></i><i class="ft-dot green" style="--d:-1.65s"></i></div>
+      <div class="ft-stage warn">⏳ Awaiting I/O<br><small>registered with epoll</small></div>
+      <div class="ft-pipe"><i class="ft-dot amber" style="--d:-0.5s"></i><i class="ft-dot amber" style="--d:-1.2s"></i><i class="ft-dot amber" style="--d:-1.9s"></i></div>
+      <div class="ft-stage">🔔 Socket ready<br><small>back to the queue</small></div>
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:26px; max-width:660px; margin-left:auto; margin-right:auto; line-height:1.8;">
+      Ten thousand dots can sit in the amber stage at once, because waiting costs nothing but a file descriptor. The
+      running stage, though, is single-file — one task at a time, on one thread. A blocking call there stops every dot
+      on the board.
+    </p>
+  </div>
+
+  <!-- Same job, both ways -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">The Same Job, Written Both Ways</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Fetch 500 URLs concurrently. Both finish in about the same time — the difference is cost and control.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">threads_vs_asyncio.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="cm"># ══ VERSION A: threads + a blocking library ═══════════════════</span>
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+<span class="kw">import</span> requests, time
+
+<span class="kw">def</span> <span class="fn">fetch</span>(<span class="param">url</span>):
+    <span class="kw">return</span> requests.get(url, timeout=<span class="num">10</span>).status_code
+
+<span class="kw">def</span> <span class="fn">main_threads</span>(<span class="param">urls</span>):
+    <span class="cm"># 50 OS threads ≈ 400 MB of virtual stack space</span>
+    <span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">50</span>) <span class="kw">as</span> pool:
+        <span class="kw">return</span> <span class="bi">list</span>(pool.map(fetch, urls))
+
+<span class="cm"># ══ VERSION B: asyncio + an async library ═════════════════════</span>
+<span class="kw">import</span> asyncio, aiohttp
+
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">fetch_async</span>(<span class="param">session</span>, <span class="param">url</span>):
+    <span class="kw">async</span> <span class="kw">with</span> session.get(url) <span class="kw">as</span> resp:   <span class="cm"># ← switch point</span>
+        <span class="kw">return</span> resp.status
+
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">main_async</span>(<span class="param">urls</span>):
+    <span class="cm"># 500 coroutines ≈ a couple of MB, one thread</span>
+    <span class="kw">async</span> <span class="kw">with</span> aiohttp.ClientSession() <span class="kw">as</span> session:
+        <span class="kw">async</span> <span class="kw">with</span> asyncio.TaskGroup() <span class="kw">as</span> tg:   <span class="cm"># 3.11+ structured concurrency</span>
+            tasks = [tg.create_task(fetch_async(session, u)) <span class="kw">for</span> u <span class="kw">in</span> urls]
+    <span class="kw">return</span> [t.result() <span class="kw">for</span> t <span class="kw">in</span> tasks]
+
+urls = [<span class="st">f"https://httpbin.org/get?i={i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">500</span>)]
+
+t0 = time.perf_counter(); main_threads(urls)
+<span class="bi">print</span>(<span class="st">f"threads : {time.perf_counter()-t0:.1f}s"</span>)
+
+t0 = time.perf_counter(); asyncio.run(main_async(urls))
+<span class="bi">print</span>(<span class="st">f"asyncio : {time.perf_counter()-t0:.1f}s"</span>)
+
+<span class="cm"># Bump the count to 10,000 and the picture changes completely:</span>
+<span class="cm">#   threads → thrashing, or OOM / "can't start new thread"</span>
+<span class="cm">#   asyncio → still one thread, still fine</span></pre>
+      </div>
+    </div>
+    <div class="output-block">
+threads : 11.4s   (50 workers, 500 URLs, ~150 MB RSS)
+asyncio : 9.8s    (500 tasks at once, ~45 MB RSS)
+
+At 10,000 URLs:
+threads : RuntimeError: can't start new thread  /  heavy swapping
+asyncio : 41.2s, ~90 MB RSS
+    </div>
+  </div>
+
+  <!-- 3-way table -->
+  <div class="glass-card reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:16px; font-size:1.1rem;">📊 Threading vs Asyncio vs Multiprocessing</h3>
+    <table>
+      <thead>
+        <tr><th>Aspect</th><th>🧵 Threading</th><th>⚡ Asyncio</th><th>⚙️ Multiprocessing</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Unit of work</strong></td><td>OS thread</td><td>Coroutine / Task</td><td>OS process</td></tr>
+        <tr><td><strong>How many OS threads</strong></td><td>One per worker</td><td>One, total</td><td>One per process</td></tr>
+        <tr><td><strong>Who schedules</strong></td><td>OS kernel (preemptive)</td><td>Event loop (cooperative)</td><td>OS kernel</td></tr>
+        <tr><td><strong>Switch points</strong></td><td>Anywhere, unpredictable</td><td>Only at <code>await</code></td><td>Anywhere</td></tr>
+        <tr><td><strong>Cost per unit</strong></td><td>~8 MB stack, ~1 ms to start</td><td>~KB, microseconds</td><td>~10 MB+, ~50–100 ms</td></tr>
+        <tr><td><strong>Practical ceiling</strong></td><td>Hundreds to a few thousand</td><td>100,000+</td><td>≈ core count</td></tr>
+        <tr><td><strong>Uses all cores</strong></td><td>❌ GIL build / ✅ free-threaded</td><td>❌ Never (one thread)</td><td>✅ Always</td></tr>
+        <tr><td><strong>Race conditions</strong></td><td>Frequent — locks required</td><td>Rare — visible switch points</td><td>N/A (isolated memory)</td></tr>
+        <tr><td><strong>Blocking calls</strong></td><td>Fine, just works</td><td>💀 Freezes the entire loop</td><td>Fine</td></tr>
+        <tr><td><strong>Library requirement</strong></td><td>Any sync library</td><td>Needs an async-native library</td><td>Anything picklable</td></tr>
+        <tr><td><strong>Cancellation / timeouts</strong></td><td>Manual, no clean way to kill a thread</td><td>Built in (<code>asyncio.timeout</code>, <code>task.cancel()</code>)</td><td><code>process.terminate()</code></td></tr>
+        <tr><td><strong>Debugging</strong></td><td>Hard — nondeterministic</td><td>Moderate — deterministic but deep stacks</td><td>Easier — isolated</td></tr>
+        <tr><td><strong>Best fit</strong></td><td>Moderate I/O with sync libs</td><td>Massive I/O concurrency</td><td>CPU-bound work</td></tr>
+        <tr><td><strong>Entry point</strong></td><td><code>ThreadPoolExecutor</code></td><td><code>asyncio.run()</code></td><td><code>ProcessPoolExecutor</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- When to pick which -->
+  <div class="grid-2 reveal" style="margin-top:32px;">
+    <div class="glass-card" style="border-left:4px solid rgb(58,114,224);">
+      <h3 style="font-size:1.05rem; margin-bottom:14px;">🧵 Pick threads over asyncio when…</h3>
+      <ul style="font-size:0.88rem; color:var(--text-muted); line-height:1.9; padding-left:20px;">
+        <li><strong>Your library is synchronous.</strong> <code>requests</code>, <code>psycopg2</code>, <code>boto3</code>, <code>pandas</code>, <code>Pillow</code>, most SDKs. No async driver means no asyncio benefit — threads are the only option that doesn't require a rewrite.</li>
+        <li><strong>You're inside a sync codebase.</strong> A Django view, a Flask handler, a CLI, a Tkinter/PyQt app. Going async is contagious: one <code>await</code> forces every caller up the stack to become async too.</li>
+        <li><strong>Concurrency is modest.</strong> Fewer than a few hundred simultaneous operations. Thread overhead is irrelevant at that scale and the code stays much simpler.</li>
+        <li><strong>The work is blocking C code that releases the GIL.</strong> <code>numpy</code>, <code>hashlib</code>, <code>zlib</code>, <code>lxml</code>, DB drivers. Threads scale on these even on a GIL build. Asyncio cannot help at all.</li>
+        <li><strong>You need preemption.</strong> If one task might run a long CPU stretch without awaiting, asyncio stalls every other task. The OS will preempt a thread whether it cooperates or not.</li>
+        <li><strong>You're on a free-threaded build doing CPU work.</strong> Asyncio is single-threaded by design and gains nothing from removing the GIL.</li>
+        <li><strong>Simple fire-and-forget background work.</strong> A daemon thread doing heartbeats or log flushing beats standing up an event loop.</li>
+      </ul>
+    </div>
+    <div class="glass-card" style="border-left:4px solid #7c3aed;">
+      <h3 style="font-size:1.05rem; margin-bottom:14px;">⚡ Pick asyncio over threads when…</h3>
+      <ul style="font-size:0.88rem; color:var(--text-muted); line-height:1.9; padding-left:20px;">
+        <li><strong>Concurrency is in the thousands.</strong> Chat servers, WebSockets, long-poll connections, crawlers. Threads run out of memory long before the event loop does.</li>
+        <li><strong>Most connections are idle most of the time.</strong> 10,000 open sockets with light traffic is the canonical asyncio workload.</li>
+        <li><strong>You're already in an async framework.</strong> FastAPI, Starlette, aiohttp, Sanic. Fighting the framework with threads adds bugs, not throughput.</li>
+        <li><strong>You need real cancellation and timeouts.</strong> <code>asyncio.timeout()</code>, <code>task.cancel()</code>, and <code>TaskGroup</code> give structured concurrency. There is no safe way to kill a Python thread from outside.</li>
+        <li><strong>Determinism matters.</strong> Explicit switch points make reasoning about shared state tractable, and reproduce bugs far more reliably.</li>
+        <li><strong>Async-native drivers exist for your stack.</strong> <code>asyncpg</code>, <code>httpx</code>, <code>aiokafka</code>, <code>redis.asyncio</code>, <code>motor</code>.</li>
+        <li><strong>Memory per connection is the constraint.</strong> A coroutine costs kilobytes; a thread costs megabytes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Decision flow -->
+  <div class="diagram-wrapper reveal">
+    <div class="diagram-title">Diagram 9 — Decision Flow</div>
+    <div class="diagram-desc">Four questions get you to the right tool almost every time</div>
+    <div class="flow-container" style="flex-direction:column; gap:14px;">
+      <div class="flow-node active" style="max-width:520px;">1. Is the bottleneck CPU or waiting?</div>
+      <div class="flow-arrow" style="transform:rotate(90deg);">→</div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+        <div class="flow-node danger" style="max-width:250px;">CPU → <strong>multiprocessing</strong><br><small>(or free-threaded threads)</small></div>
+        <div class="flow-node success" style="max-width:250px;">Waiting → keep going ↓</div>
+      </div>
+      <div class="flow-arrow" style="transform:rotate(90deg);">→</div>
+      <div class="flow-node active" style="max-width:520px;">2. Does an async driver exist for your I/O?</div>
+      <div class="flow-arrow" style="transform:rotate(90deg);">→</div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+        <div class="flow-node warning" style="max-width:250px;">No → <strong>threads</strong><br><small>(or wrap it in <code>to_thread</code>)</small></div>
+        <div class="flow-node success" style="max-width:250px;">Yes → keep going ↓</div>
+      </div>
+      <div class="flow-arrow" style="transform:rotate(90deg);">→</div>
+      <div class="flow-node active" style="max-width:520px;">3. More than ~500 concurrent operations?</div>
+      <div class="flow-arrow" style="transform:rotate(90deg);">→</div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+        <div class="flow-node warning" style="max-width:250px;">No → <strong>threads</strong><br><small>simpler wins</small></div>
+        <div class="flow-node success" style="max-width:250px;">Yes → <strong>asyncio</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bridging -->
+  <div class="reveal" style="margin-top:40px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">You Don't Have to Choose — Bridging Both</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Real applications mix all three. Asyncio ships explicit bridges for exactly this.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">bridging.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> asyncio, time, requests
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+
+<span class="cm"># ── 1. Blocking call inside async code → asyncio.to_thread (3.9+) ──</span>
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">good</span>():
+    <span class="cm"># requests is sync. to_thread hands it to a worker thread so the</span>
+    <span class="cm"># event loop keeps serving everything else.</span>
+    resp = <span class="kw">await</span> asyncio.to_thread(requests.get, <span class="st">"https://python.org"</span>)
+    <span class="kw">return</span> resp.status_code
+
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">bad</span>():
+    <span class="cm"># ❌ Blocks the loop. Every other task stops for 2 seconds.</span>
+    time.sleep(<span class="num">2</span>)                      <span class="cm"># use: await asyncio.sleep(2)</span>
+    <span class="kw">return</span> requests.get(<span class="st">"https://python.org"</span>).status_code
+
+<span class="cm"># ── 2. CPU-bound work inside async code → a process pool ───────────</span>
+<span class="kw">def</span> <span class="fn">crunch</span>(<span class="param">n</span>):
+    <span class="kw">return</span> <span class="bi">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n))
+
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">cpu_from_async</span>():
+    loop = asyncio.get_running_loop()
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+        <span class="cm"># run_in_executor keeps the loop responsive while cores burn</span>
+        results = <span class="kw">await</span> asyncio.gather(*[
+            loop.run_in_executor(pool, crunch, <span class="num">5_000_000</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">4</span>)
+        ])
+    <span class="kw">return</span> results
+
+<span class="cm"># ── 3. Async work from a *sync* thread → run_coroutine_threadsafe ──</span>
+<span class="kw">def</span> <span class="fn">from_a_worker_thread</span>(<span class="param">loop</span>, <span class="param">coro</span>):
+    <span class="st">"""Call this from any thread that is NOT running the loop."""</span>
+    fut = asyncio.run_coroutine_threadsafe(coro, loop)
+    <span class="kw">return</span> fut.result(timeout=<span class="num">10</span>)      <span class="cm"># blocks this thread only</span>
+
+<span class="cm"># ── 4. Cap how many threads asyncio will use ───────────────────────</span>
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">with_bounded_pool</span>():
+    loop = asyncio.get_running_loop()
+    <span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">10</span>) <span class="kw">as</span> pool:
+        loop.set_default_executor(pool)   <span class="cm"># to_thread now uses this pool</span>
+        <span class="kw">await</span> asyncio.gather(*[
+            asyncio.to_thread(requests.get, <span class="st">"https://python.org"</span>)
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="num">100</span>)
+        ])
+
+<span class="cm"># ── 5. Find the blocking calls you missed ──────────────────────────</span>
+asyncio.run(good(), debug=<span class="op">True</span>)
+<span class="cm"># Warns: "Executing &lt;Task...&gt; took 2.001 seconds" for any coroutine</span>
+<span class="cm"># that hogs the loop longer than loop.slow_callback_duration.</span></pre>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(239,68,68,0.06); border-radius:var(--radius-sm); border-left:3px solid var(--danger);">
+      <p style="font-size:0.9rem; color:#991b1b; line-height:1.75; margin:0;">
+        <strong>The #1 asyncio bug:</strong> calling blocking code inside a coroutine. <code>time.sleep()</code>,
+        <code>requests.get()</code>, <code>open().read()</code>, a sync DB driver, or a heavy loop over a big list all halt
+        <em>every</em> task on the loop, not just the current one. Symptom: your async server is somehow slower than the
+        threaded version it replaced. Run with <code>debug=True</code> to find the offenders.
+      </p>
+    </div>
+  </div>
+
+  <!-- Mental model -->
+  <div class="glass-card reveal" style="margin-top:32px; border-left:4px solid rgb(58,114,224);">
+    <h3 style="font-size:1.05rem; margin-bottom:12px;">🧠 One-Line Mental Model</h3>
+    <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.9;">
+      <strong>Multiprocessing</strong> buys you more cores. <strong>Asyncio</strong> buys you more concurrent waits.
+      <strong>Threading</strong> buys you concurrent waits without rewriting your libraries — and on a free-threaded build,
+      more cores too.
+    </p>
+    <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.9; margin-top:12px;">
+      Or shorter: <em>asyncio scales connections, multiprocessing scales computation, threading is the pragmatic middle
+      that works with the code you already have.</em>
+    </p>
+  </div>
+</section>
+
+<!-- Examples Section -->
+<section id="examples">
+  <div class="section-header reveal">
+    <div class="section-label">Hands-On</div>
+    <h2 class="section-title">Real-World Examples</h2>
+    <p class="section-desc">Complete patterns you'll use in actual projects.</p>
+  </div>
+
+  <!-- Example 1: Web Scraper -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 1: Concurrent Web Scraper (Threading)</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">Fetch multiple URLs concurrently — the classic threading use case.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">web_scraper.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, as_completed
+<span class="kw">import</span> urllib.request
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">fetch</span>(<span class="param">url</span>):
+    <span class="st">"""Fetch a URL and return status + size."""</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> urllib.request.urlopen(url, timeout=<span class="num">5</span>) <span class="kw">as</span> resp:
+            data = resp.read()
+            <span class="kw">return</span> {<span class="st">"url"</span>: url, <span class="st">"status"</span>: resp.status, <span class="st">"size"</span>: <span class="bi">len</span>(data)}
+    <span class="kw">except</span> <span class="bi">Exception</span> <span class="kw">as</span> e:
+        <span class="kw">return</span> {<span class="st">"url"</span>: url, <span class="st">"status"</span>: <span class="st">"error"</span>, <span class="st">"size"</span>: <span class="num">0</span>}
+
+urls = [
+    <span class="st">"https://python.org"</span>,
+    <span class="st">"https://github.com"</span>,
+    <span class="st">"https://stackoverflow.com"</span>,
+    <span class="st">"https://docs.python.org"</span>,
+    <span class="st">"https://pypi.org"</span>,
+]
+
+start = time.perf_counter()
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> pool:
+    <span class="cm"># as_completed() yields futures as they finish (not in order)</span>
+    futures = {pool.submit(fetch, url): url <span class="kw">for</span> url <span class="kw">in</span> urls}
+    <span class="kw">for</span> future <span class="kw">in</span> as_completed(futures):
+        result = future.result()
+        <span class="bi">print</span>(<span class="st">f"  {result['status']} | {result['size']:>6} bytes | {result['url']}"</span>)
+
+<span class="bi">print</span>(<span class="st">f"\nAll {len(urls)} URLs fetched in {time.perf_counter()-start:.2f}s"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+  200 |  50123 bytes | https://python.org
+  200 |  23456 bytes | https://pypi.org
+  200 | 128000 bytes | https://github.com
+  200 |  45678 bytes | https://docs.python.org
+  200 |  89012 bytes | https://stackoverflow.com
+
+All 5 URLs fetched in 0.87s
+    </div>
+  </div>
+
+  <!-- Example 2: Producer-Consumer Pattern -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 2: Producer-Consumer with Thread-Safe Queue</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">The classic pattern — one thread produces data, another consumes it, connected by a thread-safe queue.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">producer_consumer.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+<span class="kw">import</span> queue
+<span class="kw">import</span> time
+<span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">producer</span>(<span class="param">q</span>, <span class="param">num_items</span>):
+    <span class="st">"""Produces items and puts them in the queue."""</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(num_items):
+        item = <span class="st">f"task_{i}"</span>
+        time.sleep(random.uniform(<span class="num">0.1</span>, <span class="num">0.3</span>))
+        q.put(item)
+        <span class="bi">print</span>(<span class="st">f"  [Producer] Added: {item} (queue size: {q.qsize()})"</span>)
+    q.put(<span class="op">None</span>)  <span class="cm"># poison pill — signals "stop"</span>
+
+<span class="kw">def</span> <span class="fn">consumer</span>(<span class="param">q</span>):
+    <span class="st">"""Consumes items from the queue."""</span>
+    <span class="kw">while</span> <span class="op">True</span>:
+        item = q.get()  <span class="cm"># blocks until item available</span>
+        <span class="kw">if</span> item <span class="kw">is</span> <span class="op">None</span>:
+            <span class="kw">break</span>
+        time.sleep(<span class="num">0.2</span>)  <span class="cm"># simulate processing</span>
+        <span class="bi">print</span>(<span class="st">f"  [Consumer] Processed: {item}"</span>)
+        q.task_done()
+
+<span class="cm"># queue.Queue is thread-safe — no locks needed!</span>
+q = queue.Queue(maxsize=<span class="num">5</span>)  <span class="cm"># bounded queue (blocks if full)</span>
+
+prod = threading.Thread(target=producer, args=(q, <span class="num">6</span>))
+cons = threading.Thread(target=consumer, args=(q,))
+
+prod.start()
+cons.start()
+prod.join()
+cons.join()
+<span class="bi">print</span>(<span class="st">"Done! All items processed."</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+  [Producer] Added: task_0 (queue size: 1)
+  [Consumer] Processed: task_0
+  [Producer] Added: task_1 (queue size: 1)
+  [Producer] Added: task_2 (queue size: 2)
+  [Consumer] Processed: task_1
+  [Consumer] Processed: task_2
+  ...
+Done! All items processed.
+    </div>
+  </div>
+
+  <!-- Example 3: Parallel Image Processing -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 3: Parallel Image Processing (Multiprocessing)</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">CPU-heavy work distributed across cores — the multiprocessing sweet spot.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">parallel_processing.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor, ThreadPoolExecutor
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">heavy_computation</span>(<span class="param">n</span>):
+    <span class="st">"""Simulate CPU-heavy image processing."""</span>
+    <span class="kw">return</span> <span class="bi">sum</span>(i ** <span class="num">2</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n))
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    tasks = [<span class="num">2_000_000</span>] * <span class="num">8</span>  <span class="cm"># 8 heavy tasks</span>
+
+    <span class="cm"># Sequential</span>
+    start = time.perf_counter()
+    [heavy_computation(t) <span class="kw">for</span> t <span class="kw">in</span> tasks]
+    seq = time.perf_counter() - start
+
+    <span class="cm"># Threads (limited by GIL — no speedup for CPU work)</span>
+    start = time.perf_counter()
+    <span class="kw">with</span> ThreadPoolExecutor(<span class="num">4</span>) <span class="kw">as</span> pool:
+        <span class="bi">list</span>(pool.map(heavy_computation, tasks))
+    thread = time.perf_counter() - start
+
+    <span class="cm"># Processes (bypasses GIL — real speedup!)</span>
+    start = time.perf_counter()
+    <span class="kw">with</span> ProcessPoolExecutor(<span class="num">4</span>) <span class="kw">as</span> pool:
+        <span class="bi">list</span>(pool.map(heavy_computation, tasks))
+    proc = time.perf_counter() - start
+
+    <span class="bi">print</span>(<span class="st">f"Sequential:     {seq:.2f}s"</span>)
+    <span class="bi">print</span>(<span class="st">f"4 Threads:      {thread:.2f}s (GIL blocks parallelism)"</span>)
+    <span class="bi">print</span>(<span class="st">f"4 Processes:    {proc:.2f}s (true parallelism!)"</span>)
+    <span class="bi">print</span>(<span class="st">f"\nProcess speedup: {seq/proc:.1f}x"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Sequential:     2.41s
+4 Threads:      2.58s (GIL blocks parallelism)
+4 Processes:    0.71s (true parallelism!)
+
+Process speedup: 3.4x
+    </div>
+  </div>
+
+  <!-- Example 4: Deadlock Prevention -->
+  <div class="reveal" style="margin-bottom:48px;">
+    <h3 style="margin-bottom:8px; font-size:1.2rem;">Example 4: Deadlock — What It Is and How to Avoid It</h3>
+    <p style="color:var(--text-muted); margin-bottom:16px;">A deadlock happens when two threads each hold a lock the other needs — both wait forever.</p>
+
+    <div class="code-editor">
+      <div class="code-toolbar">
+        <div class="code-dots"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <span class="code-filename">deadlock_prevention.py</span>
+        <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="kw">import</span> threading
+
+lock_a = threading.Lock()
+lock_b = threading.Lock()
+
+<span class="cm"># ❌ DEADLOCK — Thread 1 holds A, wants B. Thread 2 holds B, wants A.</span>
+<span class="cm"># def thread1():</span>
+<span class="cm">#     with lock_a:</span>
+<span class="cm">#         with lock_b:  # waits forever — thread2 has lock_b</span>
+<span class="cm">#             ...</span>
+<span class="cm"># def thread2():</span>
+<span class="cm">#     with lock_b:</span>
+<span class="cm">#         with lock_a:  # waits forever — thread1 has lock_a</span>
+<span class="cm">#             ...</span>
+
+<span class="cm"># ✅ FIX 1: Always acquire locks in the same order</span>
+<span class="kw">def</span> <span class="fn">safe_thread1</span>():
+    <span class="kw">with</span> lock_a:
+        <span class="kw">with</span> lock_b:
+            <span class="bi">print</span>(<span class="st">"Thread 1: got both locks"</span>)
+
+<span class="kw">def</span> <span class="fn">safe_thread2</span>():
+    <span class="kw">with</span> lock_a:  <span class="cm"># same order as thread1!</span>
+        <span class="kw">with</span> lock_b:
+            <span class="bi">print</span>(<span class="st">"Thread 2: got both locks"</span>)
+
+<span class="cm"># ✅ FIX 2: Use timeout</span>
+<span class="kw">def</span> <span class="fn">timeout_thread</span>():
+    <span class="kw">if</span> lock_a.acquire(timeout=<span class="num">1</span>):
+        <span class="kw">try</span>:
+            <span class="kw">if</span> lock_b.acquire(timeout=<span class="num">1</span>):
+                <span class="kw">try</span>:
+                    <span class="bi">print</span>(<span class="st">"Got both!"</span>)
+                <span class="kw">finally</span>:
+                    lock_b.release()
+            <span class="kw">else</span>:
+                <span class="bi">print</span>(<span class="st">"Couldn't get lock_b — backing off"</span>)
+        <span class="kw">finally</span>:
+            lock_a.release()
+
+t1 = threading.Thread(target=safe_thread1)
+t2 = threading.Thread(target=safe_thread2)
+t1.start(); t2.start()
+t1.join(); t2.join()
+<span class="bi">print</span>(<span class="st">"No deadlock!"</span>)</pre>
+      </div>
+    </div>
+    <div class="output-block">
+Thread 1: got both locks
+Thread 2: got both locks
+No deadlock!
+    </div>
+
+    <div style="margin-top:16px; padding:18px; background:rgba(239,68,68,0.06); border-radius:var(--radius-sm); border-left:3px solid var(--danger);">
+      <p style="font-size:0.9rem; color:#991b1b; line-height:1.7; margin:0;">
+        <strong>Deadlock prevention rules:</strong> (1) Always acquire locks in a consistent global order. (2) Use timeouts. (3) Avoid holding multiple locks when possible. (4) Use <code>threading.RLock()</code> if the same thread needs to acquire a lock it already holds.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Interview Questions Section -->
+<section id="interview">
+  <div class="section-header reveal">
+    <div class="section-label">Career Prep</div>
+    <h2 class="section-title">Interview Questions</h2>
+    <p class="section-desc">Common concurrency questions. Click to reveal answers.</p>
+  </div>
+
+  <div class="reveal">
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">1</span>
+        <span class="qa-text">What's the difference between a thread and a process?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A <strong>thread</strong> is a lightweight unit of execution within a process — threads share the same memory space. A <strong>process</strong> is a separate program with its own memory, its own Python interpreter, and its own GIL. Threads are cheap to create but limited by the GIL. Processes are heavier but achieve true parallelism.</p>
+          <div class="qa-tip">💡 Analogy: threads are like multiple tabs in one browser (shared memory). Processes are like separate browser windows (isolated memory).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">2</span>
+        <span class="qa-text">What is a race condition and how do you prevent it?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A race condition occurs when two threads access shared data concurrently and at least one modifies it — the result depends on the timing of thread execution. Prevent it with: <code>threading.Lock()</code> for mutual exclusion, <code>queue.Queue</code> for thread-safe data passing, or atomic operations.</p>
+          <div class="qa-tip">💡 The key insight: <code>counter += 1</code> is NOT atomic — it's three operations (load, add, store). The GIL can switch threads between any of them.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">3</span>
+        <span class="qa-text">What is a deadlock? How do you avoid it?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A deadlock happens when two or more threads are each waiting for a lock held by the other — nobody can proceed. Four conditions must all be true: mutual exclusion, hold-and-wait, no preemption, and circular wait.</p>
+          <p style="margin-top:8px;"><strong>Prevention:</strong> Always acquire locks in the same order, use timeouts (<code>lock.acquire(timeout=1)</code>), minimize lock scope, or use lock-free data structures like <code>queue.Queue</code>.</p>
+          <div class="qa-tip">💡 In interviews, mention the "dining philosophers" problem as the classic deadlock example.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">4</span>
+        <span class="qa-text">When would you use threading vs multiprocessing vs asyncio?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Threading:</strong> I/O-bound tasks with moderate concurrency (10-100 tasks) — web scraping, file I/O, DB queries.</p>
+          <p><strong>Multiprocessing:</strong> CPU-bound tasks — image processing, data crunching, ML training.</p>
+          <p><strong>Asyncio:</strong> High-concurrency I/O (1000+ connections) — web servers, chat apps, WebSocket handlers.</p>
+          <div class="qa-tip">💡 Simple rule: waiting on network → threading/asyncio. Crunching numbers → multiprocessing. Thousands of connections → asyncio.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">5</span>
+        <span class="qa-text">What is a thread pool and why use one?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A thread pool pre-creates a fixed number of worker threads and reuses them for multiple tasks. Benefits: avoids the overhead of creating/destroying threads for each task, limits resource usage (you won't accidentally spawn 10,000 threads), and provides a clean API via <code>ThreadPoolExecutor</code>.</p>
+          <p style="margin-top:8px;">Use <code>max_workers</code> to control pool size. For I/O-bound work, a good default is <code>min(32, os.cpu_count() + 4)</code> (Python's default).</p>
+          <div class="qa-tip">💡 <code>concurrent.futures</code> gives you the same API for both thread pools and process pools — just swap <code>ThreadPoolExecutor</code> ↔ <code>ProcessPoolExecutor</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">6</span>
+        <span class="qa-text">How do processes communicate if they don't share memory?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Inter-Process Communication (IPC) options in Python:</p>
+          <ul style="padding-left:20px; line-height:2;">
+            <li><code>multiprocessing.Queue</code> — thread/process-safe, FIFO, uses pickle</li>
+            <li><code>multiprocessing.Pipe</code> — fast two-way channel between 2 processes</li>
+            <li><code>multiprocessing.Value/Array</code> — shared memory (fastest, needs locks)</li>
+            <li><code>multiprocessing.Manager</code> — shared dicts/lists (slowest, most flexible)</li>
+            <li><code>multiprocessing.shared_memory</code> — raw shared memory blocks (Python 3.8+)</li>
+          </ul>
+          <div class="qa-tip">💡 Start with Queue (simplest). Use shared memory only when Queue is too slow (large data, high frequency).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">7</span>
+        <span class="qa-text">What's the difference between <code>Lock</code>, <code>RLock</code>, <code>Semaphore</code>, and <code>Event</code>?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Lock:</strong> Basic mutual exclusion — one thread at a time. If the same thread tries to acquire it twice, it deadlocks.</p>
+          <p><strong>RLock:</strong> Reentrant lock — the same thread CAN acquire it multiple times (must release the same number of times). Useful for recursive functions.</p>
+          <p><strong>Semaphore:</strong> Allows up to N threads simultaneously. Like a parking lot with N spots — when full, others wait.</p>
+          <p><strong>Event:</strong> A flag that threads can wait on. One thread sets it, others wake up. Good for signaling "start" or "stop".</p>
+          <div class="qa-tip">💡 Use Lock for protecting shared data. Semaphore for rate limiting. Event for coordination signals. RLock when you have nested locking.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">8</span>
+        <span class="qa-text">What is a daemon thread?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>A daemon thread runs in the background and is automatically killed when all non-daemon threads finish. The main thread is non-daemon. Set <code>thread.daemon = True</code> before starting it.</p>
+          <p style="margin-top:8px;">Use cases: background logging, heartbeat checks, cache cleanup. The key behavior: your program won't wait for daemon threads to finish before exiting — they just get killed.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            t = threading.Thread(target=background_task)<br>
+            t.daemon = <span style="color:#79c0ff;">True</span>&nbsp;&nbsp;<span style="color:#8b949e;"># dies when main thread exits</span><br>
+            t.start()
+          </div>
+          <div class="qa-tip">💡 If you need cleanup before exit, don't use daemon threads — use regular threads with proper shutdown signals.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">9</span>
+        <span class="qa-text">Why is <code>if __name__ == "__main__"</code> required for multiprocessing on Windows/macOS?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>On Windows and macOS (with "spawn" start method), new processes are created by importing the main module. Without the guard, the child process would re-execute the module-level code — including creating MORE child processes — causing an infinite recursion of process spawning.</p>
+          <p style="margin-top:8px;">Linux uses "fork" by default (copies the parent process), so it often works without the guard — but it's best practice to always include it for portability.</p>
+          <div class="qa-tip">💡 Always wrap multiprocessing code in <code>if __name__ == "__main__":</code> — it's not optional on Windows/macOS.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">10</span>
+        <span class="qa-text">How do you handle exceptions in threads/processes?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Exceptions in threads/processes don't propagate to the main thread automatically. With raw <code>threading.Thread</code>, the exception is silently swallowed. With <code>concurrent.futures</code>, exceptions are captured and re-raised when you call <code>future.result()</code>.</p>
+          <div style="margin-top:14px; padding:14px 16px; background:#1e293b; border-radius:8px; font-family:var(--mono); font-size:0.82rem; color:#e6edf3; line-height:1.8;">
+            <span style="color:#ff7b72;">with</span> ThreadPoolExecutor() <span style="color:#ff7b72;">as</span> pool:<br>
+            &nbsp;&nbsp;future = pool.submit(risky_function)<br>
+            &nbsp;&nbsp;<span style="color:#ff7b72;">try</span>:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;result = future.result()&nbsp;&nbsp;<span style="color:#8b949e;"># raises if function raised</span><br>
+            &nbsp;&nbsp;<span style="color:#ff7b72;">except</span> Exception <span style="color:#ff7b72;">as</span> e:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;print(f<span style="color:#a5d6ff;">"Task failed: {e}"</span>)
+          </div>
+          <div class="qa-tip">💡 Always use <code>concurrent.futures</code> over raw threads — it handles exception propagation, timeouts, and cancellation for you.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">11</span>
+        <span class="qa-text">Why couldn't Python threads use multiple cores, and what changed?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The GIL is one mutex per interpreter, and a thread must hold it to run Python bytecode. Threads were always real OS threads that the kernel could place on any core, but only the GIL holder could execute — so total bytecode throughput was capped at one core.</p>
+          <p style="margin-top:8px;">The GIL existed because CPython's <code>ob_refcnt</code> is a plain, non-atomic integer. Concurrent increments and decrements would corrupt it, causing premature frees or leaks.</p>
+          <p style="margin-top:8px;"><strong>What changed:</strong> PEP 703 replaced the one coarse lock with fine-grained mechanisms — biased reference counting, immortal objects (PEP 683), deferred refcounting, per-object critical sections, QSBR for lock-free container reads, and mimalloc with per-thread free lists. Python 3.13 shipped that as an experimental build; PEP 779 was accepted in June 2025 and made it officially supported in 3.14. It is still an opt-in build (<code>python3.14t</code>), not the default.</p>
+          <div class="qa-tip">💡 Precise phrasing scores points: the GIL never prevented threads from being scheduled on multiple cores — it prevented more than one from executing <em>Python bytecode</em> simultaneously. That's why <code>numpy</code> and other C extensions that release the GIL always scaled with threads.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">12</span>
+        <span class="qa-text">Does the free-threaded build mean you no longer need locks?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>No — the opposite.</strong> Removing the GIL removes a performance ceiling, not a correctness guarantee. <code>counter += 1</code> is still LOAD, ADD, STORE. On a GIL build a switch between those bytecodes was possible but rare; on a free-threaded build the threads are genuinely simultaneous, so lost updates become the common case rather than the rare one.</p>
+          <p style="margin-top:8px;">What free-threading <em>does</em> guarantee is <strong>internal</strong> consistency: individual <code>list</code> and <code>dict</code> operations won't corrupt the interpreter. Your application-level invariants are still entirely your problem.</p>
+          <div class="qa-tip">💡 Best answer: "you still need locks, and the better move is to avoid shared mutable state entirely — per-thread accumulators combined at the end scale linearly and can't race."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">13</span>
+        <span class="qa-text">Threading vs asyncio — where can a context switch happen?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p><strong>Threading is preemptive:</strong> the OS scheduler can suspend a thread between any two bytecodes, at any time, without your consent. You cannot see or predict switch points, which is exactly why race conditions are so easy to introduce.</p>
+          <p style="margin-top:8px;"><strong>Asyncio is cooperative:</strong> one thread, one event loop, and control transfers <em>only</em> at <code>await</code>. Between two awaits your code is effectively atomic, so you rarely need a lock. The cost is that any task which doesn't await — a blocking call or a tight CPU loop — starves every other task on the loop.</p>
+          <div class="qa-tip">💡 The trade-off in one line: threads give you safety from starvation but expose you to races; asyncio gives you safety from races but exposes you to starvation.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">14</span>
+        <span class="qa-text">What happens if you call <code>time.sleep()</code> or <code>requests.get()</code> inside a coroutine?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>The entire event loop stops. Not just that coroutine — every task, every pending connection, every timer. The loop runs on one thread, and a blocking call refuses to give that thread back. A 2-second <code>time.sleep()</code> in one request handler adds 2 seconds of latency to all 5,000 open connections.</p>
+          <p style="margin-top:8px;"><strong>Fixes:</strong> use the async equivalent (<code>await asyncio.sleep()</code>, <code>httpx</code>/<code>aiohttp</code> instead of <code>requests</code>), or push the blocking call to a thread with <code>await asyncio.to_thread(fn, *args)</code>. For CPU-bound work use <code>loop.run_in_executor(process_pool, fn, *args)</code>.</p>
+          <div class="qa-tip">💡 Run with <code>asyncio.run(main(), debug=True)</code> — it logs a warning for any callback that exceeds <code>loop.slow_callback_duration</code>, which is how you find the blocking calls you missed.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">15</span>
+        <span class="qa-text">If asyncio runs on one thread, how is it faster than sequential code?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>It isn't faster at computing anything — it's faster at <em>waiting</em>. Sequential code waits for one network response at a time. The event loop registers all pending sockets with the kernel (<code>epoll</code> on Linux, <code>kqueue</code> on BSD/macOS, IOCP on Windows), asks in a single syscall which ones are ready, and runs those tasks. Ten thousand waits overlap on one thread.</p>
+          <p style="margin-top:8px;">This is also why asyncio gives you nothing for CPU-bound work: there's no waiting to overlap, and only one thread to run on. A free-threaded build doesn't help either — asyncio is single-threaded by design.</p>
+          <div class="qa-tip">💡 Concurrency is doing many things in overlapping time windows. Parallelism is doing many things at the same instant. Asyncio gives you concurrency only; multiprocessing (and free-threaded threading) gives you parallelism.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-question">
+        <span class="qa-num">16</span>
+        <span class="qa-text">What are subinterpreters and where do they fit alongside threads and processes?</span>
+        <span class="qa-toggle">▼</span>
+      </div>
+      <div class="qa-answer">
+        <div class="qa-answer-content">
+          <p>Subinterpreters are multiple independent Python interpreters inside a single OS process. PEP 684 gave each one its own GIL in Python 3.12, and PEP 734 exposed them in the standard library as <code>concurrent.interpreters</code> in Python 3.14, along with <code>InterpreterPoolExecutor</code> in <code>concurrent.futures</code>.</p>
+          <p style="margin-top:8px;">They sit between threads and processes: because each interpreter has its own GIL, they achieve real multi-core parallelism, but they start faster than a process and stay in one address space. Isolation is a feature — module state isn't shared — so you pass data through an interpreter queue rather than mutating shared objects.</p>
+          <div class="qa-tip">💡 Three routes to multiple cores now: <strong>processes</strong> (isolated, works everywhere), <strong>subinterpreters</strong> (isolated, cheaper, 3.14+), <strong>free-threaded threads</strong> (shared memory, fastest data sharing, most correctness risk).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="text-align:center; padding:80px 40px; border-top:1px solid var(--card-border);">
+  <div style="width:60px; height:3px; background:linear-gradient(90deg, var(--primary), #a78bfa); margin:0 auto 20px; border-radius:2px;"></div>
+  <p style="color:var(--text-muted); font-size:0.95rem;">Python Multithreading & Multiprocessing — Interactive Learning Guide</p>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">Built with HTML, CSS & vanilla JS</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+// Scroll Reveal
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// Active Nav Link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Accordion Toggle
+function toggleQA(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// Copy Code
+function copyCode(btn) {
+  const codeBody = btn.closest('.code-editor').querySelector('.code-body pre');
+  const text = codeBody.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Diagram animation engine
+
+   Markup contract: put data-anim on a diagram container.
+     data-anim="loop"  → CSS runs infinite keyframes while on screen
+     data-anim="once"  → one pass, then a pause, then repeat
+                         (tune with data-anim-dur / data-anim-gap, ms)
+
+   This file's CSS declares every animation under .anim-run, so
+   nothing moves until this script opts a diagram in. Diagrams only
+   animate while visible, and never when the OS asks for reduced motion.
+   ══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  const reduceMotion = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── 1. Index children so CSS can stagger them ───────────────── */
+
+  // Timelines: every cell learns its column number, and gets a playhead.
+  document.querySelectorAll('.timeline').forEach(tl => {
+    const tracks = tl.querySelectorAll('.tl-track');
+    tracks.forEach(track => {
+      Array.prototype.forEach.call(track.children, (cell, i) => {
+        cell.style.setProperty('--c', i);
+      });
+    });
+    if (tracks.length) tl.style.setProperty('--cols', tracks[0].children.length);
+    const scan = document.createElement('div');
+    scan.className = 'tl-scan';
+    scan.setAttribute('aria-hidden', 'true');
+    scan.appendChild(document.createElement('i'));
+    tl.appendChild(scan);
+  });
+
+  // Lifecycle walk: nodes and arrows get separate running indexes.
+  document.querySelectorAll('.flow-container.walk').forEach(fc => {
+    let node = 0, arrow = 0;
+    Array.prototype.forEach.call(fc.children, child => {
+      if (child.classList.contains('flow-node')) child.style.setProperty('--i', node++);
+      else if (child.classList.contains('flow-arrow')) child.style.setProperty('--j', arrow++);
+    });
+    fc.style.setProperty('--n', node || 1);
+  });
+
+  // Core grids that hand the GIL around.
+  document.querySelectorAll('.core-grid.cycle').forEach(grid => {
+    Array.prototype.forEach.call(grid.children, (core, i) => core.style.setProperty('--i', i));
+  });
+
+  // Switch-point marks, numbered so each can flash as the cursor arrives.
+  document.querySelectorAll('.switch-bar').forEach(bar => {
+    let m = 1;
+    Array.prototype.forEach.call(bar.children, child => {
+      if (child.classList.contains('mark')) child.style.setProperty('--m', m++);
+    });
+  });
+
+  // Event-loop chips, for a staggered entrance.
+  document.querySelectorAll('.chip-row').forEach(row => {
+    Array.prototype.forEach.call(row.children, (chip, i) => chip.style.setProperty('--k', i));
+  });
+
+  /* ── 2. Per-diagram playback ─────────────────────────────────── */
+
+  const stages = Array.prototype.slice.call(document.querySelectorAll('[data-anim]'));
+  if (!stages.length || reduceMotion) return;
+
+  const states = new Map();
+
+  function play(st) {
+    if (st.paused || !st.visible) return;
+    clearTimeout(st.timer);
+
+    if (st.mode === 'loop') { st.el.classList.add('anim-run'); return; }
+
+    // One-shot: drop the class, force a reflow so keyframes restart, re-add.
+    st.el.classList.remove('anim-run');
+    void st.el.offsetWidth;
+    st.el.classList.add('anim-run');
+    st.timer = setTimeout(() => {
+      st.el.classList.remove('anim-run');          // rest on the finished state
+      st.timer = setTimeout(() => play(st), st.gap);
+    }, st.dur);
+  }
+
+  function halt(st) {
+    clearTimeout(st.timer);
+    st.el.classList.remove('anim-run');
+  }
+
+  function setPaused(st, paused) {
+    st.paused = paused;
+    if (paused) {
+      clearTimeout(st.timer);
+      st.el.classList.add('anim-paused');          // freeze the current frame
+    } else {
+      st.el.classList.remove('anim-paused');
+      play(st);
+    }
+  }
+
+  function buildControls(st) {
+    const bar = document.createElement('div');
+    bar.className = 'anim-bar';
+
+    const status = document.createElement('span');
+    status.className = 'anim-status';
+    status.textContent = 'animating';
+
+    const pause = document.createElement('button');
+    pause.type = 'button';
+    pause.className = 'anim-btn';
+    pause.textContent = '⏸ Pause';
+    pause.setAttribute('aria-pressed', 'false');
+
+    const replay = document.createElement('button');
+    replay.type = 'button';
+    replay.className = 'anim-btn';
+    replay.textContent = '↻ Replay';
+
+    function sync() {
+      pause.textContent = st.paused ? '▶ Play' : '⏸ Pause';
+      pause.setAttribute('aria-pressed', String(st.paused));
+      status.textContent = st.paused ? 'paused' : 'animating';
+    }
+
+    pause.addEventListener('click', () => { setPaused(st, !st.paused); sync(); });
+    replay.addEventListener('click', () => { setPaused(st, false); play(st); sync(); });
+
+    bar.appendChild(status);
+    bar.appendChild(pause);
+    bar.appendChild(replay);
+    st.el.appendChild(bar);
+  }
+
+  stages.forEach(el => {
+    const st = {
+      el: el,
+      mode: el.dataset.anim === 'once' ? 'once' : 'loop',
+      dur: parseInt(el.dataset.animDur, 10) || 4300,
+      gap: parseInt(el.dataset.animGap, 10) || 1500,
+      visible: false,
+      paused: false,
+      timer: null
+    };
+    states.set(el, st);
+    buildControls(st);
+  });
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const st = states.get(entry.target);
+        if (!st) return;
+        st.visible = entry.isIntersecting;
+        if (entry.isIntersecting) play(st); else halt(st);
+      });
+    }, { threshold: 0.15 });
+    stages.forEach(el => io.observe(el));
+  } else {
+    // No observer support: just run everything.
+    states.forEach(st => { st.visible = true; play(st); });
+  }
+
+  // Stop burning CPU on animations while the tab is in the background.
+  document.addEventListener('visibilitychange', () => {
+    states.forEach(st => {
+      if (document.hidden) halt(st);
+      else if (st.visible) play(st);
+    });
+  });
+})();
+</script>
+</body>
+</html>

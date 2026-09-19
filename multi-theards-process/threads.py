@@ -784,24 +784,24 @@ def demo_summary():
 DEMOS = {
     # Part 1 - primitives
     "semaphore": demo_semaphore,
-    "lock": demo_lock,
-    "rlock": demo_rlock,
-    "event": demo_event,
-    "condition": demo_condition_and_queue,
-    "barrier": demo_barrier,
-    "local": demo_thread_local,
-    "pool": demo_pool_and_daemon,
+    # "lock": demo_lock,
+    # "rlock": demo_rlock,
+    # "event": demo_event,
+    # "condition": demo_condition_and_queue,
+    # "barrier": demo_barrier,
+    # "local": demo_thread_local,
+    # "pool": demo_pool_and_daemon,
     # Part 2 - the GIL
-    "gil_introspect": demo_gil_introspect,
-    "gil_cpu": demo_gil_cpu,
-    "gil_io": demo_gil_io,
-    "gil_races": demo_gil_hidden_races,
+    # "gil_introspect": demo_gil_introspect,
+    # "gil_cpu": demo_gil_cpu,
+    # "gil_io": demo_gil_io,
+    # "gil_races": demo_gil_hidden_races,
     # Part 3 - asyncio
-    "asyncio_vs_threads": demo_asyncio_vs_threads,
-    "asyncio_scale": demo_asyncio_scale,
-    "asyncio_blocking": demo_asyncio_blocking_pitfall,
+    # "asyncio_vs_threads": demo_asyncio_vs_threads,
+    # "asyncio_scale": demo_asyncio_scale,
+    # "asyncio_blocking": demo_asyncio_blocking_pitfall,
     # Wrap-up
-    "summary": demo_summary,
+    # "summary": demo_summary,
 }
 
 

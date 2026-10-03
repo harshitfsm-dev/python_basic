@@ -11,6 +11,7 @@ class User(BaseModel):
     email: str
     is_active: bool = True
 
+
 def example_basic_validation():
     print("--- Example 1: Basic Validation ---")
     try:
@@ -36,6 +37,7 @@ class Product(BaseModel):
     price: float = Field(..., gt=0, description="Price must be greater than zero")
     stock: int = Field(default=0, ge=0)
 
+
 def example_field_constraints():
     print("--- Example 2: Field Constraints ---")
     try:
@@ -56,17 +58,23 @@ class Address(BaseModel):
     city: str
     zip_code: str
 
+
 class DetailedUser(BaseModel):
     user: User
     address: Address
     tags: List[str] = []
 
+
 def example_nested_models():
     print("--- Example 3: Nested Models ---")
     data = {
         "user": {"id": 10, "username": "complex_user", "email": "complex@example.com"},
-        "address": {"street": "123 Python Lane", "city": "Codeville", "zip_code": "12345"},
-        "tags": ["developer", "pythonist"]
+        "address": {
+            "street": "123 Python Lane",
+            "city": "Codeville",
+            "zip_code": "12345",
+        },
+        "tags": ["developer", "pythonist"],
     }
     detailed = DetailedUser(**data)
     print(f"Success: {detailed.user.username} lives in {detailed.address.city}")
@@ -80,18 +88,19 @@ class Registration(BaseModel):
     password: str = Field(..., min_length=8)
     confirm_password: str
 
-    @field_validator('password')
+    @field_validator("password")
     @classmethod
     def password_complexity(cls, v: str) -> str:
         if not any(char.isdigit() for char in v):
-            raise ValueError('Password must contain at least one digit')
+            raise ValueError("Password must contain at least one digit")
         return v
 
-    @model_validator(mode='after')
-    def check_passwords_match(self) -> 'Registration':
+    @model_validator(mode="after")
+    def check_passwords_match(self) -> "Registration":
         if self.password != self.confirm_password:
-            raise ValueError('Passwords do not match')
+            raise ValueError("Passwords do not match")
         return self
+
 
 def example_validators():
     print("--- Example 4: Validators ---")
@@ -120,6 +129,7 @@ class ConfiguredModel(BaseModel):
 
     internal_id: int = Field(..., alias="ID")
     display_name: str
+
 
 def example_serialization():
     print("--- Example 5: Serialization & Config ---")

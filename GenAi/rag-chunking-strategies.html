@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A concise, technically detailed guide to production-ready RAG document chunking strategies.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%A9%3C/text%3E%3C/svg%3E">
+<title>Production-Ready RAG Chunking Strategies — Interactive Guide</title>
+<style>
+:root {
+  --primary: rgb(58, 114, 224); --primary-glow: rgba(58,114,224,.24); --primary-light: #e8f0fe; --primary-dark: #2a5db8;
+  --purple: #7c3aed; --cyan: #0891b2; --bg: #f5f7fb; --card-bg: #fff; --card-border: #dbe4ff;
+  --text: #1f2937; --text-muted: #64748b; --text-dim: #94a3b8; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+  --code-bg: #172033; --font: Inter, 'Segoe UI', Roboto, sans-serif; --mono: 'Fira Code','JetBrains Mono',monospace;
+  --radius: 16px; --radius-sm: 10px; --glow: 0 10px 28px rgba(58,114,224,.13);
+}
+*{margin:0;padding:0;box-sizing:border-box} html{scroll-behavior:smooth;scroll-padding-top:74px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+a{color:var(--primary-dark)} code{font-family:var(--mono);font-size:.9em;background:var(--primary-light);padding:2px 6px;border-radius:5px;color:var(--primary-dark)}
+.nav{position:fixed;inset:0 0 auto;z-index:1000;padding:15px 34px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--card-border)}
+.nav-logo{font-weight:850;font-size:1.08rem;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.nav-links{display:flex;gap:17px;list-style:none}.nav-links a{text-decoration:none;color:var(--text-muted);font-size:.82rem;font-weight:650;position:relative}.nav-links a:hover,.nav-links a.active{color:var(--primary)}.nav-links a.active:after{content:'';position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--primary)}
+section{padding:64px 38px;max-width:1200px;margin:auto}.hero-section{max-width:none;padding:132px 34px 80px;text-align:center;background:#fff;position:relative;overflow:hidden}.hero-section:before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 40%,rgba(58,114,224,.10),transparent 47%),radial-gradient(ellipse at 80% 25%,rgba(124,58,237,.08),transparent 43%),radial-gradient(ellipse at 60% 90%,rgba(8,145,178,.06),transparent 40%)}
+.hero-content{position:relative;max-width:850px;margin:auto}.badges{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:25px}.badge{padding:6px 14px;border:1px solid var(--card-border);background:#fff;border-radius:20px;font-size:.76rem;font-weight:700;color:var(--text-muted)}.badge.primary{color:var(--primary);border-color:var(--primary);background:var(--primary-light)}
+.hero-title{font-size:clamp(2.45rem,5.2vw,4rem);font-weight:900;line-height:1.08;margin-bottom:18px}.hero-title span{background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero-subtitle{max-width:700px;margin:0 auto 30px;font-size:1.12rem;color:var(--text-muted)}.hero-cta{display:flex;justify-content:center;gap:13px;flex-wrap:wrap}.btn{padding:12px 26px;border-radius:11px;text-decoration:none;font-weight:700;font-size:.9rem;transition:.25s}.btn-primary{background:var(--primary);color:#fff;box-shadow:0 5px 18px var(--primary-glow)}.btn-ghost{background:#fff;border:1px solid var(--card-border);color:var(--text)}.btn:hover{transform:translateY(-2px)}
+.section-header{text-align:center;margin-bottom:45px}.section-label{text-transform:uppercase;letter-spacing:2px;font-size:.78rem;font-weight:750;color:var(--primary);margin-bottom:8px}.section-title{font-size:clamp(1.9rem,4vw,2.65rem);font-weight:850;line-height:1.2;margin-bottom:12px}.section-desc{max-width:680px;margin:auto;color:var(--text-muted);font-size:1.02rem}
+.glass-card,.strategy-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:0 3px 10px rgba(15,23,42,.045)}.glass-card{padding:30px}.strategy-card{padding:30px;margin-bottom:25px;transition:.3s}.strategy-card:hover,.glass-card.hover:hover{border-color:var(--primary);box-shadow:var(--glow);transform:translateY(-3px)}
+.strategy-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px}.strategy-num{width:43px;height:43px;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--purple));display:grid;place-items:center;color:#fff;font-weight:850;flex:none}.strategy-title{font-size:1.25rem;line-height:1.3}.strategy-sub{font-size:.84rem;color:var(--text-muted);margin-top:3px}.tag{display:inline-block;padding:3px 9px;border-radius:14px;font-size:.68rem;font-weight:750;margin-left:6px;vertical-align:2px}.tag.popular{background:#dcfce7;color:#047857}.tag.conditional{background:#fef3c7;color:#92400e}.tag.advanced{background:#f3e8ff;color:#6d28d9}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.detail{padding:15px 17px;background:#f8fafc;border-radius:10px;border:1px solid #e8edf5}.detail h4{font-size:.77rem;text-transform:uppercase;letter-spacing:.7px;color:var(--primary-dark);margin-bottom:5px}.detail p,.detail li{font-size:.84rem;color:var(--text-muted);line-height:1.65}.detail ul{padding-left:17px}.full{grid-column:1/-1}.good{border-left:3px solid var(--success)}.bad{border-left:3px solid var(--danger)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.callout{padding:18px 20px;border-radius:var(--radius-sm);font-size:.89rem;line-height:1.75;margin:18px 0}.callout.info{background:var(--primary-light);border-left:4px solid var(--primary);color:var(--primary-dark)}.callout.warn{background:#fffbeb;border-left:4px solid var(--warning);color:#854d0e}.callout.success{background:#ecfdf5;border-left:4px solid var(--success);color:#065f46}
+.diagram-wrapper{background:#fff;border:1px solid var(--card-border);border-radius:var(--radius);padding:35px 25px;margin:28px 0;text-align:center;overflow:hidden;box-shadow:0 4px 8px rgba(15,23,42,.045)}.diagram-title{font-size:1.15rem;font-weight:800;color:var(--primary-dark)}.diagram-desc{color:var(--text-muted);font-size:.84rem;margin:5px auto 27px;max-width:710px}
+.pipeline{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}.pipe-node{position:relative;padding:14px 12px;min-width:105px;border:2px solid var(--primary);background:var(--primary-light);border-radius:11px;font-size:.74rem;font-weight:760;color:var(--primary-dark);transition:.25s}.pipe-node strong{display:block;font-size:.8rem}.pipe-arrow{font-size:1.2rem;color:var(--primary)}.pipeline.running .pipe-node{animation:nodePulse 8s linear infinite;animation-delay:calc(var(--i)*1s - 8s)}@keyframes nodePulse{0%,10%{background:var(--primary);color:white;transform:translateY(-5px);box-shadow:0 9px 20px var(--primary-glow)}13%,100%{background:var(--primary-light);color:var(--primary-dark);transform:none;box-shadow:none}}
+.chunk-demo{display:grid;grid-template-columns:1fr 44px 1.25fr;align-items:center;gap:13px;max-width:820px;margin:auto;text-align:left}.doc-sheet{padding:20px;background:#f8fafc;border:2px solid var(--card-border);border-radius:12px}.doc-line{height:8px;background:#cbd5e1;border-radius:5px;margin:8px 0}.doc-line.h{height:12px;width:58%;background:var(--primary)}.doc-line.t{height:30px;background:repeating-linear-gradient(90deg,#fde68a 0 18%,#fff7d1 18% 20%)}.chunk-stack{display:flex;flex-direction:column;gap:9px}.mini-chunk{position:relative;padding:11px 13px;border:2px solid var(--primary);background:var(--primary-light);border-radius:9px;font-size:.73rem;color:var(--primary-dark);font-weight:700;animation:chunkFloat 3s ease-in-out infinite;animation-delay:calc(var(--i)*.3s)}.mini-chunk:nth-child(2){border-color:var(--purple);background:#f3e8ff;color:#6d28d9}.mini-chunk:nth-child(3){border-color:var(--success);background:#ecfdf5;color:#047857}@keyframes chunkFloat{50%{transform:translateX(7px);box-shadow:0 5px 14px rgba(58,114,224,.13)}}
+.anim-bar{display:flex;justify-content:center;gap:9px;margin-top:20px}.anim-btn{border:1px solid var(--card-border);background:#fff;color:var(--text-muted);padding:5px 13px;border-radius:18px;cursor:pointer;font-size:.72rem;font-weight:700}.anim-btn:hover{border-color:var(--primary);color:var(--primary)}.paused *{animation-play-state:paused!important}
+.table-wrap{overflow-x:auto}.comparison{width:100%;border-collapse:collapse;margin-top:18px;min-width:860px;border:1px solid var(--card-border)}.comparison th{background:var(--primary);color:white;padding:12px 13px;text-align:left;font-size:.78rem}.comparison td{padding:11px 13px;border-bottom:1px solid var(--card-border);font-size:.8rem;vertical-align:top}.comparison tr:nth-child(even) td{background:#f8fafc}.comparison tr:hover td{background:var(--primary-light)}.rating{white-space:nowrap;color:#f59e0b;letter-spacing:1px}.pill{padding:3px 8px;border-radius:12px;font-size:.67rem;font-weight:750;white-space:nowrap}.pill.high{background:#dcfce7;color:#047857}.pill.med{background:#fef3c7;color:#92400e}.pill.low{background:#fee2e2;color:#b91c1c}
+.code-editor{border:1px solid #334155;border-radius:var(--radius);overflow:hidden;margin:16px 0 30px;box-shadow:0 6px 16px rgba(15,23,42,.12)}.code-toolbar{background:#111827;padding:10px 16px;display:flex;justify-content:space-between;align-items:center}.code-left{display:flex;align-items:center;gap:11px}.dots{display:flex;gap:6px}.dot{width:10px;height:10px;border-radius:50%}.red{background:#ff5f57}.yellow{background:#febc2e}.green{background:#28c840}.code-name{font-family:var(--mono);font-size:.73rem;color:#94a3b8}.copy{padding:4px 10px;border:1px solid #475569;background:#1e293b;color:#cbd5e1;border-radius:6px;font-size:.68rem;cursor:pointer}.code-body{background:var(--code-bg);padding:21px;overflow-x:auto}.code-body pre{font-family:var(--mono);font-size:.79rem;line-height:1.65;color:#e2e8f0}.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8391a7}.num{color:#79c0ff}.pkg{margin-top:-18px;margin-bottom:28px;padding:13px 16px;background:#fff;border:1px solid var(--card-border);border-radius:9px;font-size:.79rem;color:var(--text-muted)}.pkg strong{color:var(--text)}
+.library-grid .glass-card h3{font-size:1rem;margin-bottom:8px}.library-grid .glass-card p{font-size:.83rem;color:var(--text-muted)}
+.consideration{display:flex;gap:13px;align-items:flex-start}.consideration .icon{width:38px;height:38px;display:grid;place-items:center;background:var(--primary-light);border-radius:10px;flex:none}.consideration h3{font-size:.95rem;margin-bottom:4px}.consideration p{font-size:.82rem;color:var(--text-muted)}
+.level-head{display:flex;align-items:center;gap:10px;margin:32px 0 13px}.level-head span{padding:5px 11px;border-radius:14px;font-size:.7rem;font-weight:800;color:#fff;background:var(--primary)}.level-head h3{font-size:1.12rem}.qa-card{background:#fff;border:1px solid var(--card-border);border-radius:12px;margin-bottom:11px;overflow:hidden}.qa-question{display:flex;align-items:center;gap:13px;padding:16px 19px;cursor:pointer;background:#f8fafc}.qa-question:hover{background:var(--primary-light)}.qa-num{width:29px;height:29px;display:grid;place-items:center;border:1px solid var(--primary);border-radius:7px;color:var(--primary);font-size:.72rem;font-weight:800;flex:none}.qa-text{font-size:.88rem;font-weight:700;flex:1}.qa-toggle{color:var(--text-muted);transition:.25s}.qa-answer{max-height:0;overflow:hidden;transition:max-height .35s ease}.qa-answer>div{padding:17px 20px 20px;border-top:1px solid var(--card-border);font-size:.85rem;color:var(--text-muted)}.qa-card.open .qa-answer{max-height:400px}.qa-card.open .qa-toggle{transform:rotate(180deg)}
+/* ── Strategy-specific motion diagrams ─────────────────────── */
+.strategy-motion{margin:26px 0 8px;padding:27px 18px;background:linear-gradient(145deg,#fbfdff,#f7f9ff);border-color:#d7e2ff}.strategy-motion .diagram-desc{margin-bottom:22px}.motion-canvas{max-width:900px;margin:auto;min-height:126px;display:flex;align-items:center;justify-content:center}.motion-sequence{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;width:100%}.motion-box{position:relative;min-width:112px;padding:13px 12px;border:2px solid #cbd5e1;background:#fff;border-radius:11px;color:var(--text-muted);font-size:.73rem;font-weight:750;line-height:1.45;animation:motionStep var(--cycle,8s) linear infinite;animation-delay:calc(var(--step,0)*var(--slice,1.6s) - var(--cycle,8s))}.motion-box small{display:block;font-weight:550;font-size:.63rem;opacity:.85;margin-top:3px}.motion-arrow{color:#94a3b8;font-size:1.2rem;font-weight:900;animation:arrowGlow var(--cycle,8s) linear infinite;animation-delay:calc(var(--step,0)*var(--slice,1.6s) - var(--cycle,8s))}@keyframes motionStep{0%,16%{border-color:var(--primary);background:var(--primary);color:#fff;transform:translateY(-5px) scale(1.03);box-shadow:0 9px 22px var(--primary-glow)}21%,100%{border-color:#cbd5e1;background:#fff;color:var(--text-muted);transform:none;box-shadow:none}}@keyframes arrowGlow{0%,16%{color:var(--primary);transform:translateX(4px) scale(1.25)}21%,100%{color:#94a3b8;transform:none}}
+.motion-lines{display:grid;gap:5px;margin-top:6px}.motion-lines i{display:block;height:4px;border-radius:4px;background:currentColor;opacity:.42}.motion-lines i:nth-child(2){width:78%}.motion-lines i:nth-child(3){width:91%}.motion-blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:7px}.motion-blocks i{display:block;height:18px;border-radius:4px;background:currentColor;opacity:.35}.motion-blocks i:nth-child(2){height:25px}.motion-tree{font-family:var(--mono);font-size:.61rem;line-height:1.45;text-align:left;margin-top:5px;opacity:.75}
+.motion-semantic{flex-direction:column;gap:20px}.semantic-scan{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding-bottom:4px}.sem-sentence{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--primary);background:var(--primary-light);color:var(--primary-dark);font-size:.67rem;font-weight:800;animation:sentenceScan 7s ease-in-out infinite;animation-delay:calc(var(--step)*.65s - 7s)}.sem-gap{width:25px;height:7px;border-radius:7px;background:var(--success);opacity:.55}.sem-gap.break{background:var(--danger);height:32px;width:5px;animation:breakFlash 7s ease-in-out infinite}.semantic-results{display:flex;gap:11px;flex-wrap:wrap;justify-content:center}.semantic-results span{padding:8px 16px;border-radius:9px;background:#ecfdf5;border:1px solid var(--success);font-size:.7rem;font-weight:750;color:#047857;animation:resultLift 7s ease-in-out infinite}.semantic-results span:last-child{background:#fef2f2;border-color:#f87171;color:#b91c1c;animation-delay:.2s}@keyframes sentenceScan{0%,8%{background:var(--primary);color:#fff;transform:translateY(-6px);box-shadow:0 7px 17px var(--primary-glow)}13%,100%{background:var(--primary-light);color:var(--primary-dark);transform:none;box-shadow:none}}@keyframes breakFlash{0%,42%{opacity:.25;transform:scaleY(.35)}48%,62%{opacity:1;transform:scaleY(1.25);box-shadow:0 0 12px rgba(239,68,68,.45)}68%,100%{opacity:.25;transform:scaleY(.35)}}@keyframes resultLift{0%,55%{opacity:.35;transform:translateY(7px)}65%,90%{opacity:1;transform:none}100%{opacity:.35;transform:translateY(7px)}}
+.motion-parent{display:grid;grid-template-columns:.8fr 1.5fr;gap:22px;max-width:720px}.query-orb{align-self:center;padding:14px;border:2px solid var(--purple);background:#f3e8ff;border-radius:50%;width:92px;height:92px;display:grid;place-items:center;font-size:.71rem;font-weight:800;color:#6d28d9;animation:queryPulse 4s ease-in-out infinite}.retrieval-stack{display:flex;flex-direction:column;gap:12px}.child-row{display:flex;gap:7px}.child-chip{flex:1;padding:9px 5px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:.63rem;font-weight:750;color:var(--text-muted)}.child-chip.hit{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);animation:childHit 4s ease-in-out infinite}.parent-expand{padding:14px;border:2px solid var(--success);border-radius:10px;background:#ecfdf5;color:#047857;font-size:.72rem;font-weight:780;animation:parentOpen 4s ease-in-out infinite}.parent-expand small{display:block;font-weight:550;margin-top:3px}@keyframes queryPulse{50%{transform:scale(1.08);box-shadow:0 0 0 10px rgba(124,58,237,.08)}}@keyframes childHit{0%,25%{transform:none}40%,62%{transform:translateY(-5px);box-shadow:0 7px 16px var(--primary-glow)}80%,100%{transform:none}}@keyframes parentOpen{0%,48%{opacity:.35;transform:scaleX(.75)}65%,90%{opacity:1;transform:scaleX(1);box-shadow:0 8px 18px rgba(16,185,129,.16)}100%{opacity:.35;transform:scaleX(.75)}}
+.motion-hybrid{gap:24px;max-width:760px}.hybrid-inputs{display:flex;flex-direction:column;gap:8px;min-width:220px}.hybrid-lane{padding:9px 14px;border-radius:9px;border:1px solid var(--card-border);background:#fff;font-size:.69rem;font-weight:750;text-align:left;animation:laneFeed 5s ease-in-out infinite;animation-delay:var(--delay)}.hybrid-lane:nth-child(1){color:var(--primary-dark);border-left:4px solid var(--primary)}.hybrid-lane:nth-child(2){color:#6d28d9;border-left:4px solid var(--purple)}.hybrid-lane:nth-child(3){color:#92400e;border-left:4px solid var(--warning)}.hybrid-funnel{font-size:2rem;color:var(--primary);animation:funnelSpin 5s ease-in-out infinite}.hybrid-output{padding:18px;border:2px solid var(--success);background:#ecfdf5;border-radius:12px;color:#047857;font-size:.75rem;font-weight:800;animation:hybridOutput 5s ease-in-out infinite}@keyframes laneFeed{0%,15%{transform:translateX(0);opacity:.45}35%,65%{transform:translateX(12px);opacity:1;box-shadow:0 5px 12px rgba(15,23,42,.08)}80%,100%{transform:translateX(0);opacity:.45}}@keyframes funnelSpin{45%,65%{transform:rotate(90deg) scale(1.2)}100%{transform:none}}@keyframes hybridOutput{0%,58%{opacity:.3;transform:scale(.82)}72%,92%{opacity:1;transform:scale(1.05);box-shadow:0 8px 20px rgba(16,185,129,.2)}100%{opacity:.3;transform:scale(.82)}}
+.strategy-motion.offscreen *{animation-play-state:paused!important}
+.source-list{padding-left:20px}.source-list li{margin:8px 0;color:var(--text-muted);font-size:.85rem}.reveal{opacity:0;transform:translateY(24px);transition:.65s ease}.reveal.visible{opacity:1;transform:none}
+footer{text-align:center;padding:60px 25px;border-top:1px solid var(--card-border);background:#fff;color:var(--text-muted);font-size:.87rem}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.reveal{opacity:1;transform:none}.pipeline.running .pipe-node,.mini-chunk,.strategy-motion *{animation:none!important}.anim-bar{display:none}}
+@media(max-width:900px){.nav-links{display:none}.grid-3{grid-template-columns:1fr 1fr}.pipeline{flex-direction:column}.pipe-arrow{transform:rotate(90deg)}.chunk-demo{grid-template-columns:1fr}.chunk-demo>.pipe-arrow{transform:rotate(90deg);text-align:center}}
+@media(max-width:700px){section{padding:48px 18px}.hero-section{padding:105px 18px 55px}.nav{padding:12px 18px}.detail-grid,.grid-2,.grid-3{grid-template-columns:1fr}.strategy-card,.glass-card{padding:21px}.full{grid-column:auto}.diagram-wrapper{padding:26px 13px}.hero-title{font-size:2.25rem}.code-body{padding:15px}.code-body pre{font-size:.72rem}.motion-sequence{flex-direction:column}.motion-arrow{transform:rotate(90deg)}.motion-box{width:min(100%,240px)}.motion-parent{grid-template-columns:1fr;justify-items:center}.retrieval-stack{width:100%}.motion-hybrid{flex-direction:column}.hybrid-funnel{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav" id="navbar">
+  <div class="nav-logo">🧩 RAG Chunking</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">Overview</a></li><li><a href="#strategies">Strategies</a></li><li><a href="#comparison">Compare</a></li>
+    <li><a href="#production">Production</a></li><li><a href="#examples">Code</a></li><li><a href="#considerations">Checklist</a></li><li><a href="#interview">Interview</a></li>
+  </ul>
+</nav>
+
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="badges"><span class="badge primary">🔎 RAG</span><span class="badge">🧠 Embeddings</span><span class="badge">📄 Docling</span><span class="badge">🏗 Production</span><span class="badge">⏱ 35 min read</span></div>
+    <h1 class="hero-title"><span>Production-Ready RAG</span><br>Chunking Strategies</h1>
+    <p class="hero-subtitle">How to preserve meaning, enforce model limits, control cost, and retrieve the smallest evidence that still contains enough context to answer correctly.</p>
+    <div class="hero-cta"><a class="btn btn-primary" href="#strategies">Explore strategies →</a><a class="btn btn-ghost" href="#production">Production blueprint</a></div>
+  </div>
+</section>
+
+<section id="overview">
+  <div class="section-header reveal"><div class="section-label">Mental model</div><h2 class="section-title">Chunking Is a Retrieval Design Decision</h2><p class="section-desc">A chunk is simultaneously an embedding input, a retrieval unit, and evidence shown to the generator. Optimizing only its character count usually fails.</p></div>
+  <div class="grid-3 reveal">
+    <div class="glass-card hover"><h3>🎯 Precision</h3><p style="color:var(--text-muted);font-size:.86rem;margin-top:7px">Smaller, topically focused chunks create less embedding dilution and fewer irrelevant tokens in the answer context.</p></div>
+    <div class="glass-card hover"><h3>🧭 Context</h3><p style="color:var(--text-muted);font-size:.86rem;margin-top:7px">Larger chunks preserve definitions, headings, references, table labels, and the evidence needed to answer completely.</p></div>
+    <div class="glass-card hover"><h3>⚖️ The trade-off</h3><p style="color:var(--text-muted);font-size:.86rem;margin-top:7px">The goal is not “the perfect size.” It is the smallest independently meaningful unit, bounded by the embedding model.</p></div>
+  </div>
+  <div class="diagram-wrapper reveal" data-animated>
+    <div class="diagram-title">From Structured Document to Retrieval Units</div><div class="diagram-desc">Structure proposes safe boundaries; semantics refines them; token accounting enforces the hard contract.</div>
+    <div class="chunk-demo">
+      <div class="doc-sheet"><div class="doc-line h"></div><div class="doc-line"></div><div class="doc-line" style="width:88%"></div><div class="doc-line" style="width:76%"></div><div class="doc-line h" style="width:42%;margin-top:15px"></div><div class="doc-line t"></div><div class="doc-line t"></div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="chunk-stack"><div class="mini-chunk" style="--i:0">Chunk A · heading + coherent paragraphs · 386 tokens</div><div class="mini-chunk" style="--i:1">Chunk B · table caption + headers + rows · 441 tokens</div><div class="mini-chunk" style="--i:2">Chunk C · inherited section path + code block · 318 tokens</div></div>
+    </div>
+    <div class="anim-bar"><button class="anim-btn" onclick="toggleAnimation(this)">⏸ Pause</button></div>
+  </div>
+  <div class="callout info reveal"><strong>Production default:</strong> parse structure first, preserve atomic elements, split or merge using semantics where valuable, then enforce a tokenizer-based hard maximum. Start simple and prove every added layer with retrieval evaluation.</div>
+</section>
+
+<section id="strategies">
+  <div class="section-header reveal"><div class="section-label">Seven approaches</div><h2 class="section-title">How Each Strategy Behaves</h2><p class="section-desc">The most common production choices are recursive, structure-aware, Docling hybrid, and parent-child—often combined rather than used alone.</p></div>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">1</div><div><h3 class="strategy-title">Recursive Character Chunking <span class="tag popular">MOST USED BASELINE</span></h3><p class="strategy-sub">Deterministic splitting with progressively weaker separators</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>Attempts separators in priority order—commonly double newline, newline, sentence-like space, then characters—until every piece fits. It is “recursive” because oversized pieces are retried with the next separator. Size may be characters or a supplied token-length function.</p></div>
+      <div class="detail"><h4>When to use</h4><p>General text, Markdown, support articles, MVPs, and a robust fallback after parsers fail.</p></div><div class="detail"><h4>Typical size</h4><p>300–800 embedding tokens; 10–20% overlap. If configured in characters, calibrate against actual tokenizer distributions.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Fast, cheap, deterministic</li><li>Easy to debug and re-index</li><li>Strong baseline across domains</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>Blind to document semantics</li><li>Can detach headings or table labels</li><li>Character counts do not guarantee token limits</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Good when topics follow paragraphs. Precision drops when mixed topics enter one chunk; recall drops when answers cross boundaries.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> very low, linear scan. <strong>Suitability:</strong> excellent baseline; add metadata and token enforcement.</p></div>
+    </div>
+  </article>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">2</div><div><h3 class="strategy-title">Structure-Aware Chunking <span class="tag popular">COMMON IN PRODUCTION</span></h3><p class="strategy-sub">Uses headings, paragraphs, lists, tables, pages, and code blocks as boundaries</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>A parser builds a document tree or typed blocks. The chunker groups sibling blocks under the same heading, preserves atomic blocks when possible, and carries the section path, captions, page numbers, and element types as metadata.</p></div>
+      <div class="detail"><h4>When to use</h4><p>PDFs, manuals, policies, contracts, technical docs, Markdown/HTML, research papers, and code repositories.</p></div><div class="detail"><h4>Typical size</h4><p>One logical section or block group, usually 300–1,000 tokens, with a hard token cap and no arbitrary overlap inside tables/code.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Preserves human-authored organization</li><li>Excellent explainability and citations</li><li>Better handling of tables and code</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>Depends on parser quality</li><li>Scanned/OCR PDFs produce noisy structure</li><li>Sections vary dramatically in size</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Usually improves precision because heading context disambiguates content. Bad layout detection can silently damage both recall and ordering.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> low–medium; parsing/OCR dominates. <strong>Suitability:</strong> excellent when the corpus has reliable structure.</p></div>
+    </div>
+  </article>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">3</div><div><h3 class="strategy-title">Semantic / Embedding-Based Chunking <span class="tag conditional">SELECTIVE USE</span></h3><p class="strategy-sub">Places boundaries where adjacent sentence windows change meaning</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>Split into sentences, create overlapping sentence windows, embed each window, calculate adjacent cosine distance, and cut where the distance exceeds a percentile, standard-deviation, gradient, or absolute threshold. Some implementations then merge neighboring coherent units.</p></div>
+      <div class="detail"><h4>When to use</h4><p>Long narrative text, transcripts, mixed-topic notes, and documents whose topical boundaries are not represented by headings.</p></div><div class="detail"><h4>Typical size</h4><p>Variable, commonly targeted at 200–800 tokens. Always add a hard maximum (often 800–1,200) plus a minimum to prevent tiny fragments.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Topically coherent chunks</li><li>Fewer arbitrary mid-thought cuts</li><li>Can improve precision on topic transitions</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>Embedding pass increases cost/latency</li><li>Thresholds are model/domain sensitive</li><li>Similar prose can merge into huge chunks</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Can improve relevance where topics drift, but is not automatically better. Oversized coherent chunks dilute vectors; tiny chunks lose evidence.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> medium–high at indexing. <strong>Suitability:</strong> conditional; pin models, cache sentence embeddings, enforce limits, evaluate.</p></div>
+    </div>
+    <div class="callout warn"><strong>Why can it create excessively large chunks?</strong> If adjacent windows remain semantically similar, no breakpoint fires—even if the accumulated text exceeds the embedding model’s limit. Semantic cohesion is a soft signal, not a size guarantee.</div>
+  </article>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">4</div><div><h3 class="strategy-title">Docling <code>HybridChunker</code> <span class="tag popular">PDF-FIRST CHOICE</span></h3><p class="strategy-sub">Document hierarchy plus tokenizer-aware split/merge refinement</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>Docling first parses the file into a structured <code>DoclingDocument</code>. <code>HybridChunker</code> begins with hierarchical chunks, splits only chunks that exceed the configured tokenizer budget, and—by default—merges undersized adjacent peers that share headings/captions. Its contextualizer serializes relevant metadata with the chunk.</p></div>
+      <div class="detail"><h4>When to use</h4><p>Layout-heavy PDF, DOCX, PPTX, reports, papers, manuals, and documents containing tables/captions.</p></div><div class="detail"><h4>Typical size</h4><p>Set <code>max_tokens</code> to the embedding model’s effective limit minus enrichment/special-token reserve; often 400–800.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Preserves parsed hierarchy and metadata</li><li>Tokenizer-aware hard sizing</li><li>Repeats table headers across split chunks</li><li>Merges compatible tiny peers</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>Parsing/OCR can be expensive</li><li>Depends on layout recognition quality</li><li>Not a semantic topic-change detector by itself</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Strong for PDFs because captions, section paths, and table headers remain attached. Contextualized text improves standalone chunk meaning.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> medium; mostly parsing. <strong>Suitability:</strong> high for enterprise documents, with parser QA and pinned versions.</p></div>
+    </div>
+  </article>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">5</div><div><h3 class="strategy-title">Parent-Child / Hierarchical Chunking <span class="tag popular">HIGH-VALUE PATTERN</span></h3><p class="strategy-sub">Retrieve with small children; answer with larger parents</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>Index small child chunks for precise vector matching. Each child stores a <code>parent_id</code>. At query time, retrieve top children, map them to their larger parent sections, deduplicate parents, optionally rerank, and pass those parents to the generator.</p></div>
+      <div class="detail"><h4>When to use</h4><p>Answers need a surrounding procedure, definition, legal clause, or several adjacent facts—not just the matching sentence.</p></div><div class="detail"><h4>Typical size</h4><p>Children: 150–400 tokens. Parents: 800–2,000 tokens or a coherent section. Parent must still fit the generation budget.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Combines retrieval precision with answer context</li><li>Reduces need for large child overlap</li><li>Natural citations at section level</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>Two stores and ID integrity required</li><li>Multiple hits may inflate context</li><li>Large parents can add irrelevant content</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Often raises answer completeness without sacrificing child-level recall. Deduplication and parent reranking are essential.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> medium storage/orchestration. <strong>Suitability:</strong> excellent for complex QA and long-form documents.</p></div>
+    </div>
+  </article>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">6</div><div><h3 class="strategy-title">Hybrid Chunking Approaches <span class="tag popular">RECOMMENDED END STATE</span></h3><p class="strategy-sub">Combines deterministic structure, semantic signals, and hard token constraints</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>A policy chain chooses boundaries in order: preserve atomic structure → detect semantic transitions within oversized narrative sections → enforce token maximum recursively → merge tiny compatible neighbors → enrich with metadata. Different element types receive different policies.</p></div>
+      <div class="detail"><h4>When to use</h4><p>Mixed enterprise corpora, high-value search, many file types, or when one strategy cannot safely handle prose, tables, and code.</p></div><div class="detail"><h4>Typical size</h4><p>Target 300–700 tokens, hard max aligned to embeddings, minimum 80–150; overlap only for boundary-sensitive prose.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Best balance of quality and control</li><li>Element-specific behavior</li><li>Graceful fallback path</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>More policies and observability needed</li><li>Harder to reproduce/debug</li><li>Benefits may not justify complexity</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Potentially highest quality because both logical and topical boundaries are respected. Gains must be measured by corpus/query segment.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> medium–high. <strong>Suitability:</strong> high after a simpler baseline establishes measurable gaps.</p></div>
+    </div>
+  </article>
+
+  <article class="strategy-card reveal">
+    <div class="strategy-head"><div class="strategy-num">7</div><div><h3 class="strategy-title">LLM-Based Chunking <span class="tag advanced">ADVANCED / OFFLINE</span></h3><p class="strategy-sub">Uses a language model to identify discourse units or label boundaries</p></div></div>
+    <div class="detail-grid">
+      <div class="detail full"><h4>How it works</h4><p>An LLM receives a bounded document window and returns sentence-boundary indices, section labels, or structured JSON describing self-contained units. A deterministic post-processor validates offsets, enforces token limits, and falls back when output is invalid.</p></div>
+      <div class="detail"><h4>When to use</h4><p>High-value, low-volume domains where implicit discourse matters: complex policies, clinical literature, legal analysis, or curated knowledge bases.</p></div><div class="detail"><h4>Typical size</h4><p>Prompt for 400–1,200-token units, but always validate with the embedding tokenizer and split oversized output deterministically.</p></div>
+      <div class="detail good"><h4>Advantages</h4><ul><li>Understands discourse and implicit context</li><li>Can add titles/summaries while chunking</li><li>Domain instructions are expressive</li></ul></div><div class="detail bad"><h4>Disadvantages</h4><ul><li>Highest cost and latency</li><li>Nondeterminism and malformed offsets</li><li>Privacy, rate-limit, and model-drift risks</li></ul></div>
+      <div class="detail"><h4>Retrieval impact</h4><p>Can excel on nuanced corpora, but summaries may distort evidence and model changes can alter every boundary. Preserve source spans.</p></div><div class="detail"><h4>Cost & production suitability</h4><p><strong>Cost:</strong> very high. <strong>Suitability:</strong> niche; batch-only, cached, versioned, validated, and evaluated against simpler methods.</p></div>
+    </div>
+  </article>
+</section>
+
+<section id="comparison">
+  <div class="section-header reveal"><div class="section-label">Decision matrix</div><h2 class="section-title">Concise Strategy Comparison</h2><p class="section-desc">Relative ratings assume competent implementation and a heterogeneous enterprise corpus.</p></div>
+  <div class="glass-card reveal table-wrap">
+    <table class="comparison"><thead><tr><th>Approach</th><th>Retrieval quality</th><th>Complexity</th><th>Index latency</th><th>Incremental cost</th><th>Production suitability</th><th>Best fit</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Recursive</strong></td><td><span class="rating">★★★☆☆</span></td><td>Low</td><td>Very low</td><td>Very low</td><td><span class="pill high">Excellent baseline</span></td><td>General prose</td></tr>
+      <tr><td><strong>Structure-aware</strong></td><td><span class="rating">★★★★☆</span></td><td>Medium</td><td>Low–medium</td><td>Low–medium</td><td><span class="pill high">Excellent</span></td><td>Well-formed docs</td></tr>
+      <tr><td><strong>Semantic</strong></td><td><span class="rating">★★★★☆</span></td><td>Medium</td><td>High</td><td>Medium–high</td><td><span class="pill med">Conditional</span></td><td>Topic-drifting prose</td></tr>
+      <tr><td><strong>Docling Hybrid</strong></td><td><span class="rating">★★★★☆</span></td><td>Medium</td><td>Medium</td><td>Medium</td><td><span class="pill high">High</span></td><td>PDF / office files</td></tr>
+      <tr><td><strong>Parent-child</strong></td><td><span class="rating">★★★★★</span></td><td>Medium–high</td><td>Medium</td><td>Medium</td><td><span class="pill high">High</span></td><td>Precise search + broad answer</td></tr>
+      <tr><td><strong>Hybrid policy</strong></td><td><span class="rating">★★★★★</span></td><td>High</td><td>Medium–high</td><td>Medium–high</td><td><span class="pill high">High when measured</span></td><td>Mixed corpora</td></tr>
+      <tr><td><strong>LLM-based</strong></td><td><span class="rating">★★★★☆</span></td><td>Very high</td><td>Very high</td><td>Very high</td><td><span class="pill low">Niche</span></td><td>High-value batch ingestion</td></tr>
+    </tbody></table>
+  </div>
+  <div class="callout success reveal"><strong>Selection rule:</strong> choose the least complex strategy that meets measured retrieval goals. In many systems, structure-aware + token enforcement + parent-child retrieval beats a costly semantic/LLM chunker.</div>
+</section>
+
+<section id="production">
+  <div class="section-header reveal"><div class="section-label">Production recommendations</div><h2 class="section-title">A Layered Ingestion Pipeline</h2><p class="section-desc">Treat chunking as a versioned transformation with explicit contracts, metrics, and reproducible outputs.</p></div>
+  <div class="diagram-wrapper reveal" data-animated>
+    <div class="diagram-title">Recommended Production RAG Flow</div><div class="diagram-desc">Each stage has one responsibility; the active stage moves from source to searchable evidence.</div>
+    <div class="pipeline running">
+      <div class="pipe-node" style="--i:0"><strong>Document</strong>bytes + version</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:1"><strong>Parsing</strong>typed blocks</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:2"><strong>Structure</strong>tree + order</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:3"><strong>Semantic / Hybrid</strong>safe boundaries</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:4"><strong>Token Limit</strong>hard contract</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:5"><strong>Enrichment</strong>context + IDs</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:6"><strong>Embeddings</strong>batched vectors</div><span class="pipe-arrow">→</span>
+      <div class="pipe-node" style="--i:7"><strong>Vector DB</strong>index + filters</div>
+    </div><div class="anim-bar"><button class="anim-btn" onclick="toggleAnimation(this)">⏸ Pause</button></div>
+  </div>
+  <div class="grid-2 reveal">
+    <div class="glass-card"><h3 style="margin-bottom:12px">Stage responsibilities</h3><ol style="padding-left:20px;color:var(--text-muted);font-size:.85rem;line-height:1.9"><li><strong>Parsing:</strong> recover reading order and typed elements; retain source coordinates.</li><li><strong>Structure detection:</strong> create heading ancestry, table/caption links, list/code boundaries.</li><li><strong>Semantic/hybrid chunking:</strong> form independently meaningful candidate units.</li><li><strong>Token enforcement:</strong> count exactly as the embedding model does; reserve enrichment tokens.</li><li><strong>Context enrichment:</strong> prepend concise document title/section path; keep raw text separately.</li><li><strong>Embedding/indexing:</strong> batch, normalize as required, upsert idempotently, and filter by active version.</li></ol></div>
+    <div class="glass-card"><h3 style="margin-bottom:12px">Recommended policy</h3><ul style="padding-left:20px;color:var(--text-muted);font-size:.85rem;line-height:1.9"><li>Start with structure-aware or recursive token-aware chunks.</li><li>Route tables, code, and narrative prose to separate chunk policies.</li><li>Use semantic splitting only inside oversized prose sections—not across document hierarchy.</li><li>Use child vectors + parent expansion when complete answers need more context.</li><li>Record <code>parser_version</code>, <code>chunker_version</code>, tokenizer/model IDs, parameters, and content hashes.</li><li>Canary re-index and compare Recall@K, Precision@K, answer faithfulness, latency, and cost.</li></ul></div>
+  </div>
+  <div class="glass-card reveal" style="margin-top:22px;border-left:4px solid var(--purple)"><h3>Why <code>HybridChunker</code> is useful—and how to combine it</h3><p style="font-size:.88rem;color:var(--text-muted);margin-top:8px">PDF text extraction alone loses hierarchy, captions, and table meaning. Docling keeps those relationships and then makes the hierarchy safe for a real tokenizer. Configure it with the embedding tokenizer and an effective budget such as <code>model_limit - enrichment_reserve - special_tokens</code>. For large narrative sections, optionally run semantic breakpoint detection <em>within that section first</em>, then pass every result through token enforcement. Do not semantically split table rows or code blocks blindly; use Docling’s structural/line-aware handling and repeat table headers when a table spans chunks.</p><div class="callout info"><strong>Layer order matters:</strong> structure constrains where semantic splitting is allowed; token limits are the final authority. Semantic similarity must never override the embedding model’s hard input limit.</div></div>
+</section>
+
+<section id="examples">
+  <div class="section-header reveal"><div class="section-label">Small practical examples</div><h2 class="section-title">Code Patterns</h2><p class="section-desc">APIs evolve: pin exact package versions, test representative files, and treat examples as focused building blocks rather than a complete ingestion service.</p></div>
+
+  <div class="reveal"><h3>1. Recursive chunking — <code>langchain-text-splitters</code></h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">recursive_chunking.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">from</span> langchain_text_splitters <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoTokenizer
+
+tok = AutoTokenizer.from_pretrained(<span class="st">"BAAI/bge-small-en-v1.5"</span>)
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=<span class="num">480</span>, chunk_overlap=<span class="num">60</span>,
+    length_function=<span class="kw">lambda</span> s: <span class="bi">len</span>(tok.encode(s, add_special_tokens=<span class="kw">False</span>)),
+    separators=[<span class="st">"\n\n"</span>, <span class="st">"\n"</span>, <span class="st">". "</span>, <span class="st">" "</span>, <span class="st">""</span>],
+)
+chunks = splitter.create_documents([text], metadatas=[{<span class="st">"doc_id"</span>: doc_id}])</pre></div></div>
+  <div class="pkg"><strong>Package:</strong> <code>langchain-text-splitters</code>. <strong>Production:</strong> yes—mature and deterministic; use an embedding-tokenizer length function rather than relying on characters.</div></div>
+
+  <div class="reveal"><h3>2. Token-based chunking — Hugging Face <code>transformers</code></h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">token_windows.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">from</span> transformers <span class="kw">import</span> AutoTokenizer
+
+tok = AutoTokenizer.from_pretrained(<span class="st">"BAAI/bge-small-en-v1.5"</span>, use_fast=<span class="kw">True</span>)
+ids = tok.encode(text, add_special_tokens=<span class="kw">False</span>)
+size, overlap = <span class="num">480</span>, <span class="num">60</span>
+chunks = [
+    tok.decode(ids[i:i + size], skip_special_tokens=<span class="kw">True</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">0</span>, <span class="bi">len</span>(ids), size - overlap)
+]
+<span class="kw">assert</span> <span class="bi">all</span>(<span class="bi">len</span>(tok.encode(c, add_special_tokens=<span class="kw">False</span>)) &lt;= size <span class="kw">for</span> c <span class="kw">in</span> chunks)</pre></div></div>
+  <div class="pkg"><strong>Package:</strong> <code>transformers</code> (Hugging Face). <strong>Production:</strong> yes for exact counting; raw token windows may split sentences or decode imperfectly, so prefer them as a final enforcement/fallback layer.</div></div>
+
+  <div class="reveal"><h3>3. Semantic chunking — LangChain status and alternatives</h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">semantic_chunking.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">from</span> langchain_experimental.text_splitter <span class="kw">import</span> SemanticChunker
+<span class="kw">from</span> langchain_huggingface <span class="kw">import</span> HuggingFaceEmbeddings
+
+emb = HuggingFaceEmbeddings(model_name=<span class="st">"sentence-transformers/all-MiniLM-L6-v2"</span>)
+splitter = SemanticChunker(
+    emb, breakpoint_threshold_type=<span class="st">"percentile"</span>,
+    breakpoint_threshold_amount=<span class="num">90</span>, min_chunk_size=<span class="num">200</span>,
+)
+candidates = splitter.create_documents([text])
+<span class="cm"># Required next step: enforce the embedding tokenizer's hard maximum.</span></pre></div></div>
+  <div class="pkg"><strong>Packages:</strong> <code>langchain-experimental</code> + an embedding integration such as <code>langchain-huggingface</code>. <strong>Status:</strong> LangChain’s <code>SemanticChunker</code> remains experimental, so its API is less stable; pin and wrap it. <strong>Alternatives:</strong> LlamaIndex <code>SemanticSplitterNodeParser</code>, <code>semantic-text-splitter</code>, or a custom sentence-window + cosine-distance implementation. <strong>Production:</strong> conditional—benchmark, cache, and hard-cap output.</div></div>
+
+  <div class="reveal"><h3>4. Docling <code>HybridChunker</code></h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">docling_hybrid.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">from</span> docling.document_converter <span class="kw">import</span> DocumentConverter
+<span class="kw">from</span> docling.chunking <span class="kw">import</span> HybridChunker
+
+EMBED_MODEL = <span class="st">"sentence-transformers/all-MiniLM-L6-v2"</span>
+dl_doc = DocumentConverter().convert(<span class="st">"manual.pdf"</span>).document
+chunker = HybridChunker(tokenizer=EMBED_MODEL, max_tokens=<span class="num">480</span>, merge_peers=<span class="kw">True</span>)
+
+records = [
+    {<span class="st">"text"</span>: chunker.contextualize(c), <span class="st">"meta"</span>: c.meta.export_json_dict()}
+    <span class="kw">for</span> c <span class="kw">in</span> chunker.chunk(dl_doc=dl_doc)
+]</pre></div></div>
+  <div class="pkg"><strong>Package:</strong> <code>docling</code> (or <code>docling-core[chunking]</code>). <strong>Production:</strong> high suitability for PDFs/office files; validate OCR/layout quality and align its tokenizer/model identifier with the embedding service.</div></div>
+
+  <div class="reveal"><h3>5. Parent-child retrieval — LangChain</h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">parent_child.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">from</span> langchain.retrievers <span class="kw">import</span> ParentDocumentRetriever
+<span class="kw">from</span> langchain.storage <span class="kw">import</span> InMemoryStore
+<span class="kw">from</span> langchain_text_splitters <span class="kw">import</span> RecursiveCharacterTextSplitter
+
+retriever = ParentDocumentRetriever(
+    vectorstore=vectorstore, docstore=InMemoryStore(),
+    child_splitter=RecursiveCharacterTextSplitter(chunk_size=<span class="num">300</span>, chunk_overlap=<span class="num">30</span>),
+    parent_splitter=RecursiveCharacterTextSplitter(chunk_size=<span class="num">1400</span>, chunk_overlap=<span class="num">100</span>),
+)
+retriever.add_documents(documents)
+parents = retriever.invoke(<span class="st">"How do I rotate an API key?"</span>)</pre></div></div>
+  <div class="pkg"><strong>Packages:</strong> <code>langchain</code> + <code>langchain-text-splitters</code> and your vector-store integration. <strong>Production:</strong> pattern is highly suitable; replace in-memory parent storage with a durable store and pin LangChain because import paths can change across releases.</div></div>
+
+  <div class="reveal"><h3>6. Context enrichment — framework-neutral</h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">context_enrichment.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">def</span> <span class="fn">embedding_text</span>(chunk: <span class="bi">dict</span>) -&gt; <span class="bi">str</span>:
+    m = chunk[<span class="st">"metadata"</span>]
+    prefix = <span class="st">f"Document: {m['title']}\nSection: {' &gt; '.join(m['heading_path'])}"</span>
+    <span class="kw">return</span> <span class="st">f"{prefix}\n\n{chunk['raw_text']}"</span>
+
+record = {
+    <span class="st">"chunk_id"</span>: stable_chunk_id, <span class="st">"raw_text"</span>: raw_text,
+    <span class="st">"embedding_text"</span>: embedding_text(chunk),
+    <span class="st">"metadata"</span>: {**chunk[<span class="st">"metadata"</span>], <span class="st">"document_version"</span>: version},
+}</pre></div></div>
+  <div class="pkg"><strong>Package:</strong> none required. <strong>Production:</strong> strongly recommended. Keep source-faithful raw text separate from embedding text; enrichment should be concise, deterministic, versioned, and included in token accounting.</div></div>
+
+  <div class="reveal"><h3>7. Late chunking — <code>transformers</code> + <code>torch</code></h3>
+  <div class="code-editor"><div class="code-toolbar"><div class="code-left"><div class="dots"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i></div><span class="code-name">late_chunking_core.py</span></div><button class="copy" onclick="copyCode(this)">📋 Copy</button></div><div class="code-body"><pre><span class="kw">import</span> torch
+<span class="kw">from</span> torch.nn.functional <span class="kw">import</span> normalize
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoModel, AutoTokenizer
+
+name = <span class="st">"jinaai/jina-embeddings-v2-base-en"</span>
+tok = AutoTokenizer.from_pretrained(name, trust_remote_code=<span class="kw">True</span>)
+model = AutoModel.from_pretrained(name, trust_remote_code=<span class="kw">True</span>).eval()
+batch = tok(document, return_tensors=<span class="st">"pt"</span>, return_offsets_mapping=<span class="kw">True</span>, truncation=<span class="kw">True</span>)
+offsets = batch.pop(<span class="st">"offset_mapping"</span>)[<span class="num">0</span>]
+<span class="kw">with</span> torch.no_grad(): token_vectors = model(**batch).last_hidden_state[<span class="num">0</span>]
+
+<span class="cm"># char_spans come from structural/semantic chunk boundaries.</span>
+chunk_vectors = []
+<span class="kw">for</span> start, end <span class="kw">in</span> char_spans:
+    mask = (offsets[:, <span class="num">0</span>] &lt; end) &amp; (offsets[:, <span class="num">1</span>] &gt; start)
+    chunk_vectors.append(normalize(token_vectors[mask].mean(<span class="num">0</span>), dim=<span class="num">0</span>))</pre></div></div>
+  <div class="pkg"><strong>Packages:</strong> <code>transformers</code>, <code>torch</code>; reference implementation: <code>jina-ai/late-chunking</code>. <strong>How it differs:</strong> encode the long document first, then pool token vectors for chunk spans, so each chunk vector contains surrounding context. <strong>Production:</strong> advanced/conditional—requires a compatible long-context model, correct offset mapping, high memory, batching, and benchmarked serving/indexing code.</div></div>
+</section>
+
+<section id="considerations">
+  <div class="section-header reveal"><div class="section-label">Operational checklist</div><h2 class="section-title">Important Production Considerations</h2><p class="section-desc">Most chunking failures in production are lifecycle and observability failures, not splitter-algorithm failures.</p></div>
+  <div class="grid-2 reveal">
+    <div class="glass-card consideration"><div class="icon">📏</div><div><h3>Embedding token limits</h3><p>Use the model’s documented maximum as a hard ceiling—not a target. Reserve tokens for titles, headings, instructions, separators, and special tokens. Track p50/p95/p99 chunk tokens and rejected/truncated counts.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">🔤</div><div><h3>Tokenizer alignment</h3><p>The chunker and embedding service should use the same tokenizer and normalization rules. Different subword vocabularies can turn a safe chunk into truncation, especially for code, CJK text, IDs, and tables.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">🔁</div><div><h3>Chunk overlap</h3><p>Use overlap to protect facts crossing arbitrary prose boundaries, usually 10–20%. It increases index size, embedding cost, duplicate retrieval, and context waste. Structure-aware and parent-child systems often need less.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">▦</div><div><h3>Tables and code</h3><p>Keep caption, headers, units, and rows together; repeat headers when splitting tables. Split code at symbol/class/function boundaries, preserve signatures and imports, and avoid overlapping arbitrary token windows through syntax.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">🏷</div><div><h3>Metadata</h3><p>Store source URI, title, heading path, element type, page/coordinates, language, timestamps, access-control labels, parent ID, and raw source offsets. Metadata enables filtering, citations, debugging, and secure retrieval.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">🆔</div><div><h3>Chunk IDs & versions</h3><p>Use deterministic IDs such as hash(document stable ID + document version + source span + chunker version). Never overwrite history ambiguously; query only the active document version and support rollback.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">🧬</div><div><h3>Deduplication</h3><p>Use exact content hashes before embedding and near-duplicate detection where templates dominate. Preserve provenance lists. At retrieval, collapse siblings/duplicates so repeated boilerplate does not occupy top-K.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">♻️</div><div><h3>Re-indexing</h3><p>Build a new versioned index or namespace, backfill idempotently, run shadow queries, compare metrics, then atomically switch an alias. Avoid destructive in-place migration and clean old indexes only after rollback windows expire.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">💸</div><div><h3>Embedding cost</h3><p>Estimate total enriched tokens—not document bytes. Overlap, contextual prefixes, duplicate documents, semantic-boundary embeddings, and retries all add cost. Cache by content + model + preprocessing version and batch requests.</p></div></div>
+    <div class="glass-card consideration"><div class="icon">📊</div><div><h3>Recall@K & Precision@K</h3><p>Create query-to-relevant-evidence judgments. Recall@K measures whether top K contains the needed chunk; Precision@K measures the fraction of top K that is relevant. Also track MRR/nDCG, answer faithfulness, context tokens, latency, and cost.</p></div></div>
+  </div>
+  <div class="callout warn reveal"><strong>Access control:</strong> authorization metadata must propagate to every child and parent. Apply permission filters before retrieval results reach reranking or generation; parent expansion must not cross ACL boundaries.</div>
+</section>
+
+<section id="interview">
+  <div class="section-header reveal"><div class="section-label">Career preparation</div><h2 class="section-title">18 Interview Questions</h2><p class="section-desc">Short model answers focused on practical system-design decisions. Click a question to reveal the answer.</p></div>
+  <div class="reveal">
+    <div class="level-head"><span>BEGINNER</span><h3>Foundations</h3></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">1</b><span class="qa-text">Why does a RAG system chunk documents?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Embedding and generation models have input limits, while whole-document vectors compress too many topics. Chunks provide focused retrieval units so the system can fetch only relevant evidence.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">2</b><span class="qa-text">How would you choose chunk size?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Start from the smallest unit that can answer typical queries, then stay below the embedding-token limit with room for enrichment. Benchmark several sizes—often 256, 512, and 768 tokens—using labeled queries and Recall@K/Precision@K rather than intuition.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">3</b><span class="qa-text">What does chunk overlap solve?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>It duplicates boundary context so a sentence or fact split near an arbitrary edge can still be retrieved intact. It costs extra vectors/tokens and can crowd top-K with duplicates, so use the minimum measured amount.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">4</b><span class="qa-text">Characters or tokens—which should define chunk size?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Tokens should enforce the production limit because the embedding model consumes tokens. Character counts are only a fast approximation and vary badly across languages, code, and identifiers.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">5</b><span class="qa-text">What is recursive character chunking?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>It recursively tries separators from strongest to weakest—paragraphs, lines, spaces, characters—until every chunk fits. It is cheap, deterministic, and a strong baseline, but does not understand layout or topic changes.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">6</b><span class="qa-text">Why store metadata with each chunk?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Metadata supports filtering, authorization, citations, parent lookup, provenance, debugging, and re-indexing. At minimum keep document/version IDs, source span, section path, and chunker/model versions.</div></div></div>
+
+    <div class="level-head"><span style="background:var(--purple)">INTERMEDIATE</span><h3>Applied design</h3></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">7</b><span class="qa-text">When would you use semantic chunking?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Use it for narrative or transcript-like text where topics change without reliable headings and a recursive baseline merges unrelated ideas. Avoid paying for it until evaluation shows structure-aware/token-based chunks are insufficient.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">8</b><span class="qa-text">Why can semantic chunking create excessively large chunks?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>If adjacent sentence windows remain similar, the distance threshold never triggers. The chunk keeps growing beyond model limits, so semantic boundaries require an independent hard token cap and usually a minimum/target size too.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">9</b><span class="qa-text">Why is Docling HybridChunker useful for PDFs?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>PDFs encode layout rather than logical text. Docling reconstructs hierarchy, reading order, tables, captions, and metadata; HybridChunker then splits oversized structural chunks and merges compatible small peers using the embedding tokenizer.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">10</b><span class="qa-text">How do you handle tables?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Keep the caption, units, headers, and row groups together. If rows must be split, repeat headers in every chunk, preserve row boundaries and table coordinates, and consider both a Markdown serialization and a concise table summary.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">11</b><span class="qa-text">How does parent-child chunking work?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Small child chunks are embedded for precise matching. Retrieved child IDs point to larger parent sections, which are deduplicated and supplied to the LLM. This separates the optimal retrieval unit from the optimal answer-context unit.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">12</b><span class="qa-text">Why should chunker and embedding tokenizers match?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>The model limit is expressed in its own tokens. A different tokenizer may undercount and cause silent truncation, changing the meaning of the embedded text and breaking reproducibility.</div></div></div>
+
+    <div class="level-head"><span style="background:#0f766e">ADVANCED</span><h3>Production and evaluation</h3></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">13</b><span class="qa-text">How do you evaluate whether one chunking strategy is better?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Freeze the parser, embedding model, index, queries, judgments, K, and retrieval settings; change only chunking. Compare Recall@K, Precision@K, MRR/nDCG, answer correctness/faithfulness, context tokens, ingestion cost, storage, and latency by document/query type.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">14</b><span class="qa-text">What is late chunking?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>It runs a long-context embedding transformer over the document first, then pools token representations for each chunk span. Chunk embeddings therefore retain surrounding context, unlike traditional pre-chunk-then-embed processing.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">15</b><span class="qa-text">How would you combine semantic splitting with HybridChunker?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Use Docling to establish hierarchy and protect tables/code. Apply semantic breakpoints only inside oversized narrative sections, then enforce the embedding tokenizer’s maximum and optionally merge tiny peers with the same heading. Structure constrains semantics; tokens have final authority.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">16</b><span class="qa-text">How do you re-index without downtime?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Create a new versioned namespace, ingest idempotently, run integrity checks and shadow retrieval evaluation, then atomically move an index alias. Keep the previous index during a rollback window.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">17</b><span class="qa-text">What can go wrong with LLM-based chunking?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>The model may invent summaries, omit evidence, return invalid or unstable offsets, exceed rate limits, leak sensitive data, or drift after an upgrade. Require structured output, source-span validation, deterministic token caps, caching, model versioning, and fallback logic.</div></div></div>
+    <div class="qa-card" onclick="toggleQA(this)"><div class="qa-question"><b class="qa-num">18</b><span class="qa-text">A strategy improves Recall@10 but answer quality falls. Why?</span><span class="qa-toggle">▼</span></div><div class="qa-answer"><div>Top-10 may now contain the evidence but also more redundant or irrelevant tokens, causing context dilution or truncation. Inspect Precision@K, parent expansion, duplicate collapse, reranking, context order, and whether the gold evidence survives the final generation budget.</div></div></div>
+  </div>
+</section>
+
+<section id="sources">
+  <div class="section-header reveal"><div class="section-label">References</div><h2 class="section-title">Primary Technical Sources</h2><p class="section-desc">Official project documentation and the late-chunking reference implementation.</p></div>
+  <div class="glass-card reveal"><ul class="source-list">
+    <li><a href="https://python.langchain.com/api_reference/experimental/text_splitter/langchain_experimental.text_splitter.SemanticChunker.html" target="_blank" rel="noopener">LangChain SemanticChunker API reference</a> — experimental package status and breakpoint configuration.</li>
+    <li><a href="https://python.langchain.com/api_reference/langchain/retrievers/langchain.retrievers.parent_document_retriever.ParentDocumentRetriever.html" target="_blank" rel="noopener">LangChain ParentDocumentRetriever reference</a> — child retrieval and parent expansion pattern.</li>
+    <li><a href="https://github.com/docling-project/docling/blob/main/docs/concepts/chunking.md" target="_blank" rel="noopener">Docling chunking concepts</a> — HybridChunker hierarchy, tokenizer refinement, peer merging, contextualization, and table-header behavior.</li>
+    <li><a href="https://huggingface.co/docs/transformers/main_classes/tokenizer" target="_blank" rel="noopener">Hugging Face tokenizer documentation</a> — model-aligned encoding, offsets, truncation, and token accounting.</li>
+    <li><a href="https://github.com/jina-ai/late-chunking" target="_blank" rel="noopener">Jina AI late-chunking reference implementation</a> and <a href="https://arxiv.org/abs/2409.04701" target="_blank" rel="noopener">research paper</a> — contextual token encoding followed by chunk-level pooling.</li>
+  </ul><p style="font-size:.76rem;color:var(--text-dim);margin-top:16px">External source content was rephrased for compliance with licensing restrictions. Library APIs can change; confirm against the version pinned by your project.</p></div>
+</section>
+
+<footer><div style="width:64px;height:3px;background:linear-gradient(90deg,var(--primary),var(--purple));margin:0 auto 17px;border-radius:3px"></div><strong>Production-Ready RAG Chunking Strategies</strong><br><span style="color:var(--text-dim)">Interactive learning guide · HTML, CSS & vanilla JavaScript</span></footer>
+
+<script>
+/* Keep implementation beside explanation: relocate every code pattern into
+   its corresponding strategy card before navigation/reveal observers start. */
+(function colocateCodePatterns() {
+  const source = document.getElementById('examples');
+  const strategies = Array.from(document.querySelectorAll('#strategies .strategy-card'));
+  if (!source || strategies.length < 7) return;
+
+  const examples = Array.from(source.children).filter(el => el.querySelector('.code-editor'));
+  const targetStrategy = [0, 0, 2, 3, 4, 1, 5];
+  const labels = [
+    'Code pattern', 'Token-limit enforcement', 'Code pattern',
+    'Code pattern', 'Code pattern', 'Context enrichment', 'Advanced pattern'
+  ];
+
+  examples.forEach((example, index) => {
+    const target = strategies[targetStrategy[index]];
+    if (!target) return;
+
+    example.classList.add('strategy-code');
+    example.style.cssText = 'margin-top:28px;padding-top:24px;border-top:1px solid var(--card-border)';
+
+    const heading = example.querySelector('h3');
+    if (heading) {
+      const title = heading.innerHTML.replace(/^\d+\.\s*/, '');
+      heading.innerHTML = `<span style="color:var(--primary);font-size:.75rem;text-transform:uppercase;letter-spacing:.7px">${labels[index]}</span><br>${title}`;
+      heading.style.cssText = 'font-size:1.02rem;line-height:1.5;margin-bottom:4px';
+    }
+
+    target.appendChild(example);
+  });
+
+  source.remove();
+  document.querySelector('.nav-links a[href="#examples"]')?.closest('li')?.remove();
+})();
+
+/* Build one purpose-specific motion diagram for every strategy. Keeping the
+   visuals data-driven makes their order stay aligned with the numbered cards. */
+(function addStrategyMotionDiagrams() {
+  const cards = Array.from(document.querySelectorAll('#strategies .strategy-card'));
+  if (cards.length !== 7) return;
+
+  const sequence = (steps, cycle = 8) => `
+    <div class="motion-canvas" role="img" aria-label="${steps.map(step => step.label).join(' then ')}">
+      <div class="motion-sequence" style="--cycle:${cycle}s;--slice:${cycle / steps.length}s">
+        ${steps.map((step, index) => `
+          <div class="motion-box" style="--step:${index}">${step.icon} ${step.label}<small>${step.note}</small>${step.extra || ''}</div>
+          ${index < steps.length - 1 ? `<span class="motion-arrow" style="--step:${index}">→</span>` : ''}
+        `).join('')}
+      </div>
+    </div>`;
+
+  const diagrams = [
+    {
+      title: 'Motion — Recursive Separator Fallback',
+      description: 'The splitter tries the strongest natural boundary first and weakens it only while a piece remains over budget.',
+      html: sequence([
+        {icon:'📄', label:'Oversized text', note:'1,240 tokens', extra:'<span class="motion-lines"><i></i><i></i><i></i></span>'},
+        {icon:'¶', label:'Paragraph split', note:'one piece still 820'},
+        {icon:'↵', label:'Line split', note:'largest piece 510'},
+        {icon:'✂️', label:'Word fallback', note:'all pieces fit'},
+        {icon:'✅', label:'Final chunks', note:'≤480 + 60 overlap'}
+      ], 10)
+    },
+    {
+      title: 'Motion — Preserve the Document’s Shape',
+      description: 'Typed blocks are grouped under their heading ancestry; tables and code remain atomic until a hard limit forces a safe split.',
+      html: sequence([
+        {icon:'📰', label:'Raw layout', note:'headings · prose · table', extra:'<span class="motion-blocks"><i></i><i></i><i></i></span>'},
+        {icon:'🧱', label:'Typed blocks', note:'reading order restored'},
+        {icon:'🌳', label:'Section tree', note:'inherit ancestry', extra:'<span class="motion-tree">H1<br>├─ H2 → prose<br>└─ H2 → table</span>'},
+        {icon:'🛡️', label:'Protect atoms', note:'caption + header + rows'},
+        {icon:'🏷️', label:'Contextual chunks', note:'path + page + source'}
+      ], 10)
+    },
+    {
+      title: 'Motion — Find Semantic Breakpoints',
+      description: 'Sentence windows are embedded in sequence. A large adjacent distance crosses the threshold and becomes a chunk boundary.',
+      html: `<div class="motion-canvas motion-semantic" role="img" aria-label="Scan adjacent sentence similarities, detect a topic break, and form two coherent chunks">
+        <div class="semantic-scan">
+          <span class="sem-sentence" style="--step:0">S1</span><i class="sem-gap"></i>
+          <span class="sem-sentence" style="--step:1">S2</span><i class="sem-gap"></i>
+          <span class="sem-sentence" style="--step:2">S3</span><i class="sem-gap break" title="distance exceeds threshold"></i>
+          <span class="sem-sentence" style="--step:3">S4</span><i class="sem-gap"></i>
+          <span class="sem-sentence" style="--step:4">S5</span><i class="sem-gap"></i>
+          <span class="sem-sentence" style="--step:5">S6</span>
+        </div>
+        <div class="semantic-results"><span>Chunk A · S1–S3</span><span>Chunk B · S4–S6</span></div>
+      </div>`
+    },
+    {
+      title: 'Motion — Docling Hierarchy + Token Refinement',
+      description: 'HybridChunker starts from parsed hierarchy, splits only oversized units, and merges compatible undersized peers.',
+      html: sequence([
+        {icon:'📑', label:'PDF / DOCX', note:'layout-rich source'},
+        {icon:'🔎', label:'Docling parse', note:'order + typed elements', extra:'<span class="motion-blocks"><i></i><i></i><i></i></span>'},
+        {icon:'🌳', label:'Hierarchy chunks', note:'headings + captions'},
+        {icon:'📏', label:'Tokenizer gate', note:'compare with max_tokens'},
+        {icon:'🔀', label:'Split / merge', note:'repeat table headers'}
+      ], 10)
+    },
+    {
+      title: 'Motion — Retrieve Small, Expand Large',
+      description: 'The query matches a precise child vector; its parent ID expands the result into a complete section for generation.',
+      html: `<div class="motion-canvas motion-parent" role="img" aria-label="Query retrieves a small matching child chunk and expands it to its larger parent section">
+        <div class="query-orb">Query<br>🔎</div>
+        <div class="retrieval-stack">
+          <div class="child-row"><span class="child-chip">child A</span><span class="child-chip hit">child B ✓</span><span class="child-chip">child C</span></div>
+          <div style="color:var(--primary);font-weight:900">parent_id ↓</div>
+          <div class="parent-expand">Parent section · complete procedure<small>deduplicate → rerank → send to LLM</small></div>
+        </div>
+      </div>`
+    },
+    {
+      title: 'Motion — Hybrid Signals Converge',
+      description: 'Structure protects valid boundaries, semantics identifies topic changes, and the tokenizer acts as the final hard gate.',
+      html: `<div class="motion-canvas motion-hybrid" role="img" aria-label="Structure, semantic, and token-limit signals converge into production-ready chunks">
+        <div class="hybrid-inputs">
+          <div class="hybrid-lane" style="--delay:0s">🧱 Structure · protect atoms</div>
+          <div class="hybrid-lane" style="--delay:.35s">🧠 Semantics · find topic shifts</div>
+          <div class="hybrid-lane" style="--delay:.7s">📏 Tokens · enforce hard maximum</div>
+        </div>
+        <div class="hybrid-funnel">⇉</div>
+        <div class="hybrid-output">✅ Bounded<br>coherent chunk</div>
+      </div>`
+    },
+    {
+      title: 'Motion — LLM Boundaries with Deterministic Guardrails',
+      description: 'The model proposes discourse boundaries; deterministic validation checks offsets and token limits before any chunk is accepted.',
+      html: sequence([
+        {icon:'📝', label:'Bounded window', note:'numbered sentences'},
+        {icon:'💬', label:'Chunking prompt', note:'schema + domain rules'},
+        {icon:'🤖', label:'LLM proposal', note:'boundary indices + labels'},
+        {icon:'🧪', label:'Validator', note:'offsets · coverage · tokens'},
+        {icon:'✅', label:'Versioned chunks', note:'or deterministic fallback'}
+      ], 10)
+    }
+  ];
+
+  cards.forEach((card, index) => {
+    if (card.querySelector('.strategy-motion')) return;
+    const diagram = document.createElement('div');
+    diagram.className = 'diagram-wrapper strategy-motion';
+    diagram.setAttribute('data-animated', '');
+    diagram.setAttribute('data-motion-strategy', String(index + 1));
+    diagram.innerHTML = `
+      <div class="diagram-title">${diagrams[index].title}</div>
+      <div class="diagram-desc">${diagrams[index].description}</div>
+      ${diagrams[index].html}
+      <div class="anim-bar"><button class="anim-btn" type="button" onclick="toggleAnimation(this)" aria-label="Pause this diagram">⏸ Pause</button></div>`;
+    card.querySelector('.detail-grid')?.insertAdjacentElement('afterend', diagram);
+  });
+})();
+
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.08, rootMargin:'0px 0px -35px'});
+reveals.forEach(el => revealObserver.observe(el));
+
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 110) current = s.id; });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+}, {passive:true});
+
+function toggleQA(card) {
+  const wasOpen = card.classList.contains('open');
+  card.parentElement.querySelectorAll('.qa-card').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) card.classList.add('open');
+}
+
+function copyCode(btn) {
+  const text = btn.closest('.code-editor').querySelector('pre').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = '📋 Copy', 1600);
+  });
+}
+
+function toggleAnimation(btn) {
+  const diagram = btn.closest('[data-animated]');
+  const paused = diagram.classList.toggle('paused');
+  btn.textContent = paused ? '▶ Play' : '⏸ Pause';
+  btn.setAttribute('aria-label', paused ? 'Play this diagram' : 'Pause this diagram');
+}
+
+// Animate only while diagrams are visible to avoid background CPU use.
+const animated = document.querySelectorAll('[data-animated]');
+const animationObserver = new IntersectionObserver(entries => entries.forEach(e => {
+  e.target.classList.toggle('offscreen', !e.isIntersecting);
+  if (!e.target.classList.contains('paused')) e.target.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+  e.target.querySelectorAll('.pipeline, .mini-chunk').forEach(el => el.style.animationPlayState = e.isIntersecting ? 'running' : 'paused');
+}), {threshold:.12});
+animated.forEach(el => animationObserver.observe(el));
+</script>
+</body>
+</html>

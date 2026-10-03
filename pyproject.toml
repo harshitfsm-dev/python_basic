@@ -3,8 +3,19 @@ name = "python"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
+    "chromadb>=1.5.9",
+    "docling",
     "httpx>=0.28.1",
+    "langchain",
+    "langchain-community",
+    "langchain-ollama",
+    "langchain-openai>=1.6.7",
+    "langchain-text-splitters==1.1.2",
+    "langgraph==1.2.12",
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    "python-dotenv",
     "requests>=2.34.2",
 ]

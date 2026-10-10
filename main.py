@@ -1,22 +1,27 @@
-class Solution:
-    def isPalindrome(self, s: str) -> bool:
-        l = 0
-        r = len(s) - 1
+import ollama
 
-        while l <= r:
-            if not s[l].isalnum():
-                l += 1
-            elif not s[r].isalnum():
-                r -= 1
-            elif s[l].lower()  == s[r].lower():
-                l += 1
-                r -= 1
-            else: 
-                return False
-        return True
-
-        
-
-solution = Solution()
-input = "A man, a plan, a canal: Panama"
-print(solution.isPalindrome(input))
+response = ollama.systemone(
+    model="nimble:9b",
+    state={"ticket": "I was charged twice. Please refund the extra payment."},
+    questions={
+        "team": {
+            "type": "choice",
+            "instructions": "Which team should handle this ticket?",
+            "criteria": {
+                "billing": "Payments and refunds",
+                "technical": "Bugs and integrations",
+                "other": "None of the above",
+            },
+        },
+        "refund": {
+            "type": "noul",
+            "instructions": "Does the customer explicitly ask for a refund?",
+        },
+        "urgency": {
+            "type": "score",
+            "instructions": "How urgent is this ticket?",
+            "criteria": ["Routine", "Soon", "Urgent"],
+        },
+    },
+)
+print(response.answers)
